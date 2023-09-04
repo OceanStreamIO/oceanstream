@@ -1,0 +1,5 @@
+L3_regridded_data module
+========================
+
+.. automodule:: oceanstream.L3_regridded_data.template
+   :members:
