@@ -1,0 +1,5 @@
+L2_calibrated_data module
+=========================
+
+.. automodule:: oceanstream.L2_calibrated_data.template
+   :members:
