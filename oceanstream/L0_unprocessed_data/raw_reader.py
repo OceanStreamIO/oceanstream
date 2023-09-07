@@ -4,52 +4,21 @@ raw_reader.py
 Module for reading, verifying, and converting echosounder raw data files.
 
 This module provides functionalities to:
+
 - Search for raw echosounder files within specified directories or paths.
 - Verify the integrity of these files, ensuring they are readable by echopype.
-- Extract essential metadata from the files, such as campaign ID,
+- Extract essential metadata from the files, such as campaign ID,\
 date of measurement, and sonar model.
-- Convert raw files to specified formats (netCDF or zarr) and
+- Convert raw files to specified formats (netCDF or zarr) and\
 save them to a desired location.
-- Group similar files based on specific criteria, such as campaign ID,
- sonar model, and time difference.
+- Group similar files based on specific criteria, such as campaign ID,\
+sonar model, and time difference.
 
 The module supports various sonar models including
 EK60, ES70, EK80, EA640, AZFP, and AD2CP.
 It also defines a time threshold for determining
 the similarity between two consecutive files.
 
-Author: Mihai Boldeanu
-Date: 07/09/2023
-
-Functions:
-- file_finder(paths, file_type="raw"): Finds and returns all files
-of a specified type from given paths.
-- file_integrity_checking(file_path): Checks the integrity
-of a given echosounder file.
-- read_raw_files(file_dicts): Reads multiple raw echosounder files
-and returns a list of Datasets.
-- read_processed_files(file_paths): Reads multiple processed echosounder files
-and returns a list of Datasets.
-- _read_file(file_path, sonar_model="EK80"): Reads an echosounder file
-and returns the corresponding Dataset.
-- convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
-Converts raw files to a specified format.
-- _write_file(ed, save_path, save_file_type="nc", overwrite=False):
-Writes a dataset to a specified file type.
-- _is_similar(file_dict1, file_dict2): Determines if two file information
-dictionaries are similar.
-- split_files(file_dicts): Splits files into sublists
- based on their similarity.
-
-Constants:
-- SUPPORTED_SONAR_MODELS: List of supported sonar models.
-- TIME_BETWEEN_FILES: Time threshold (in minutes) for determining
-the similarity between two files.
-
-Dependencies:
-- os: For file and directory operations.
-- datetime: For date and time operations.
-- echopype: For reading and converting echosounder files.
 """
 
 # Import necessary libraries
@@ -72,21 +41,25 @@ def file_finder(paths, file_type="raw"):
     across multiple specified file paths.
 
     Parameters:
-    - paths (str or list[str]): If a string is provided,
-    it should be the absolute path to a directory.
-                                If a list is provided,
+
+    - paths (str or list[str]): If a string is provided,\
+    it should be the absolute path to a directory.\
+    If a list is provided,\
     it should contain absolute paths to individual files.
-    - file_type (str, optional): The type of files to search for.
+    - file_type (str, optional): The type of files to search for.\
     Defaults to "raw".
 
     Returns:
+
     - list[str]: A sorted list of all found files of the specified type.
 
     Raises:
-    - ValueError: If the provided paths input is neither a directory
+
+    - ValueError: If the provided paths input is neither a directory\
     nor a list of file paths.
 
     Example:
+
      file_finder("/path/to/directory")
     ['/path/to/directory/file1.raw', '/path/to/directory/file2.raw']
 
@@ -121,35 +94,38 @@ def file_integrity_checking(file_path):
     This function verifies if the provided echosounder file is
     readable by echopype and extracts
     essential metadata such as the campaign ID, date of measurement,
-     and sonar model. The function
+    and sonar model. The function
     supports raw, netCDF, and zarr file formats.
 
     Parameters:
+
     - file_path (str): Absolute path to the echosounder file.
 
     Returns:
+
     - dict: A dictionary containing the following keys:
-        - 'file_path': Absolute path to the file.
-        - 'campaign_id': Identifier for the measuring campaign
-        extracted from the file name.
-        - 'date': Date and time when the measurement started,
-         extracted from the file name.
-        - 'sonar_model': Type of sonar that produced the file.
-        - 'file_integrity': Boolean indicating if the
-        file is readable by echopype.
+    'file_path': Absolute path to the file.
+    'campaign_id': Identifier for the measuring\
+    campaign extracted from the file name.
+    'date': Date and time when the measurement started,\
+     extracted from the file name.
+    'sonar_model': Type of sonar that produced the file.
+    'file_integrity': Boolean indicating if the file is readable by echopype.
 
     Raises:
+
     - Exception: If the file type is not supported or
     if there are issues reading the file.
 
     Example:
+
     file_integrity_checking("/path/to/JR161-D20230509-T100645.raw")
     {
-        'file_path': '/path/to/file.raw',
-        'campaign_id': 'JR161',
-        'date': datetime.datetime(2023, 5, 9, 10, 6, 45),
-        'sonar_model': 'EK60',
-        'file_integrity': True
+    'file_path': '/path/to/JR161-D20230509-T100645.raw',
+    'campaign_id': 'JR161',
+    'date': datetime.datetime(2023, 5, 9, 10, 6, 45),
+    'sonar_model': 'EK60',
+    'file_integrity': True
     }
     """
     return_dict = {}
@@ -198,11 +174,13 @@ def read_raw_files(file_dicts):
     and returns the corresponding datasets.
 
     Parameters:
-    - file_dicts (list of dict): List of dictionaries,
-    each containing file information
-      as provided by the file_integrity_checking function.
+
+    - file_dicts (list of dict): List of dictionaries, \
+    each containing file information \
+    as provided by the file_integrity_checking function.
 
     Returns:
+
     - list: List of EchoData datasets corresponding to each raw file.
 
     """
@@ -221,11 +199,13 @@ def read_processed_files(file_paths):
     and returns the corresponding datasets.
 
     Parameters:
-    - file_paths (list of str): List of file paths
+
+    - file_paths (list of str): List of file paths\
     to processed echosounder files.
 
     Returns:
-    - list: List of EchoData datasets
+
+    - list: List of EchoData datasets\
     corresponding to each processed file.
 
     """
@@ -247,14 +227,17 @@ def _read_file(file_path, sonar_model="EK80"):
     For raw files, the sonar model must be specified.
 
     Parameters:
+
     - file_path (str): Absolute path to the echosounder file.
-    - sonar_model (str, optional): Type of sonar model. Defaults to "EK80".
+    - sonar_model (str, optional): Type of sonar model. Defaults to "EK80".\
       Relevant only for raw files.
 
     Returns:
+
     - EchoData: Dataset corresponding to the provided file.
 
     Raises:
+
     - Exception: If the file type is not supported by echopype.
 
     """
@@ -279,15 +262,17 @@ def convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
     and saves the converted files to the given path.
 
     Parameters:
-    - file_dicts (list of dict): List of dictionaries,
+
+    - file_dicts (list of dict): List of dictionaries,\
     each containing file information.
-    - save_path (str): Directory path where
+    - save_path (str): Directory path where\
     the converted files will be saved.
-    - save_file_type (str): Desired file type
-    for saving the converted files.
+    - save_file_type (str): Desired file type\
+    for saving the converted files.\
     Options are 'nc' or 'zarr'.
 
     Returns:
+
     - list: List of paths to the saved converted files.
 
     """
@@ -312,18 +297,21 @@ def _write_file(ed, save_path, save_file_type="nc", overwrite=False):
     (netCDF or zarr), and saves the file to the provided path.
 
     Parameters:
+
     - ed (EchoData): Echosounder dataset to be saved.
     - save_path (str): Directory path where the dataset will be saved.
-    - save_file_type (str, optional): Desired file type
-    for saving the dataset. Defaults to 'nc'.
+    - save_file_type (str, optional): Desired file type\
+    for saving the dataset. Defaults to 'nc'.\
       Options are 'nc' or 'zarr'.
-    - overwrite (bool, optional): If True, overwrites
+    - overwrite (bool, optional): If True, overwrites\
     the file if it already exists. Defaults to False.
 
     Returns:
+
     - str: Path to the saved file.
 
     Raises:
+
     - Exception: If the specified file type is not supported by echopype.
 
     """
@@ -347,11 +335,13 @@ def _is_similar(file_dict1, file_dict2):
     is within a specified time range.
 
     Parameters:
+
     - file_dict1 (dict): First file information dictionary.
     - file_dict2 (dict): Second file information dictionary.
 
     Returns:
-    - bool: True if the file dictionaries are similar
+
+    - bool: True if the file dictionaries are similar\
     based on the criteria, False otherwise.
 
     """
@@ -379,10 +369,12 @@ def split_files(file_dicts):
     specific criteria.
 
     Parameters:
+
     - file_dicts (list of dict): List of file information dictionaries.
 
     Returns:
-    - list of lists: List containing sublists of file dictionaries
+
+    - list of lists: List containing sublists of file dictionaries\
     grouped by their similarity.
 
     """
