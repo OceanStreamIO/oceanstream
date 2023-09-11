@@ -1,11 +1,11 @@
 """
 raw_reader.py
 -------------
-Module for reading, verifying, and converting echosounder raw data files.
+Module for reading, verifying, and converting echo sounder raw data files.
 
 This module provides functionalities to:
 
-- Search for raw echosounder files within specified directories or paths.
+- Search for raw echo sounder files within specified directories or paths.
 - Verify the integrity of these files, ensuring they are readable by echopype.
 - Extract essential metadata from the files, such as campaign ID,\
 date of measurement, and sonar model.
@@ -23,6 +23,7 @@ the similarity between two consecutive files.
 
 # Import necessary libraries
 import os
+import re
 from datetime import datetime, timedelta
 
 import echopype as ep
@@ -67,31 +68,31 @@ def file_finder(paths, file_type="raw"):
     ['/path/to/file1.raw', '/path/to/file2.raw']
     """
     if isinstance(paths, str) and os.path.isdir(paths):
-        files = [
-            os.path.join(paths, file)
-            for file in os.listdir(paths)
-            if os.path.isfile(os.path.join(paths, file))
+        ret_files = [
+            os.path.join(paths, f_p)
+            for f_p in os.listdir(paths)
+            if os.path.isfile(os.path.join(paths, f_p))
         ]
-        files = file_finder(files)
+        ret_files = file_finder(ret_files, file_type)
     elif isinstance(paths, list):
-        files = []
+        ret_files = []
         for elem in paths:
             if "." + file_type in elem and os.path.isfile(elem):
-                files.append(elem)
+                ret_files.append(elem)
     else:
         raise ValueError(
             "Invalid input. Provide either a directory\
              path or a list of file paths."
         )
 
-    return sorted(files)
+    return sorted(ret_files)
 
 
 def file_integrity_checking(file_path):
     """
-    Checks the integrity of a given echosounder file.
+    Checks the integrity of a given echo sounder file.
 
-    This function verifies if the provided echosounder file is
+    This function verifies if the provided echo sounder file is
     readable by echopype and extracts
     essential metadata such as the campaign ID, date of measurement,
     and sonar model. The function
@@ -99,7 +100,7 @@ def file_integrity_checking(file_path):
 
     Parameters:
 
-    - file_path (str): Absolute path to the echosounder file.
+    - file_path (str): Absolute path to the echo sounder file.
 
     Returns:
 
@@ -134,13 +135,28 @@ def file_integrity_checking(file_path):
     # eliminate file type
     file_name = file_name.split(".")[0]
     campaign_id = file_name.split("-")[0]
-    date_string = file_name.split("-")[1] + "-" + file_name.split("-")[2]
-    date = datetime.strptime(date_string, "D%Y%m%d-T%H%M%S")
-    file_integrity = False
+    no_date_from_file_name = False
+    date = datetime.now()
+    try:
+        pattern_date = r"D(\d{4})(\d{2})(\d{2})"
+        pattern_time = r"T(\d{2})(\d{2})(\d{2})"
+
+        matches_date = re.findall(pattern_date, file_name)[0]
+        matches_time = re.findall(pattern_time, file_name)[0]
+
+        year, month, day = matches_date
+        hour, minute, second = matches_time
+
+        datetime_string = f"D{year}{month}{day}-T{hour}{minute}{second}"
+        date = datetime.strptime(datetime_string, "D%Y%m%d-T%H%M%S")
+    except Exception as e:
+        e += "!"
+        no_date_from_file_name = True
+
     if ".raw" in file_path:
-        for sonar_model in SUPPORTED_SONAR_MODELS:
+        for s_m in SUPPORTED_SONAR_MODELS:
             try:
-                ed = ep.open_raw(file_path, sonar_model=sonar_model)
+                ed = ep.open_raw(file_path, sonar_model=s_m)  # type: ignore
                 file_integrity = True
                 break
             except ValueError:
@@ -155,6 +171,9 @@ def file_integrity_checking(file_path):
             raise Exception("File type not supported for " + str(file_path))
     else:
         raise Exception("File type not supported for " + str(file_path))
+    if no_date_from_file_name:
+        datetime_string = ed["Top-level"].date_created
+        date = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ")
 
     return_dict["file_path"] = file_path
     return_dict["campaign_id"] = campaign_id
@@ -166,7 +185,7 @@ def file_integrity_checking(file_path):
 
 def read_raw_files(file_dicts):
     """
-    Reads multiple raw echosounder files and returns a list of Datasets.
+    Reads multiple raw echo sounder files and returns a list of Datasets.
 
     This function processes a list of file information dictionaries,
     opens each raw file
@@ -193,7 +212,7 @@ def read_raw_files(file_dicts):
 
 def read_processed_files(file_paths):
     """
-    Reads multiple processed echosounder files and returns a list of Datasets.
+    Reads multiple processed echo sounder files and returns a list of Datasets.
 
     This function processes a list of file paths, opens each processed file,
     and returns the corresponding datasets.
@@ -201,7 +220,7 @@ def read_processed_files(file_paths):
     Parameters:
 
     - file_paths (list of str): List of file paths\
-    to processed echosounder files.
+    to processed echo sounder files.
 
     Returns:
 
@@ -218,7 +237,7 @@ def read_processed_files(file_paths):
 
 def _read_file(file_path, sonar_model="EK80"):
     """
-    Reads an echosounder file and
+    Reads an echo sounder file and
     returns the corresponding Dataset.
 
     This function determines the type of the file
@@ -228,7 +247,7 @@ def _read_file(file_path, sonar_model="EK80"):
 
     Parameters:
 
-    - file_path (str): Absolute path to the echosounder file.
+    - file_path (str): Absolute path to the echo sounder file.
     - sonar_model (str, optional): Type of sonar model. Defaults to "EK80".\
       Relevant only for raw files.
 
@@ -243,7 +262,7 @@ def _read_file(file_path, sonar_model="EK80"):
     """
     file_name = os.path.split(file_path)[-1]
     if ".raw" in file_name:
-        ed = ep.open_raw(file_path, sonar_model=sonar_model)
+        ed = ep.open_raw(file_path, sonar_model=sonar_model)  # type: ignore
     elif ".nc" in file_name or ".zarr" in file_name:
         ed = ep.open_converted(file_path)  # create an EchoData object
     else:
@@ -253,7 +272,7 @@ def _read_file(file_path, sonar_model="EK80"):
 
 def convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
     """
-    Converts multiple raw echosounder files to the
+    Converts multiple raw echo sounder files to the
     specified file type and saves them.
 
     This function processes a list of file information dictionaries,
@@ -289,7 +308,7 @@ def convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
 
 def _write_file(ed, save_path, save_file_type="nc", overwrite=False):
     """
-    Writes an echosounder dataset to a
+    Writes an echo sounder dataset to a
     specified file type and saves it.
 
     This function takes an EchoData dataset,
@@ -298,7 +317,7 @@ def _write_file(ed, save_path, save_file_type="nc", overwrite=False):
 
     Parameters:
 
-    - ed (EchoData): Echosounder dataset to be saved.
+    - ed (EchoData): echo sounder dataset to be saved.
     - save_path (str): Directory path where the dataset will be saved.
     - save_file_type (str, optional): Desired file type\
     for saving the dataset. Defaults to 'nc'.\
@@ -389,8 +408,16 @@ def split_files(file_dicts):
             list_of_lists.append(temp_list)
             temp_list = [elem]
         prev_elem = elem
-
+    list_of_lists.append(temp_list)
     return list_of_lists
+
+
+def concatenate_files(file_dicts):
+    list_of_datasets = []
+    for file_info in file_dicts:
+        list_of_datasets.append(_read_file(file_info["file_path"]))
+    combined_dataset = ep.combine_echodata(list_of_datasets)
+    return combined_dataset
 
 
 # Additional functions...
@@ -402,7 +429,7 @@ if __name__ == "__main__":
 
     # Get list of files
     path = r"C:\Users\mishu\OneDrive\Desktop\pinelab\test_data\ek60"
-    files = file_finder(path)
+    files_from_dir = file_finder(path)
     files = [
         "JR161-D20061118-T010645.raw",
         "JR161-D20061127-T115759.raw",
@@ -421,11 +448,13 @@ if __name__ == "__main__":
         "JR245-D20110116-T182142.raw",
         "JR245-D20110117-T213756.raw",
     ]
-    files = [os.path.join(path, f) for f in files]
-    files = file_finder(files, "raw")
+    file_paths = [os.path.join(path, f) for f in files]
+    files_found_from_list = file_finder(file_paths, "raw")
+    files_txt = file_finder(path, "txt")
+    print(files_txt)
     # Check to be raw files integrity
     raw_files_info = []
-    for file in files:
+    for file in files_found_from_list:
         file_info = file_integrity_checking(file)
         if file_info["file_integrity"]:
             raw_files_info.append(file_info)
@@ -440,4 +469,11 @@ if __name__ == "__main__":
         if file_info["file_integrity"]:
             converted_files_info.append(file_info)
 
-    contigous_files_list = split_files(converted_files_info)
+    contiguous_files_list = split_files(converted_files_info)
+
+    for list_of_files in contiguous_files_list:
+        if len(list_of_files) > 1:
+            print(list_of_files)
+            combined_ed = concatenate_files(list_of_files)
+            print(combined_ed)
+            print(combined_ed["Top-level"])
