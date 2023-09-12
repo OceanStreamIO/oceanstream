@@ -22,7 +22,7 @@ var/
 wheels/
 share/python-wheels/
 *.egg-info/
-notebooks/*/
+notebooks
 .installed.cfg
 *.egg
 MANIFEST
