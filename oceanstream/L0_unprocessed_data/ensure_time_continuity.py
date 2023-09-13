@@ -1,6 +1,7 @@
 """
 Module Name: L0_unprocessed_data.py
-Description: Verifies that a netcdf file contains no time reversals, and fixes them should they appear.
+Description: Verifies that a netcdf file contains no time reversals,
+            and fixes them should they appear.
 Author: Ruxandra Valcu
 Date: 2023-09-08
 """
@@ -46,12 +47,15 @@ def fix_time_reversions(er: xr.Dataset, time_dict=None, win_len: int = 100):
 
     Parameters:
     - ds (xr.Dataset): Unprocessed netcdf file to check for time reversals
-    - time_dict (dict): a dictionary where the keys are various sonar beam groups and the values are the time dimension
-    - win_len (int): length of the local window before the reversed timestamp within which the median pinging interval
+    - time_dict (dict): a dictionary where the keys are various sonar beam
+                        groups and the values are the time dimension
+    - win_len (int): length of the local window before the reversed timestamp
+                        within which the median pinging interval
                         is used to infer the next ping time
 
     Returns:
-    - ds (xr.Dataset): the input dataset but with specific time coordinates coerced to flow forward
+    - ds (xr.Dataset): the input dataset but with specific time coordinates
+                        coerced to flow forward
 
     Example:
     >>> fix_time_reversions(er, {"Sonar/Beam_group1": "ping_time"})
@@ -62,7 +66,10 @@ def fix_time_reversions(er: xr.Dataset, time_dict=None, win_len: int = 100):
         time_dict = DEFAULT_TIME_DICT
     for dimension, time_name in time_dict:
         if check_reversed_time(er, dimension, time_name) is True:
-            er[dimension] = coerce_increasing_time(er[dimension], time_name, win_len)
+            er[dimension] = coerce_increasing_time(
+                er[dimension],
+                time_name,
+                win_len)
     return er
 
 

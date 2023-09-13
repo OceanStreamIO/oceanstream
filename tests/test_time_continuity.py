@@ -1,13 +1,14 @@
 import os
 import subprocess
+from pathlib import Path
+
 import echopype as ep
 import numpy as np
 import pytest
 import xarray as xr
 
-from oceanstream.L0_unprocessed_data.ensure_time_continuity import check_reversed_time, fix_time_reversions
-from pathlib import Path
-
+from oceanstream.L0_unprocessed_data.ensure_time_continuity \
+    import check_reversed_time, fix_time_reversions
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 FTP_MAIN = "ftp.bas.ac.uk"
@@ -36,7 +37,8 @@ def test_check_reverse_time(file_name: str, dimension: str, time_name: str):
     dataset = _setup_file(file_name)
     has_reverse = check_reversed_time(dataset, dimension, time_name)
     assert not has_reverse
-    dataset[dimension].coords[time_name].values[51] = "2009-12-15T12:20:55.3130629021"
+    dataset[dimension].coords[time_name].values[51] = \
+        "2009-12-15T12:20:55.3130629021"
     has_reverse_bad = check_reversed_time(dataset, dimension, time_name)
     assert has_reverse_bad
 
@@ -47,51 +49,13 @@ def test_check_reverse_time(file_name: str, dimension: str, time_name: str):
 )
 def test_fix_reversal(file_name: str, dimension: str, time_name: str):
     dataset = _setup_file(file_name)
-    dataset[dimension].coords[time_name].values[51] = "2009-12-15T12:20:55.3130629021"
+    dataset[dimension].coords[time_name].values[51] \
+        = "2009-12-15T12:20:55.3130629021"
     fixed_dataset = fix_time_reversions(dataset, dimension, time_name)
     has_reverse_bad = check_reversed_time(dataset, dimension, time_name)
-    has_reverse_fixed = check_reversed_time(fixed_dataset, dimension, time_name)
+    has_reverse_fix = check_reversed_time(fixed_dataset, dimension, time_name)
     assert has_reverse_bad
-    assert not has_reverse_fixed
-
-
-
-
-
-
-
-
-"""
-def test_check_reverse_time(dataset=dataset_jr230(), dimension="Sonar/Beam_group1", time_name="ping_time"):
-    has_reversed = check_reversed_time(dataset, dimension, time_name)
-    assert has_reversed is False
-"""
-
-
-def synthetic_dataset(date_time) -> xr.DataArray:
-    da = xr.DataArray(
-        np.random.rand(len(date_time)),
-        coords=[np.array(date_time)],
-        dims="ping_time"
-    )
-    sd = da
-    return sd
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert not has_reverse_fix
 
 
 
