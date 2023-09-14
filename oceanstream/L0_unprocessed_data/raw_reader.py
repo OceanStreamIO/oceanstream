@@ -25,6 +25,7 @@ the similarity between two consecutive files.
 import os
 import re
 from datetime import datetime, timedelta
+from typing import Dict, List, Union
 
 import echopype as ep
 
@@ -32,7 +33,9 @@ SUPPORTED_SONAR_MODELS = ["EK60", "ES70", "EK80", "EA640", "AZFP", "AD2CP"]
 TIME_BETWEEN_FILES = 30  # time in minutes between two consecutive files
 
 
-def file_finder(paths, file_type="raw"):
+def file_finder(
+    paths: Union[str, List[str]], file_type: str = "raw"
+) -> List[str]:  # noqa: E501
     """
     Finds and returns all files of a specified type from given paths.
 
@@ -88,7 +91,9 @@ def file_finder(paths, file_type="raw"):
     return sorted(ret_files)
 
 
-def file_integrity_checking(file_path):
+def file_integrity_checking(
+    file_path: str,
+) -> Dict[str, Union[str, datetime, bool]]:  # noqa: E501
     """
     Checks the integrity of a given echo sounder file.
 
@@ -183,7 +188,9 @@ def file_integrity_checking(file_path):
     return return_dict
 
 
-def read_raw_files(file_dicts):
+def read_raw_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+) -> List[ep.EchoData]:
     """
     Reads multiple raw echo sounder files and returns a list of Datasets.
 
@@ -210,7 +217,7 @@ def read_raw_files(file_dicts):
     return ret_list
 
 
-def read_processed_files(file_paths):
+def read_processed_files(file_paths: List[str]) -> List[ep.EchoData]:
     """
     Reads multiple processed echo sounder files and returns a list of Datasets.
 
@@ -235,7 +242,7 @@ def read_processed_files(file_paths):
     return ret_list
 
 
-def _read_file(file_path, sonar_model="EK80"):
+def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.EchoData:
     """
     Reads an echo sounder file and
     returns the corresponding Dataset.
@@ -270,7 +277,11 @@ def _read_file(file_path, sonar_model="EK80"):
     return ed
 
 
-def convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
+def convert_raw_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]],
+    save_path: str = "",
+    save_file_type: str = "nc",
+) -> List[str]:
     """
     Converts multiple raw echo sounder files to the
     specified file type and saves them.
@@ -306,7 +317,12 @@ def convert_raw_files(file_dicts, save_path="", save_file_type="nc"):
     return ret_list
 
 
-def _write_file(ed, save_path, save_file_type="nc", overwrite=False):
+def _write_file(
+    ed: ep.EchoData,
+    save_path: str,
+    save_file_type: str = "nc",
+    overwrite: bool = False,  # noqa: E501
+) -> str:
     """
     Writes an echo sounder dataset to a
     specified file type and saves it.
@@ -343,7 +359,10 @@ def _write_file(ed, save_path, save_file_type="nc", overwrite=False):
     return save_path
 
 
-def _is_similar(file_dict1, file_dict2):
+def _is_similar(
+    file_dict1: Dict[str, Union[str, datetime, bool]],
+    file_dict2: Dict[str, Union[str, datetime, bool]],
+) -> bool:
     """
     Determines if two file information dictionaries
     are similar based on specific criteria.
@@ -376,7 +395,9 @@ def _is_similar(file_dict1, file_dict2):
     return True
 
 
-def split_files(file_dicts):
+def split_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+) -> List[List[Dict[str, Union[str, datetime, bool]]]]:
     """
     Splits a list of file information dictionaries
     into sublists based on their similarity.
@@ -412,7 +433,9 @@ def split_files(file_dicts):
     return list_of_lists
 
 
-def concatenate_files(file_dicts):
+def concatenate_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+) -> ep.EchoData:
     list_of_datasets = []
     for file_info in file_dicts:
         list_of_datasets.append(_read_file(file_info["file_path"]))

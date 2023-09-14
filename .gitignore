@@ -22,11 +22,7 @@ var/
 wheels/
 share/python-wheels/
 *.egg-info/
-<<<<<<< Updated upstream
-notebooks
-=======
 notebooks/
->>>>>>> Stashed changes
 .installed.cfg
 *.egg
 MANIFEST
