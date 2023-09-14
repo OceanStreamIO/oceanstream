@@ -1,5 +1,5 @@
 L0_unprocessed_data module
 ==========================
 
-.. automodule:: oceanstream.L0_unprocessed_data.template
+.. automodule:: oceanstream.L0_unprocessed_data.raw_reader
    :members:
