@@ -1,5 +1,5 @@
 """
-test_time_continuity.py
+ensure_time_continuity.py
 -----------------------
 Module for ensuring temporal consistency of EK60/EK80-generated netcdf files
 
