@@ -5,8 +5,10 @@ from pathlib import Path
 import echopype as ep
 import pytest
 
-from oceanstream.L0_unprocessed_data.ensure_time_continuity \
-    import check_reversed_time, fix_time_reversions
+from oceanstream.L0_unprocessed_data.ensure_time_continuity import (
+    check_reversed_time,
+    fix_time_reversions,
+)
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 FTP_MAIN = "ftp.bas.ac.uk"
@@ -28,8 +30,7 @@ def _setup_file(file_name):
 
 
 @pytest.mark.parametrize(
-    "file_name, dim, time",
-    [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
+    "file_name, dim, time", [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
 )
 def test_check_reverse_time(file_name: str, dim: str, time: str):
     dataset = _setup_file(file_name)
@@ -42,22 +43,13 @@ def test_check_reverse_time(file_name: str, dim: str, time: str):
 
 
 @pytest.mark.parametrize(
-    "file_name, dim, time",
-    [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
+    "file_name, dim, time", [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
 )
 def test_fix_reversal(file_name: str, dim: str, time: str):
     dataset = _setup_file(file_name)
-    dataset[dim].coords[time].values[51] \
-        = "2009-12-15T12:20:55.3130629021"
+    dataset[dim].coords[time].values[51] = "2009-12-15T12:20:55.3130629021"
     fixed_dataset = fix_time_reversions(dataset, dim, time)
     has_reverse_bad = check_reversed_time(dataset, dim, time)
     has_reverse_fix = check_reversed_time(fixed_dataset, dim, time)
     assert has_reverse_bad
     assert not has_reverse_fix
-
-
-
-
-
-
-

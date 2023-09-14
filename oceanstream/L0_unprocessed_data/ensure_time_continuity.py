@@ -10,9 +10,8 @@ beam group and time dimension
 and time dimensions associated.
 """
 
-# import echopype as ep
-from echopype.qc.api import exist_reversed_time, coerce_increasing_time
 import xarray as xr
+from echopype.qc.api import coerce_increasing_time, exist_reversed_time
 
 DEFAULT_TIME_DICT = {"Sonar/Beam_group1": "ping_time"}
 DEFAULT_DIMENSION = list(DEFAULT_TIME_DICT.keys())[0]
