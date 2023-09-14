@@ -4,8 +4,9 @@ on: [push, pull_request]
 
 jobs:
   build:
-
+    if: env.SKIP_BUILD != 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       matrix:
