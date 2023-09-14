@@ -15,16 +15,29 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install Dependencies
+    - name: Install Miniconda
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+        bash miniconda.sh -b -p $HOME/miniconda
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda info -a
+
+    - name: Install Mamba
+      run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda install mamba -c conda-forge
+
+    - name: Create Environment and Install Dependencies
+      run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        mamba create -q -n test-environment python=${{ matrix.python-version }}
+        conda activate test-environment
+        mamba install pytest -c conda-forge
 
     - name: Run Tests
       run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda activate test-environment
         pytest
