@@ -28,54 +28,30 @@ def _setup_file(file_name):
 
 
 @pytest.mark.parametrize(
-    "file_name, dimension, time_name",
+    "file_name, dim, time",
     [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
 )
-def test_check_reverse_time(
-        file_name: str,
-        dimension: str,
-        time_name: str
-):
+def test_check_reverse_time(file_name: str, dim: str, time: str):
     dataset = _setup_file(file_name)
-    has_reverse = check_reversed_time(
-        dataset,
-        dimension,
-        time_name
-    )
+    has_reverse = check_reversed_time(dataset, dim, time)
     assert not has_reverse
-    pings = dataset[dimension].coords[time_name].values
+    pings = dataset[dim].coords[time].values
     pings[51] = "2009-12-15T12:20:55.3130629021"
-    has_reverse_bad = check_reversed_time(
-        dataset,
-        dimension,
-        time_name)
+    has_reverse_bad = check_reversed_time(dataset, dim, time)
     assert has_reverse_bad
 
 
 @pytest.mark.parametrize(
-    "file_name, dimension, time_name",
+    "file_name, dim, time",
     [(FILE_NAME, "Sonar/Beam_group1", "ping_time")]
 )
-def test_fix_reversal(
-        file_name: str,
-        dimension: str,
-        time_name: str
-):
+def test_fix_reversal(file_name: str, dim: str, time: str):
     dataset = _setup_file(file_name)
-    dataset[dimension].coords[time_name].values[51] \
+    dataset[dim].coords[time].values[51] \
         = "2009-12-15T12:20:55.3130629021"
-    fixed_dataset = fix_time_reversions(
-        dataset,
-        dimension,
-        time_name)
-    has_reverse_bad = check_reversed_time(
-        dataset,
-        dimension,
-        time_name)
-    has_reverse_fix = check_reversed_time(
-        fixed_dataset,
-        dimension,
-        time_name)
+    fixed_dataset = fix_time_reversions(dataset, dim, time)
+    has_reverse_bad = check_reversed_time(dataset, dim, time)
+    has_reverse_fix = check_reversed_time(fixed_dataset, dim, time)
     assert has_reverse_bad
     assert not has_reverse_fix
 

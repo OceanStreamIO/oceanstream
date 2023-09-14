@@ -1,9 +1,13 @@
 """
-Module Name: L0_unprocessed_data.py
-Description: Verifies that a netcdf file contains no time reversals,
-            and fixes them should they appear.
-Author: Ruxandra Valcu
-Date: 2023-09-08
+test_time_continuity.py
+-----------------------
+Module for ensuring temporal consistency of EK60/EK80-generated netcdf files
+
+This module provides functionalities to:
+- Check if a given netcdf file contains time reversals on a specific \
+beam group and time dimension
+- Fix time reversals in a given netcdf file on a specific list of beam groups \
+and time dimensions associated.
 """
 
 # import echopype as ep
@@ -64,12 +68,9 @@ def fix_time_reversions(er: xr.Dataset, time_dict=None, win_len: int = 100):
     """
     if time_dict is None:
         time_dict = DEFAULT_TIME_DICT
-    for dimension, time_name in time_dict:
-        if check_reversed_time(er, dimension, time_name) is True:
-            er[dimension] = coerce_increasing_time(
-                er[dimension],
-                time_name,
-                win_len)
+    for dim, time in time_dict:
+        if check_reversed_time(er, dim, time) is True:
+            er[dim] = coerce_increasing_time(er[dim], time, win_len)
     return er
 
 
