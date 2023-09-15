@@ -41,6 +41,5 @@ sphinx_rtd_theme
 sphinxcontrib-mermaid
 twine
 wheel
-pydantic 
+pydantic
 echopype
-
