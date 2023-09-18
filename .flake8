@@ -1,6 +1,6 @@
 [flake8]
 # It's okay to have lines up to 88 characters long to match Black's default
-max-line-length = 88
+max-line-length = 100
 
 # W503 and W504 are conflicting rules related to line breaks before or after binary operators.
 # Black (the formatter) has chosen to put line breaks before binary operators, so we ignore W503.
