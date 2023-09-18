@@ -16,9 +16,11 @@ This creates a new virtual environment named oceanstream using Python 3.9.
 #### Activate the virtual environment:
 
 On macOS and Linux:
+
     source oceanstream/bin/activate
 
 On Windows:
+
     oceanstream\Scripts\activate
 
 #### Install packages using pip:
