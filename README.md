@@ -8,7 +8,15 @@
 
 ### Setup
 
-- Clone the Repository
+If you wish to contribute or simply want to have a local copy of the code, you can clone the OceanStream repository. We recommend cloning from the dev branch as it contains the latest development changes:
+
+    git clone -b dev https://github.com/OceanStreamIO/oceanstream.git
+
+After cloning, navigate to the oceanstream directory:
+
+    cd oceanstream
+From here, you can install dependencies, run tests, or start development! 
+All pull requests should be directed to the dev branch.
 
 ### Using conda/mamba
 
