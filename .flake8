@@ -9,7 +9,7 @@ ignore =
     E203,
     # line break before binary operator
     W503,
-    # line too long (handled by Black)
+    # line too long (handled by Black anyway)
     E501
 
 # Exclude directories/files that shouldn't be checked
