@@ -10,7 +10,7 @@
 
 - Clone the Repository
 
-### using conda/mamba
+### Using conda/mamba
 
     conda create -n oceanstream --yes python=3.9 --file requirements.txt --file requirements-dev.txt
 
@@ -18,7 +18,7 @@
 
 1. Create a virtual environment:
     ```bash
-    $ python -m venv .venv
+    python -m venv .venv
     ```
     This command creates a virtual environment in the `.venv` directory.
     The virtual environment should use Python 3.9.
@@ -27,52 +27,51 @@
 
     - If you're using `pyenv`, you can install Python 3.9 with:
     ```bash
-    $ pyenv install 3.9
+    pyenv install 3.9
     ```
 
     - Navigate to Your Project Directory:
     ```bash
-    $ cd /path/to/your/project_directory
+    cd /path/to/your/project_directory
     ```
 
     - Using the Python 3.9 executable managed by `pyenv`, create the virtual environment:
     ```bash
-    $ ~/.pyenv/versions/3.9/bin/python -m venv .venv
+    ~/.pyenv/versions/3.9/bin/python -m venv .venv
     ```
 
 2. Activate the virtual environment:
 Note: In this context, `<venv_directory>` refers to `.venv`.
 * On Linux and MacOS
     ```bash
-    $ source <venv_directory>/bin/activate
+    source <venv_directory>/bin/activate
     ```
 * On Windows:
     ```bash
     # In cmd.exe
-    $ <venv_directory>\Scripts\activate.bat
+    <venv_directory>\Scripts\activate.bat
     # In PowerShell
-    $ <venv_directory>\Scripts\Activate.ps1
+    <venv_directory>\Scripts\Activate.ps1
     ```
 
 3. Install the dependencies:
     ```bash
-    $ pip install -r requirements.txt
-    $ pip install -r requirements-dev.txt
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt # only for development needs
     ```
 
-## How to contribute
+## Running pre-commit locally
+
 ### Installation:
 First, you need to install the pre-commit tool. You can do this using pip:
 
-    ```bash
-    $ pip install pre-commit
-    ```
+    pip install pre-commit
+
 ### Installing the Git Hook Scripts:
 Navigate to your repository where the .pre-commit-config.yaml file is located. Install the Git hook scripts with the following command:
 
-    ```bash
-    $ pre-commit install
-    ```
+    pre-commit install
+
 This command installs the pre-commit script in your .git/hooks/ directory, allowing it to run automatically before each commit.
 
 ### Running pre-commit:
@@ -80,30 +79,28 @@ With everything set up, pre-commit will now run automatically every time you att
 
 If you wish to manually run all hooks against all the files to see what might fail in advance, use:
 
-    ```bash
-    $ pre-commit run --all-files
-    ```
+    pre-commit run --all-files
+
 ### Updating Hooks:
 As hooks receive updates or if the configuration in .pre-commit-config.yaml changes, you can update your hooks to the latest versions with:
 
-    ```bash
-    $ pre-commit autoupdate
-    ```
+     pre-commit autoupdate
+
 ### Skipping Hooks:
 If, for some reason, you need to bypass the hooks for a particular commit, you can use the -n or --no-verify option:
 
-    ```bash
-   $ git commit -m "Your commit message" -n
-    ```
+
+    git commit -m "Your commit message" -n
+
 ### Uninstalling pre-commit:
 If you decide to stop using pre-commit or need to reinstall it, you can uninstall the Git hook scripts with:
 
-    ```bash
-    $ pre-commit uninstall
-    ```
+
+    pre-commit uninstall
+
 With the configuration file already in the repository, setting up pre-commit is straightforward. It ensures that all contributors to the repo maintain a consistent code quality and adhere to the defined guidelines.
 
-## Building Documentation Locally
+## Building documentation locally
 
 ### Prerequisites
 
