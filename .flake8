@@ -1,0 +1,25 @@
+[flake8]
+# It's okay to have lines up to 88 characters long to match Black's default
+max-line-length = 88
+
+# W503 and W504 are conflicting rules related to line breaks before or after binary operators.
+# Black (the formatter) has chosen to put line breaks before binary operators, so we ignore W503.
+ignore =
+    # ignored because it warns about whitespace around the colon, which black enforces.
+    E203,
+    # line break before binary operator
+    W503,
+    # line too long (handled by Black)
+    E501
+
+# Exclude directories/files that shouldn't be checked
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    venv,
+    *.egg-info
+
+# Set the complexity threshold. This checks the McCabe complexity of your code.
+max-complexity = 10
