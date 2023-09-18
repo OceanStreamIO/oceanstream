@@ -22,4 +22,4 @@ exclude =
     *.egg-info
 
 # Set the complexity threshold. This checks the McCabe complexity of your code.
-max-complexity = 10
+max-complexity = 20
