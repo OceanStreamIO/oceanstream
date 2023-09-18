@@ -33,9 +33,7 @@ SUPPORTED_SONAR_MODELS = ["EK60", "ES70", "EK80", "EA640", "AZFP", "AD2CP"]
 TIME_BETWEEN_FILES = 30  # time in minutes between two consecutive files
 
 
-def file_finder(
-    paths: Union[str, List[str]], file_type: str = "raw"
-) -> List[str]:  # noqa: E501
+def file_finder(paths: Union[str, List[str]], file_type: str = "raw") -> List[str]:  # noqa: E501
     """
     Finds and returns all files of a specified type from given paths.
 
@@ -188,9 +186,7 @@ def file_integrity_checking(
     return return_dict
 
 
-def read_raw_files(
-    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
-) -> List[ep.EchoData]:
+def read_raw_files(file_dicts: List[Dict[str, Union[str, datetime, bool]]]) -> List[ep.EchoData]:
     """
     Reads multiple raw echo sounder files and returns a list of Datasets.
 
@@ -433,9 +429,7 @@ def split_files(
     return list_of_lists
 
 
-def concatenate_files(
-    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
-) -> ep.EchoData:
+def concatenate_files(file_dicts: List[Dict[str, Union[str, datetime, bool]]]) -> ep.EchoData:
     list_of_datasets = []
     for file_info in file_dicts:
         list_of_datasets.append(_read_file(file_info["file_path"]))

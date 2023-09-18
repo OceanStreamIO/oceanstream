@@ -59,9 +59,7 @@ class ComputeSVParams(BaseModel):
     @field_validator("echodata")
     def check_echodata_type(cls, value):
         if not isinstance(value, EchoData):
-            raise ValueError(
-                "Invalid type for echodata. Expected an instance of EchoData."
-            )
+            raise ValueError("Invalid type for echodata. Expected an instance of EchoData.")
         return value
 
     @field_validator("waveform_mode")
