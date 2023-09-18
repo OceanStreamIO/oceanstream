@@ -1,3 +1,6 @@
+# macOS .DS_Store files
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -22,7 +25,7 @@ var/
 wheels/
 share/python-wheels/
 *.egg-info/
-notebooks/
+notebooks
 .installed.cfg
 *.egg
 MANIFEST
