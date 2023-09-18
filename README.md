@@ -2,33 +2,106 @@
 
 ## How to install
 
-### With conda/mamba
+### Prerequisites
+
+- **Python 3.9**: Ensure you have Python 3.9 installed.
+
+### Setup
+
+- Clone the Repository
+
+### using conda/mamba
 
     conda create -n oceanstream --yes python=3.9 --file requirements.txt --file requirements-dev.txt
 
+### Using pip
 
-### With pip
+1. Create a virtual environment:
+    ```bash
+    $ python -m venv .venv
+    ```
+    This command creates a virtual environment in the `.venv` directory.
+    The virtual environment should use Python 3.9.
 
-    virtualenv oceanstream -p python3.9
+- **Example using `pyenv`**:
 
-This creates a new virtual environment named oceanstream using Python 3.9.
+    - If you're using `pyenv`, you can install Python 3.9 with:
+    ```bash
+    $ pyenv install 3.9
+    ```
 
-#### Activate the virtual environment:
+    - Navigate to Your Project Directory:
+    ```bash
+    $ cd /path/to/your/project_directory
+    ```
 
-On macOS and Linux:
+    - Using the Python 3.9 executable managed by `pyenv`, create the virtual environment:
+    ```bash
+    $ ~/.pyenv/versions/3.9/bin/python -m venv .venv
+    ```
 
-    source oceanstream/bin/activate
+2. Activate the virtual environment:
+Note: In this context, `<venv_directory>` refers to `.venv`.
+* On Linux and MacOS
+    ```bash
+    $ source <venv_directory>/bin/activate
+    ```
+* On Windows:
+    ```bash
+    # In cmd.exe
+    $ <venv_directory>\Scripts\activate.bat
+    # In PowerShell
+    $ <venv_directory>\Scripts\Activate.ps1
+    ```
 
-On Windows:
+3. Install the dependencies:
+    ```bash
+    $ pip install -r requirements.txt
+    $ pip install -r requirements-dev.txt
+    ```
 
-    oceanstream\Scripts\activate
+## How to contribute
+### Installation:
+First, you need to install the pre-commit tool. You can do this using pip:
 
-#### Install packages using pip:
+    ```bash
+    $ pip install pre-commit
+    ```
+### Installing the Git Hook Scripts:
+Navigate to your repository where the .pre-commit-config.yaml file is located. Install the Git hook scripts with the following command:
 
-    pip install -r requirements.txt
-    pip install -r requirements-dev.txt
+    ```bash
+    $ pre-commit install
+    ```
+This command installs the pre-commit script in your .git/hooks/ directory, allowing it to run automatically before each commit.
 
-Now, you have a virtual environment named oceanstream with the packages specified in both requirements.txt and requirements-dev.txt installed.
+### Running pre-commit:
+With everything set up, pre-commit will now run automatically every time you attempt to make a commit. If any of the hooks fail, the commit will be blocked, and you'll be prompted to fix the issues before committing again.
+
+If you wish to manually run all hooks against all the files to see what might fail in advance, use:
+
+    ```bash
+    $ pre-commit run --all-files
+    ```
+### Updating Hooks:
+As hooks receive updates or if the configuration in .pre-commit-config.yaml changes, you can update your hooks to the latest versions with:
+
+    ```bash
+    $ pre-commit autoupdate
+    ```
+### Skipping Hooks:
+If, for some reason, you need to bypass the hooks for a particular commit, you can use the -n or --no-verify option:
+
+    ```bash
+   $ git commit -m "Your commit message" -n
+    ```
+### Uninstalling pre-commit:
+If you decide to stop using pre-commit or need to reinstall it, you can uninstall the Git hook scripts with:
+
+    ```bash
+    $ pre-commit uninstall
+    ```
+With the configuration file already in the repository, setting up pre-commit is straightforward. It ensures that all contributors to the repo maintain a consistent code quality and adhere to the defined guidelines.
 
 ## Building Documentation Locally
 
