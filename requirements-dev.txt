@@ -23,4 +23,4 @@ sphinx_rtd_theme
 sphinxcontrib-mermaid
 twine
 wheel
-git+https://github.com/OceanStreamIO/echopype/tree/next-dev
+git+https://github.com/OceanStreamIO/echopype.git@next-dev
