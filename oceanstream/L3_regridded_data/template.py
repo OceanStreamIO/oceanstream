@@ -1,8 +1,8 @@
 """
-Module Name: module_name_here.py
+module_name_here.py
+-------------------------
 Description: Brief description of what this module does.
-Author: Your Name
-Date: Creation date
+
 """
 
 # Import necessary libraries
