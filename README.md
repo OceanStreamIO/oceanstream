@@ -22,7 +22,7 @@ This creates a new virtual environment named oceanstream using Python 3.9.
 
 #### Install packages using pip:
 
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt
 
 Now, you have a virtual environment named oceanstream with the packages specified in both requirements.txt and requirements-dev.txt installed.
