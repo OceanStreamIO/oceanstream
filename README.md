@@ -15,7 +15,7 @@ If you wish to contribute or simply want to have a local copy of the code, you c
 After cloning, navigate to the oceanstream directory:
 
     cd oceanstream
-From here, you can install dependencies, run tests, or start development! 
+From here, you can install dependencies, run tests, or start development!
 All pull requests should be directed to the dev branch.
 
 ### Using conda/mamba
@@ -116,24 +116,24 @@ Ensure you have Python and pip (Python package installer) installed on your syst
 
 ### Steps
 
-#### 1) Install Sphinx:
+1. Install Sphinx:
 
-Install Sphinx using pip. This is a one-time setup step.
+    Install Sphinx using pip. This is a one-time setup step.
 
-    pip install sphinx
+        pip install sphinx
 
-#### 2) Navigate to Your Project's docs Directory:
+2. Navigate to Your Project's docs Directory:
 
-Open a terminal (or Command Prompt on Windows) and navigate to the docs directory of your project.
+    Open a terminal (or Command Prompt on Windows) and navigate to the docs directory of your project.
 
-#### 3) Build the Documentation:
+3. Build the Documentation:
 
-For Linux/Mac:
+    For Linux/Mac:
 
-    make html
+        make html
 
-For Windows:
+    For Windows:
 
-    make.bat html
+        make.bat html
 
-This command will generate the HTML documentation in the build/html directory within your docs folder.
+    This command will generate the HTML documentation in the build/html directory within your docs folder.
