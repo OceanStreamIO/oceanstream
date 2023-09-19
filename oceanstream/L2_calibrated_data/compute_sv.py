@@ -10,8 +10,8 @@ Supported Sonar Models:
 Functions and Classes:
 - `SupportedSonarModelsForSv`: An Enum containing the sonar models supported
 for Sv computation.
-- `WaveformMode`: Enum specifying the waveform mode (CW or BB).
-- `EncodeMode`: Enum indicating the encoding mode (complex or power).
+- `WaveformMode`: Enum specifying the waveform mode ("CW" or "BB").
+- `EncodeMode`: Enum indicating the encoding mode ("complex" or "power").
 - `ComputeSVParams`: Class to validate and structure the parameters passed
 to the Sv computation function.
 - `compute_sv`: Main function to calculate Sv given an EchoData object
@@ -30,7 +30,6 @@ import echopype as ep
 import xarray as xr
 from echopype.echodata.echodata import EchoData
 from pydantic import BaseModel, ValidationError, field_validator
-from pydantic_core.core_schema import FieldValidationInfo
 
 
 class SupportedSonarModelsForSv(str, Enum):
@@ -62,28 +61,6 @@ class ComputeSVParams(BaseModel):
             raise ValueError("Invalid type for echodata. Expected an instance of EchoData.")
         return value
 
-    @field_validator("waveform_mode")
-    def check_waveform_mode(cls, waveform_mode, info: FieldValidationInfo):
-        echodata = info.data.get("echodata")
-        is_not_ek80 = echodata and echodata.sonar_model != "EK80"
-        if is_not_ek80 and waveform_mode is not None:
-            raise ValueError(
-                f"waveform_mode is only valid for EK80. \
-                    Got sonar_model='{echodata.sonar_model}'"
-            )
-        return waveform_mode
-
-    @field_validator("encode_mode")
-    def check_encode_mode(cls, encode_mode, info: FieldValidationInfo):
-        echodata = info.data.get("echodata")
-        is_not_ek80 = echodata and echodata.sonar_model != "EK80"
-        if is_not_ek80 and encode_mode is not None:
-            raise ValueError(
-                f"encode_mode is only valid for EK80. \
-                    Got sonar_model='{echodata.sonar_model}'"
-            )
-        return encode_mode
-
 
 def compute_sv(echodata: EchoData, **kwargs) -> xr.Dataset:
     """
@@ -109,8 +86,13 @@ def compute_sv(echodata: EchoData, **kwargs) -> xr.Dataset:
     - Returns Sv only if it is not empty.
 
     """
-    sonar_model = echodata.sonar_model
+    # Validate parameters using the pydantic model
+    try:
+        ComputeSVParams(echodata=echodata, **kwargs)
+    except ValidationError as e:
+        raise ValueError(str(e))
     # Check if the sonar model is supported
+    sonar_model = echodata.sonar_model
     try:
         SupportedSonarModelsForSv(sonar_model)
     except ValueError:
@@ -120,12 +102,6 @@ def compute_sv(echodata: EchoData, **kwargs) -> xr.Dataset:
                           Supported models are \
                             {list(SupportedSonarModelsForSv)}."
         )
-
-    # Validate parameters using the pydantic model
-    try:
-        ComputeSVParams(echodata=echodata, **kwargs)
-    except ValidationError as e:
-        raise ValueError(str(e))
     # Compute Sv
     Sv = ep.calibrate.compute_Sv(echodata, **kwargs)
     # Check if the computed Sv is empty
