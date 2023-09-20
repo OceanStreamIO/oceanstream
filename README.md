@@ -15,7 +15,7 @@ If you wish to contribute or simply want to have a local copy of the code, you c
 After cloning, navigate to the oceanstream directory:
 
     cd oceanstream
-From here, you can install dependencies, run tests, or start development! 
+From here, you can install dependencies, run tests, or start development!
 All pull requests should be directed to the dev branch.
 
 ### Using conda/mamba
