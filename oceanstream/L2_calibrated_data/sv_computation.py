@@ -1,6 +1,6 @@
 """
-compute_sv.py
--------------
+sv_computation.py
+-----------------
 
 Module for computing the volume backscattering strength (Sv) from raw data.
 Supported Sonar Models:
