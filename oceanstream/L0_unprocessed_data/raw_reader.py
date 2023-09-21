@@ -186,7 +186,9 @@ def file_integrity_checking(
     return return_dict
 
 
-def read_raw_files(file_dicts: List[Dict[str, Union[str, datetime, bool]]]) -> List[ep.EchoData]:
+def read_raw_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+) -> List[ep.echodata.EchoData]:
     """
     Reads multiple raw echo sounder files and returns a list of Datasets.
 
@@ -213,7 +215,7 @@ def read_raw_files(file_dicts: List[Dict[str, Union[str, datetime, bool]]]) -> L
     return ret_list
 
 
-def read_processed_files(file_paths: List[str]) -> List[ep.EchoData]:
+def read_processed_files(file_paths: List[str]) -> List[ep.echodata.EchoData]:
     """
     Reads multiple processed echo sounder files and returns a list of Datasets.
 
@@ -238,7 +240,7 @@ def read_processed_files(file_paths: List[str]) -> List[ep.EchoData]:
     return ret_list
 
 
-def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.EchoData:
+def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.echodata.EchoData:
     """
     Reads an echo sounder file and
     returns the corresponding Dataset.
@@ -314,7 +316,7 @@ def convert_raw_files(
 
 
 def _write_file(
-    ed: ep.EchoData,
+    ed: ep.echodata.EchoData,
     save_path: str,
     save_file_type: str = "nc",
     overwrite: bool = False,  # noqa: E501
@@ -429,7 +431,9 @@ def split_files(
     return list_of_lists
 
 
-def concatenate_files(file_dicts: List[Dict[str, Union[str, datetime, bool]]]) -> ep.EchoData:
+def concatenate_files(
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+) -> ep.echodata.EchoData:
     list_of_datasets = []
     for file_info in file_dicts:
         list_of_datasets.append(_read_file(file_info["file_path"]))
