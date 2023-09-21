@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from oceanstream.L2_calibrated_data.compute_sv import ComputeSVParams, SupportedSonarModelsForSv
+from oceanstream.L2_calibrated_data.sv_computation import ComputeSVParams, SupportedSonarModelsForSv
 
 
 def test_valid_sonar_models():
