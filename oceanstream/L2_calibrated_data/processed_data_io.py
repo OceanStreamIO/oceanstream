@@ -1,8 +1,27 @@
 """
-processed_reader.py
--------------------------
-Description: Brief description of what this module does.
+processed_data_io.py
+--------------------
+Module for handling input and output operations of processed data.
 
+This module provides utility functions to read from and write to different
+data formats, specifically NetCDF (".nc") and Zarr (".zarr"). It ensures that
+the data is correctly loaded into xarray Datasets and provides error handling
+for unsupported file formats and other potential issues.
+
+Functions:
+- read_processed(file_path: Union[str, Path]) -> xr.Dataset:
+    Reads and returns a xarray Dataset from a specified file path.
+
+- write_processed(sv: xr.Dataset, file_path: Union[str, Path], file_name: str = "", file_type: str = "nc", overwrite: bool = True):
+    Saves a xarray Dataset to a specified path with a given file name and type.
+
+Example:
+    >> ds = read_processed("/path/to/datafile.nc")
+    >> write_processed(ds, "/path/to/save", "datafile", "nc")
+
+Note:
+    This module can be extended in the future to support more file formats or additional
+    IO operations as needed.
 """
 
 from pathlib import Path
@@ -18,13 +37,17 @@ def read_processed(file_path: Union[str, Path]) -> xr.Dataset:
     Read and return a xarray Dataset from a specified file path.
 
     Parameters:
-    - file_path (Union[str, Path]): The path to the file to be read.
+    - file_path (Union[str, Path]): The path to the .nc or .zarr file to be read.
 
     Returns:
     - xr.Dataset: The xarray Dataset read from the file.
 
     Raises:
     - ValueError: If the file does not exist or has an unsupported format.
+
+    Supported File Types:
+    - NetCDF (".nc")
+    - Zarr (".zarr")
 
     Example:
     >> ds = read_processed("/path/to/datafile.nc")
