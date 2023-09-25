@@ -9,6 +9,13 @@ import xarray as xr
 from tests.conftest import TEST_DATA_FOLDER
 
 
-def test_ftp(sv_dataset_jr161):
-    source_Sv = sv_dataset_jr161
-    print(source_Sv)
+def test_ftp_161(setup_test_data_jr161):
+    assert os.path.isfile(setup_test_data_jr161)
+    
+def test_ftp_230(setup_test_data_jr230):
+
+    assert os.path.isfile(setup_test_data_jr230)
+
+def test_ftp_179(setup_test_data_jr179):
+    assert os.path.isfile(setup_test_data_jr179)
+
