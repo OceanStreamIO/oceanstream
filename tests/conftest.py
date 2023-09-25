@@ -95,7 +95,7 @@ def ftp_data():
     with FTP(FTP_MAIN) as ftp:
         ftp.login()  # Add credentials if needed: ftp.login(user="username", passwd="password")
         download_ftp_directory(ftp, FTP_PARTIAL_PATH, TEST_DATA_FOLDER)
-    yield TEST_DATA_FOLDER
+    return TEST_DATA_FOLDER
     # Optional: Cleanup after tests are done
     # shutil.rmtree(TEST_DATA_FOLDER)
 
