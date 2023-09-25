@@ -21,64 +21,64 @@ Now, you can install dependencies, run tests, or start development! Direct all p
 ### Using Conda/Mamba
 
 - **Create a virtual environment to use the package:**
-
+    ```bash
     conda env create -f environment.yml
-
+    ```
 This command creates an environment named `oceanstream`. To activate it:
-
+    ```bash
     conda activate oceanstream
-
+    ```
 - **Create a virtual environment to contribute to the package:**
-
+    ```bash
     conda env create -f environment-dev.yml
-
+    ```
 Again, activate the environment with:
-
+    ```bash
     conda activate oceanstream
-
+    ```
 ### Using Pip
 
 1. **Create a Virtual Environment:**
-
+    ```bash
     python -m venv .venv
-
+    ```
 This command creates a virtual environment in the `.venv` directory using Python 3.9.
 
 - **Example using `pyenv`:**
 
     - Install Python 3.9 with `pyenv`:
-
+        ```bash
         pyenv install 3.9
-
+        ```
     - Navigate to your project directory:
-
+        ```bash
         cd /path/to/your/project_directory
-
+        ```
     - Create the virtual environment using the Python 3.9 executable managed by `pyenv`:
-
+        ```bash
         ~/.pyenv/versions/3.9/bin/python -m venv .venv
-
+        ```
 2. **Activate the Virtual Environment:**
 
 - On Linux and MacOS:
-
+    ```bash
     source .venv/bin/activate
-
+    ```
 - On Windows:
-
+    ```bash
     .venv\Scripts\activate.bat  # In cmd.exe
     .venv\Scripts\Activate.ps1  # In PowerShell
-
+    ```
 3. **Install the Dependencies:**
 
 - To use the package:
-
+    ```bash
     pip install -r requirements.txt
-
+    ```
 - To contribute to the package:
-
+    ```bash
     pip install -r requirements-dev.txt
-
+    ```
 ## Running Pre-Commit Locally
 
 ### Installation
