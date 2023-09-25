@@ -29,9 +29,9 @@ To use:
 2. Create a virtual environment to contribute to the package:
     conda env create -f environment-dev.yml
 
-An environment with all neceseray packages is created with the name `oceanstream-dev`.
+An environment with all neceseray packages is created with the name `oceanstream`.
 To use:
-    conda activate oceanstream-dev
+    conda activate oceanstream
 
 ### Using pip
 
