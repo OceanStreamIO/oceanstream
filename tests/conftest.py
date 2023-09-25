@@ -2,7 +2,7 @@ import ftplib
 import os
 from ftplib import FTP
 from pathlib import Path
-import xarray as xr
+# import xarray as xr
 
 import echopype as ep
 import pytest
@@ -71,7 +71,7 @@ def ftp_raw_file_path(file_name):
         ftp.login()  # Add credentials if needed: ftp.login(user="username", passwd="password")
         download_ftp_file(ftp, FTP_PARTIAL_PATH, file_name, TEST_DATA_FOLDER)
     local_path = os.path.join(TEST_DATA_FOLDER, file_name)
-    yield local_path
+    return local_path
     # Optional: Cleanup after tests are done
     # shutil.rmtree(TEST_DATA_FOLDER)
 
@@ -181,6 +181,3 @@ def ed_ek_80_for_Sv():
     )
     return ed_EK80
 
-def test_transient(sv_dataset_jr161):
-    source_Sv = sv_dataset_jr161
-    print(source_Sv)
