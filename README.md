@@ -21,17 +21,21 @@ All pull requests should be directed to the dev branch.
 
 ### Using conda/mamba
 1. Create a virtual environment to use the package:
+
     conda env create -f environment.yml
 
 An environment with all neceseray packages is created with the name `oceanstream`.
 To use:
+
     conda activate oceanstream
 
 2. Create a virtual environment to contribute to the package:
+
     conda env create -f environment-dev.yml
 
 An environment with all neceseray packages is created with the name `oceanstream`.
 To use:
+
     conda activate oceanstream
 
 ### Using pip
