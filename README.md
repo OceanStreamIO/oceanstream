@@ -1,161 +1,148 @@
-# oceanstream
+# OceanStream
 
-## How to install
+## How to Install
 
 ### Prerequisites
 
-- **Python 3.9**: Ensure you have Python 3.9 installed.
+- **Python 3.9**: Ensure Python 3.9 is installed on your system.
 
 ### Setup
 
-If you wish to contribute you can clone the OceanStream repository dev branch. We recommend cloning from the dev branch as it contains the latest development changes:
+To contribute, clone the OceanStream repository's dev branch, which contains the latest development changes:
 
     git clone -b dev https://github.com/OceanStreamIO/oceanstream.git
 
-After cloning, navigate to the oceanstream directory:
+Navigate to the oceanstream directory:
 
     cd oceanstream
 
-From here, you can install dependencies, run tests, or start development!
-All pull requests should be directed to the dev branch.
+Now, you can install dependencies, run tests, or start development! Direct all pull requests to the dev branch.
 
-### Using conda/mamba
- - Create a virtual environment to use the package:
-    ```bash
+### Using Conda/Mamba
+
+- **Create a virtual environment to use the package:**
+
     conda env create -f environment.yml
-    ```
-An environment with all neceseray packages is created with the name `oceanstream`.
-To use:
+
+This command creates an environment named `oceanstream`. To activate it:
 
     conda activate oceanstream
 
- - Create a virtual environment to contribute to the package:
-    ```bash
+- **Create a virtual environment to contribute to the package:**
+
     conda env create -f environment-dev.yml
-    ```
-An environment with all neceseray packages is created with the name `oceanstream`.
-To use:
+
+Again, activate the environment with:
 
     conda activate oceanstream
 
-### Using pip
+### Using Pip
 
-1. Create a virtual environment:
-    ```bash
+1. **Create a Virtual Environment:**
+
     python -m venv .venv
-    ```
-    This command creates a virtual environment in the `.venv` directory.
-    The virtual environment should use Python 3.9.
 
-- **Example using `pyenv`**:
+This command creates a virtual environment in the `.venv` directory using Python 3.9.
 
-    - If you're using `pyenv`, you can install Python 3.9 with:
-    ```bash
-    pyenv install 3.9
-    ```
+- **Example using `pyenv`:**
 
-    - Navigate to Your Project Directory:
-    ```bash
-    cd /path/to/your/project_directory
-    ```
+    - Install Python 3.9 with `pyenv`:
 
-    - Using the Python 3.9 executable managed by `pyenv`, create the virtual environment:
-    ```bash
-    ~/.pyenv/versions/3.9/bin/python -m venv .venv
-    ```
+        pyenv install 3.9
 
-2. Activate the virtual environment:
-Note: In this context, `<venv_directory>` refers to `.venv`.
-* On Linux and MacOS
-    ```bash
-    source <venv_directory>/bin/activate
-    ```
-* On Windows:
-    ```bash
-    # In cmd.exe
-    <venv_directory>\Scripts\activate.bat
-    # In PowerShell
-    <venv_directory>\Scripts\Activate.ps1
-    ```
+    - Navigate to your project directory:
 
-3. Install the dependencies:
+        cd /path/to/your/project_directory
 
-3.1 Install to use the package:
-    ```bash
+    - Create the virtual environment using the Python 3.9 executable managed by `pyenv`:
+
+        ~/.pyenv/versions/3.9/bin/python -m venv .venv
+
+2. **Activate the Virtual Environment:**
+
+- On Linux and MacOS:
+
+    source .venv/bin/activate
+
+- On Windows:
+
+    .venv\Scripts\activate.bat  # In cmd.exe
+    .venv\Scripts\Activate.ps1  # In PowerShell
+
+3. **Install the Dependencies:**
+
+- To use the package:
+
     pip install -r requirements.txt
-    ```
 
-3.2 Install to contribute to the package:
-    ```bash
-    pip install -r requirements-dev.txt # only for development needs
-    ```
+- To contribute to the package:
 
-## Running pre-commit locally
+    pip install -r requirements-dev.txt
 
-### Installation:
-First, you need to install the pre-commit tool. You can do this using pip:
+## Running Pre-Commit Locally
+
+### Installation
+
+Install the pre-commit tool using pip:
 
     pip install pre-commit
 
-### Installing the Git Hook Scripts:
-Navigate to your repository where the .pre-commit-config.yaml file is located. Install the Git hook scripts with the following command:
+### Installing the Git Hook Scripts
+
+Navigate to your repository where the `.pre-commit-config.yaml` file is located. Install the Git hook scripts with:
 
     pre-commit install
 
-This command installs the pre-commit script in your .git/hooks/ directory, allowing it to run automatically before each commit.
+### Running Pre-Commit
 
-### Running pre-commit:
-With everything set up, pre-commit will now run automatically every time you attempt to make a commit. If any of the hooks fail, the commit will be blocked, and you'll be prompted to fix the issues before committing again.
+Pre-commit will now run automatically every time you attempt to make a commit. If any hooks fail, the commit will be blocked, and you'll be prompted to fix the issues before committing again.
 
-If you wish to manually run all hooks against all the files to see what might fail in advance, use:
+To manually run all hooks against all the files, use:
 
     pre-commit run --all-files
 
-### Updating Hooks:
-As hooks receive updates or if the configuration in .pre-commit-config.yaml changes, you can update your hooks to the latest versions with:
+### Updating Hooks
 
-     pre-commit autoupdate
+To update your hooks to the latest versions, use:
 
-### Skipping Hooks:
-If, for some reason, you need to bypass the hooks for a particular commit, you can use the -n or --no-verify option:
+    pre-commit autoupdate
 
+### Skipping Hooks
+
+To bypass the hooks for a particular commit, use the `-n` or `--no-verify` option:
 
     git commit -m "Your commit message" -n
 
-### Uninstalling pre-commit:
-If you decide to stop using pre-commit or need to reinstall it, you can uninstall the Git hook scripts with:
+### Uninstalling Pre-Commit
 
+To uninstall the Git hook scripts, use:
 
     pre-commit uninstall
 
-With the configuration file already in the repository, setting up pre-commit is straightforward. It ensures that all contributors to the repo maintain a consistent code quality and adhere to the defined guidelines.
-
-## Building documentation locally
+## Building Documentation Locally
 
 ### Prerequisites
 
-Ensure you have Python and pip (Python package installer) installed on your system.
+Ensure Python and pip are installed on your system.
 
 ### Steps
 
-1. Install Sphinx:
+1. **Install Sphinx:**
 
-    Install Sphinx using pip. This is a one-time setup step.
+    pip install sphinx
 
-        pip install sphinx
+2. **Navigate to Your Project's docs Directory:**
 
-2. Navigate to Your Project's docs Directory:
+    cd /path/to/your/docs_directory
 
-    Open a terminal (or Command Prompt on Windows) and navigate to the docs directory of your project.
+3. **Build the Documentation:**
 
-3. Build the Documentation:
+- For Linux/Mac:
 
-    For Linux/Mac:
+    make html
 
-        make html
+- For Windows:
 
-    For Windows:
+    make.bat html
 
-        make.bat html
-
-    This command will generate the HTML documentation in the build/html directory within your docs folder.
+This command will generate the HTML documentation in the `build/html` directory within your docs folder.
