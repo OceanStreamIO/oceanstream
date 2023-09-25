@@ -8,13 +8,14 @@
 
 ### Setup
 
-If you wish to contribute or simply want to have a local copy of the code, you can clone the OceanStream repository. We recommend cloning from the dev branch as it contains the latest development changes:
+If you wish to contribute you can clone the OceanStream repository dev branch. We recommend cloning from the dev branch as it contains the latest development changes:
 
     git clone -b dev https://github.com/OceanStreamIO/oceanstream.git
 
 After cloning, navigate to the oceanstream directory:
 
     cd oceanstream
+
 From here, you can install dependencies, run tests, or start development!
 All pull requests should be directed to the dev branch.
 
@@ -80,7 +81,7 @@ Note: In this context, `<venv_directory>` refers to `.venv`.
     pip install -r requirements.txt
     ```
 
-3.2 Install to use the package:
+3.2 Install to contribute to the package:
     ```bash
     pip install -r requirements-dev.txt # only for development needs
     ```
