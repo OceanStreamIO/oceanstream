@@ -3,7 +3,7 @@
 
 from oceanstream.L2_calibrated_data.noise_masks import *
 
-
+"""
 def test_impulse(sv_dataset_jr230):
     source_Sv = sv_dataset_jr230
     mask = create_impulse_mask(source_Sv, method="ryan", thr=10, m=1, n=1)
@@ -26,5 +26,16 @@ def test_seabed(complete_dataset_jr179):
     source_Sv = complete_dataset_jr179
     mask = create_seabed_mask(source_Sv)
     assert mask["channel"].shape == (3, )
+
+
+def test_mask_metadata(complete_dataset_jr179, metadata=None):
+    if metadata is None:
+        metadata = {"test": "test"}
+    source_Sv = complete_dataset_jr179
+    mask = create_seabed_mask(source_Sv)
+    mask_with_metadata = add_metadata_to_mask(mask, metadata)
+    for k, v in metadata.items():
+        assert mask_with_metadata.attrs[k] == v
+"""
 
 

@@ -105,9 +105,8 @@ def add_metadata_to_mask(mask, metadata):
     Expected Output
     A mask with the metadata stored as global attributes
     """
-    old_attrs = mask.attrs
-    attrs = old_attrs.append(metadata)
-    mask.attrs = attrs
+    for k, v in metadata.items():
+        mask.attrs[k] = v
     return mask
 
 
