@@ -25,7 +25,7 @@ Now, you can install dependencies, run tests, or start development! Direct all p
     conda env create -f environment.yml
     ```
 This command creates an environment named `oceanstream`. To activate it:
-    ```bash
+    ```
     conda activate oceanstream
     ```
 - **Create a virtual environment to contribute to the package:**
@@ -33,7 +33,7 @@ This command creates an environment named `oceanstream`. To activate it:
     conda env create -f environment-dev.yml
     ```
 Again, activate the environment with:
-    ```bash
+    ```
     conda activate oceanstream
     ```
 ### Using Pip
