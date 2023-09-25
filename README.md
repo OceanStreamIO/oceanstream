@@ -19,8 +19,19 @@ From here, you can install dependencies, run tests, or start development!
 All pull requests should be directed to the dev branch.
 
 ### Using conda/mamba
+1. Create a virtual environment to use the package:
+    conda env create -f environment.yml
 
-    conda create -n oceanstream --yes python=3.9 --file requirements.txt --file requirements-dev.txt
+An environment with all neceseray packages is created with the name `oceanstream`.
+To use:
+    conda activate oceanstream
+
+2. Create a virtual environment to contribute to the package:
+    conda env create -f environment-dev.yml
+
+An environment with all neceseray packages is created with the name `oceanstream-dev`.
+To use:
+    conda activate oceanstream-dev
 
 ### Using pip
 
@@ -63,8 +74,14 @@ Note: In this context, `<venv_directory>` refers to `.venv`.
     ```
 
 3. Install the dependencies:
+
+3.1 Install to use the package:
     ```bash
     pip install -r requirements.txt
+    ```
+
+3.2 Install to use the package:
+    ```bash
     pip install -r requirements-dev.txt # only for development needs
     ```
 
