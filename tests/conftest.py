@@ -2,7 +2,7 @@ import ftplib
 import os
 from ftplib import FTP
 from pathlib import Path
-import xarray as xr
+# import xarray as xr
 
 import echopype as ep
 import pytest

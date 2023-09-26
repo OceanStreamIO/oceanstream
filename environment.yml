@@ -1,0 +1,29 @@
+name: oceanstream
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - jinja2
+  - netcdf4
+  - numpy
+  - pytz
+  - scipy
+  - pandas
+  - s3fs
+  - requests
+  - aiohttp
+  - geopy
+  - dask
+  - pynmea2
+  - xarray
+  - zarr
+  - fsspec
+  - psutil>=5.9.1
+  - more-itertools==8.13.0
+  - pydantic>2
+  - echopype
+  - pip
+  - git
+  - pip:
+      - git+https://github.com/OceanStreamIO/echopype.git@next-dev
