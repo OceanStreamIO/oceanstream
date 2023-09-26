@@ -87,7 +87,7 @@ def apply_remove_background_noise(
         SNR_threshold=SNR_threshold,
     )
     # Rename Sv to Sv_original
-    ds_Sv_corrected = ds_Sv_corrected.rename({"Sv": "Sv_original"})
+    ds_Sv_corrected = ds_Sv_corrected.rename({"Sv": "Sv_with_background_noise"})
     # Rename Sv_corrected to Sv
     ds_Sv_corrected = ds_Sv_corrected.rename({"Sv_corrected": "Sv"})
     return ds_Sv_corrected
