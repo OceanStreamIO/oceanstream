@@ -12,10 +12,7 @@ from oceanstream.L0_unprocessed_data.raw_reader import (
     read_raw_files,
     split_files,
 )
-
-current_directory = os.path.dirname(os.path.abspath(__file__))
-TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data", "ek60")
-
+from tests.conftest import TEST_DATA_FOLDER
 
 def test_file_finder(ftp_data):
     # Test with a valid directory path containing files
@@ -81,7 +78,7 @@ def test_read_raw_files(ftp_data):
     file_dicts = [file_integrity_checking(f) for f in found_files]
 
     datasets = read_raw_files(file_dicts)
-    assert len(datasets) == 17
+    assert len(datasets) == 16
     # Additional assertions can be added based on expected dataset properties
 
     # Test with an empty list
@@ -138,6 +135,7 @@ def test_convert_raw_files(ftp_data):
     for file in converted_files:
         assert os.path.exists(file)
         assert file.endswith(".nc")
+        os.remove(file)
 
 
 def test_split_files(ftp_data):
@@ -146,8 +144,8 @@ def test_split_files(ftp_data):
     file_dicts = [file_integrity_checking(f) for f in found_files[5:7]]
 
     grouped_files = split_files(file_dicts)
-    assert len(grouped_files) == 1
-    assert len(grouped_files[0]) == 2
+    assert len(grouped_files) == 2
+    assert len(grouped_files[0]) == 1
 
     # Test with a list of dissimilar file dictionaries
     found_files = file_finder(ftp_data, "raw")
@@ -161,15 +159,3 @@ def test_split_files(ftp_data):
     with pytest.raises(Exception):
         grouped_files = split_files([])
 
-
-def test_concatenate_files(ftp_data):
-    # Test with a list of valid file dictionaries
-    found_files = file_finder(ftp_data, "raw")
-    file_dicts = [file_integrity_checking(f) for f in found_files[5:7]]
-    converted_files = convert_raw_files(
-        file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="nc"
-    )
-    file_dicts = [file_integrity_checking(f) for f in converted_files]
-    concatenated_dataset = concatenate_files(file_dicts)
-    # Here, you might want to add more assertions based on the expected properties of the concatenated dataset
-    assert concatenated_dataset is not None

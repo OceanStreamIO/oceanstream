@@ -10,22 +10,12 @@ from oceanstream.L0_unprocessed_data.ensure_time_continuity import (
     fix_time_reversions,
 )
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-FTP_MAIN = "ftp.bas.ac.uk"
-FTP_PARTIAL_PATH = "rapidkrill/ek60/"
-BASE_FOLDER = Path(__file__).parent.parent.absolute()
-TEST_DATA_FOLDER = BASE_FOLDER / "test_data"
+from tests.conftest import TEST_DATA_FOLDER
 FILE_NAME = "JR230-D20091215-T121917.raw"
 
 
-def _setup_file(file_name):
-    test_data_path = os.path.join(TEST_DATA_FOLDER, file_name)
-    if not os.path.exists(TEST_DATA_FOLDER):
-        os.mkdir(TEST_DATA_FOLDER)
-    if not os.path.exists(test_data_path):
-        ftp_file_path = FTP_MAIN + FTP_PARTIAL_PATH + file_name
-        subprocess.run(["wget", ftp_file_path, "-o", test_data_path])
-    ed = ep.open_raw(test_data_path, sonar_model="EK60")
+def _setup_file(sv_dataset_jr230):
+    ed = sv_dataset_jr230
     return ed
 
 
