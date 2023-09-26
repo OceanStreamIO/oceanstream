@@ -147,6 +147,12 @@ def raw_dataset_jr179(setup_test_data_jr179):
     return ed
 
 
+@pytest.fixture(scope="session")
+def raw_dataset_jr230(setup_test_data_jr230):
+    ed = get_raw_dataset(setup_test_data_jr230)
+    return ed
+
+
 @pytest.fixture(scope="module")
 def ed_ek_60_for_Sv():
     bucket = "ncei-wcsd-archive"
