@@ -2,7 +2,7 @@ import ftplib
 import os
 from ftplib import FTP
 from pathlib import Path
-import xarray as xr
+# import xarray as xr
 
 import echopype as ep
 import pytest
@@ -178,8 +178,3 @@ def ed_ek_80_for_Sv():
         sonar_model="EK80",
     )
     return ed_EK80
-
-
-def test_transient(sv_dataset_jr161):
-    source_Sv = sv_dataset_jr161
-    print(source_Sv)
