@@ -67,9 +67,9 @@ def fix_time_reversions(er: xr.Dataset, time_dict=None, win_len: int = 100):
     """
     if time_dict is None:
         time_dict = DEFAULT_TIME_DICT
-    for dim, time in time_dict:
-        if check_reversed_time(er, dim, time) is True:
-            er[dim] = coerce_increasing_time(er[dim], time, win_len)
+    for dim, time in time_dict.items():
+        if check_reversed_time(er, dim, time):
+            coerce_increasing_time(er[dim], time, win_len)
     return er
 
 
