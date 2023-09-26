@@ -9,8 +9,7 @@ from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
 from oceanstream.L2_calibrated_data.processed_data_io import write_processed, read_processed
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data", "ek60")
+from tests.conftest import TEST_DATA_FOLDER
 
 
 def test_write_processed_nc(ed_ek_60_for_Sv):

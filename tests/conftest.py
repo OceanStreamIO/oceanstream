@@ -2,15 +2,14 @@ import ftplib
 import os
 from ftplib import FTP
 from pathlib import Path
-import xarray as xr
+# import xarray as xr
 
 import echopype as ep
 import pytest
 from xarray import Dataset
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data", "ek60")
-
+TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")
 FTP_MAIN = "ftp.bas.ac.uk"
 FTP_PARTIAL_PATH = "rapidkrill/ek60/"
 
@@ -70,12 +69,12 @@ def ftp_raw_file_path(file_name):
     with FTP(FTP_MAIN) as ftp:
         ftp.login()  # Add credentials if needed: ftp.login(user="username", passwd="password")
         download_ftp_file(ftp, FTP_PARTIAL_PATH, file_name, TEST_DATA_FOLDER)
-    yield os.path.join(TEST_DATA_FOLDER, file_name)
-    # Optional: Cleanup after tests are done
-    # shutil.rmtree(TEST_DATA_FOLDER)
+    local_path = os.path.join(TEST_DATA_FOLDER, file_name)
+    return local_path
 
 
 def get_sv_dataset(file_path, enriched: bool = False, waveform: str = "CW", encode: str = "power"):
+    print(file_path)
     ed = ep.open_raw(file_path, sonar_model="ek60")  # type: ignore
     Sv = ep.calibrate.compute_Sv(ed).compute()
     if enriched is True:
@@ -90,28 +89,29 @@ def get_raw_dataset(file_path):
 
 @pytest.fixture(scope="session")
 def ftp_data():
+    test_data_folder = Path(TEST_DATA_FOLDER) / "ek60"
     with FTP(FTP_MAIN) as ftp:
         ftp.login()  # Add credentials if needed: ftp.login(user="username", passwd="password")
-        download_ftp_directory(ftp, FTP_PARTIAL_PATH, TEST_DATA_FOLDER)
-    yield TEST_DATA_FOLDER
+        download_ftp_directory(ftp, FTP_PARTIAL_PATH, test_data_folder)
+    yield str(test_data_folder)
     # Optional: Cleanup after tests are done
     # shutil.rmtree(TEST_DATA_FOLDER)
 
 
 @pytest.fixture(scope="session")
-def download_test_data_jr230():
+def setup_test_data_jr230():
     file_name = "JR230-D20091215-T121917.raw"
     return ftp_raw_file_path(file_name)
 
 
 @pytest.fixture(scope="session")
-def download_test_data_jr161():
+def setup_test_data_jr161():
     file_name = "JR161-D20061118-T010645.raw"
     return ftp_raw_file_path(file_name)
 
 
 @pytest.fixture(scope="session")
-def download_test_data_jr179():
+def setup_test_data_jr179():
     file_name = "JR179-D20080410-T150637.raw"
     return ftp_raw_file_path(file_name)
 
@@ -135,7 +135,7 @@ def sv_dataset_jr179(setup_test_data_jr179) -> Dataset:
 def complete_dataset_jr179(setup_test_data_jr179):
     sv = get_sv_dataset(setup_test_data_jr179,
                         enriched=True,
-                        waveform="CW", 
+                        waveform="CW",
                         encode="power"
                         )
     return sv
@@ -172,7 +172,7 @@ def ed_ek_80_for_Sv():
     file_name = "D20161109-T163350.raw"
     raw_file_address = base_url + path + file_name
 
-    rf = Path(raw_file_address)
+    rf = raw_file_address  # Path(raw_file_address)
     ed_EK80 = ep.open_raw(
         f"https://{rf}",
         sonar_model="EK80",
