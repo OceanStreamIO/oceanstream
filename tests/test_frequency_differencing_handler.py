@@ -6,7 +6,7 @@ from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L3_regridded_data.frequency_differencing_handler import apply_freq_diff
 
 
-def test_apply_remove_background_noise(ed_ek_60_for_Sv):
+def test_apply_freq_diff(ed_ek_60_for_Sv):
     sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
     ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
     chanA = "GPT 120 kHz 00907205a6d0 4-1 ES120-7C"
