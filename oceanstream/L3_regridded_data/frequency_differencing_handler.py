@@ -10,23 +10,47 @@ Functions:
 It utilizes the `frequency_differencing` and `apply_mask` methods from the echopype library
 to create and apply a mask based on the differences of Sv values using a pair of frequencies.
 
+- `identify_krill`:
+A wrapper around `apply_freq_diff` tailored for krill identification based on
+the difference in volume backscattering strength between 120 kHz and 38 kHz
+typically ranging from 2 dB to 16 dB.
+
+- `identify_gas_bearing_organisms`:
+A wrapper around `apply_freq_diff` for identifying gas-bearing organisms using a specific
+acoustic signature where the difference in volume backscattering strength between 120 kHz
+and 38 kHz is less than -1 dB.
+
+- `identify_fluid_like_organisms`:
+A wrapper around `apply_freq_diff` for identifying fluid-like organisms using a specific
+acoustic signature where the difference in volume backscattering strength between 120 kHz
+and 38 kHz is greater than 2 dB.
+
 Usage:
 
 To apply a frequency differencing mask to a given Sv dataset, `ds`, simply call:
 `apply_freq_diff(ds, chanA, chanB, single_operator, single_value)`
 or for interval-based masking:
-`apply_freq_diffapply_freq_diff(ds,
-                                chanA,
-                                chanB,
-                                interval_start_operator,
-                                interval_start_value,
-                                interval_end_operator,
-                                interval_end_value,
-                            )`
+`apply_freq_diff(ds,
+                 chanA,
+                 chanB,
+                 interval_start_operator,
+                 interval_start_value,
+                 interval_end_operator,
+                 interval_end_value)`
+
+For krill identification:
+`identify_krill(ds, chan38, chan120)`
+
+For gas-bearing organisms identification:
+`identify_gas_bearing_organisms(ds, chan38, chan120)`
+
+For fluid-like organisms identification:
+`identify_fluid_like_organisms(ds, chan38, chan120)`
 
 Note:
 - Ensure that the echopype library is properly installed and imported when using this module.
 - Sv = the volume backscattering strength
+
 """
 from typing import Optional
 
@@ -89,7 +113,75 @@ def apply_freq_diff(
         low_mask = ep.mask.frequency_differencing(source_Sv=ds, chanABEq=chanABEq_low_mask)
         high_mask = ep.mask.frequency_differencing(source_Sv=ds, chanABEq=chanABEq_high_mask)
         mask = low_mask & high_mask
-
     else:
         raise ValueError("Invalid combination of parameters provided.")
     return ep.mask.apply_mask(ds, mask)
+
+
+def identify_gas_bearing_organisms(ds: xr.Dataset, chan38: str, chan120: str) -> xr.Dataset:
+    """
+    Identify gas-bearing organisms using frequency differencing.
+    Parameters:
+    - ds (xr.Dataset): The dataset containing the Sv data to create a mask for.
+    - chan38 (str): Channel name for 38 kHz.
+    - chan120 (str): Channel name for 120 kHz.
+    Returns:
+    - xr.Dataset: A dataset with the applied mask for gas-bearing organisms identification.
+    Notes:
+    - Gas-bearing organisms are identified by an acoustic signature where the difference in volume
+      backscattering strength between 120 kHz and 38 kHz is less than -1 dB.
+    """
+    return apply_freq_diff(
+        ds=ds,
+        chanA=chan38,
+        chanB=chan120,
+        single_operator=">",
+        single_value="1",
+    )
+
+
+def identify_fluid_like_organisms(ds: xr.Dataset, chan38: str, chan120: str) -> xr.Dataset:
+    """
+    Identify fluid-like organisms using frequency differencing.
+    Parameters:
+    - ds (xr.Dataset): The dataset containing the Sv data to create a mask for.
+    - chan38 (str): Channel name for 38 kHz.
+    - chan120 (str): Channel name for 120 kHz.
+    Returns:
+    - xr.Dataset: A dataset with the applied mask for fluid-like organisms identification.
+    Notes:
+    Fluid-like organisms are identified by an acoustic signature where the difference in volume
+    backscattering strength between 120 kHz and 38 kHz is greater than 2 dB.
+    """
+    return apply_freq_diff(
+        ds=ds,
+        chanA=chan120,
+        chanB=chan38,
+        single_operator=">",
+        single_value="2.0",
+    )
+
+
+def identify_krill(ds: xr.Dataset, chan38: str, chan120: str) -> xr.Dataset:
+    """
+    Identify krill using frequency differencing intervals.
+    Parameters:
+    - ds (xr.Dataset): The dataset containing the Sv data to create a mask for.
+    - chan38 (str): Channel name for 38 kHz.
+    - chan120 (str): Channel name for 120 kHz.
+    Returns:
+    - xr.Dataset: A dataset with the applied mask for krill identification.
+    Notes:
+    The most prevalent frequency differencing interval for krill identification is given by:
+    the difference in volume backscattering strength between 120 kHz and 38 kHz
+    typically ranging from 2 dB to 16 dB.
+    """
+    return apply_freq_diff(
+        ds=ds,
+        chanA=chan120,
+        chanB=chan38,
+        interval_start_operator=">=",
+        interval_start_value="2.0",
+        interval_end_operator="<=",
+        interval_end_value="16.0",
+    )
