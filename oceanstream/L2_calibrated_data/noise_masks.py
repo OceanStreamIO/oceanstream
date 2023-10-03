@@ -3,9 +3,13 @@ noise_masks.py
 -------------------------
 Description: Module for computing noise masks from Sv data.
 """
-import xarray
 
-# import xarray as xr
+
+import pathlib
+from typing import Union
+
+import xarray
+import xarray as xr
 from echopype.clean.api import (
     get_attenuation_mask_multichannel,
     get_impulse_noise_mask_multichannel,
@@ -14,60 +18,88 @@ from echopype.clean.api import (
 from echopype.mask.api import get_seabed_mask_multichannel
 
 
-def create_transient_mask(Sv, **kwargs):
+def create_transient_mask(
+    Sv: Union[xr.Dataset, str, pathlib.Path], parameters: dict, method: str = "ryan"
+):
     """
     Invokes echopype's get_transient_noise_mask_multichannel
-    (see echopype's documentation for the possible parameters)
+    (see echopype's documentation)
 
     Parameters:
-        - Sv - the dataset we're trying to create a mask for
-        - other arguments as required by the specific function used
+    - Sv: xr.Dataset or str or pathlib.Path
+        If a Dataset this value contains the Sv data to create a mask for,
+        else it specifies the path to a zarr or netcdf file containing
+        a Dataset. This input must correspond to a Dataset that has the
+        coordinate ``channel`` and variables ``frequency_nominal`` and ``Sv``.
+    - method: str with either "ryan" or "fielding" based on
+        the preferred method for transient noise mask generation
+    - parameters: dict
+        Default method parameters
 
     Returns:
-        - a multichannel mask for transient noise
+    - A multichannel mask for transient noise
 
     Example:
-        create_transient_mask(Sv)
+        >>> create_transient_mask(Sv, parameters, method)
     """
-    mask = get_transient_noise_mask_multichannel(Sv, **kwargs)
+    mask = get_transient_noise_mask_multichannel(Sv, parameters, method)
     return mask
 
 
-def create_impulse_mask(Sv, **kwargs):
+def create_impulse_mask(
+    Sv: xr.Dataset,
+    parameters: dict,
+    method: str = "ryan",
+) -> xr.DataArray:
     """
     Invokes echopype's get_impulse_noise_mask_multichannel
-    (see echopype's documentation for the possible parameters)
+    (see echopype's documentation)
 
     Parameters:
-        - Sv - the dataset we're trying to create a mask for
-        - other arguments as required by the specific function used
+    - Sv: xr.Dataset
+        Dataset  containing the Sv data to create a mask
+    - method: str, optional
+        The method (ryan, ryan iterable or wang) used to mask impulse noise. Defaults to 'ryan'.
+    - parameters: dict
+        Default method parameters
 
     Returns:
-        - a multichannel mask for impulse noise
+    - A multichannel mask for impulse noise
 
     Example:
-        create_impulse_mask(Sv)
+        >>> create_impulse_mask(Sv, parameters, method)
     """
-    mask = get_impulse_noise_mask_multichannel(Sv, **kwargs)
+    mask = get_impulse_noise_mask_multichannel(Sv, parameters, method)
     return mask
 
 
-def create_attenuation_mask(Sv, **kwargs):
+def create_attenuation_mask(
+    Sv: Union[xr.Dataset, str, pathlib.Path],
+    parameters: dict,
+    method: str = "ryan",
+) -> xr.DataArray:
     """
     Invokes echopype's get_attenuation_mask_multichannel
-    (see echopype's documentation for the possible parameters)
+    (see echopype's documentation)
 
     Parameters:
-        - Sv - the dataset we're trying to create a mask for
-        - other arguments as required by the specific function used
+    - Sv: xr.Dataset or str or pathlib.Path
+        If a Dataset this value contains the Sv data to create a mask for,
+        else it specifies the path to a zarr or netcdf file containing
+        a Dataset. This input must correspond to a Dataset that has the
+        coordinate ``channel`` and variables ``frequency_nominal`` and ``Sv``.
+    - method: str with either "ryan" or "ariza" based on the
+        preferred method for signal attenuation mask generation
+    - parameters: dict
+        Default method parameters
 
     Returns:
-        - a multichannel mask for attenuation noise
+    - A multichannel mask for attenuation noise
 
     Example:
-        create_attenuation_mask(Sv)
+        >>> create_attenuation_mask(Sv, parameters, method)
     """
-    mask = get_attenuation_mask_multichannel(Sv, **kwargs)
+    mask = get_attenuation_mask_multichannel(Sv, parameters, method)
     return mask
 
 
@@ -77,14 +109,14 @@ def create_seabed_mask(Sv, **kwargs):
     (see echopype's documentation for the possible parameters)
 
     Parameters:
-        - Sv - the dataset we're trying to create a mask for
-        - other arguments as required by the specific function used
+    - Sv: the dataset we're trying to create a mask for
+    - Other arguments as required by the specific function used
 
     Returns:
-        - a multichannel mask for attenuation noise
+    - Multichannel mask for seabed detection
 
     Example:
-        create_seabed_mask(Sv)
+        >>> create_seabed_mask(Sv)
     """
     mask = get_seabed_mask_multichannel(Sv, **kwargs)
     return mask
@@ -92,7 +124,7 @@ def create_seabed_mask(Sv, **kwargs):
 
 def add_metadata_to_mask(mask, metadata):
     """
-    Brief description of the function.
+    Attaches the provided metadata to the given mask as global attributes.
 
     Parameters:
     - mask (xarray.Dataset): Mask to be attached
@@ -102,7 +134,7 @@ def add_metadata_to_mask(mask, metadata):
     - xarray.Dataset - mask with metadata stored as global attributes
 
     Example:
-    >>> add_metadata_to_mask(mask, metadata={"mask_type": "transient",
+        >>> add_metadata_to_mask(mask, metadata={"mask_type": "transient",
                                     "interpolation": "median_filtering"})
     Expected Output
     A mask with the metadata stored as global attributes
@@ -126,11 +158,10 @@ def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
     - xarray.Dataset - dataset enriched with the mask
 
     Example:
-    >>> attach_mask_to_dataset(Sv, mask)
+        >>> attach_mask_to_dataset(Sv, mask)
     Expected Output
         Sv with an extra variable containing the mask, named mask_[mask_type]
     """
-
     mask_type = mask.attrs["mask_type"]
     mask_name = "mask_" + mask_type
     Sv_mask = Sv.assign(mask=mask)
@@ -152,9 +183,9 @@ def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]):
     - xarray.Dataset - dataset enriched with the masks as separate variables
 
     Example:
-    >>> attach_mask_to_dataset(Sv, masks)
+        >>> attach_mask_to_dataset(Sv, masks)
     Expected Output
-        Sv with extra variables containing the masks, named mask_[mask_type]
+    - Sv with extra variables containing the masks, named mask_[mask_type]
     """
     for mask in masks:
         Sv = attach_mask_to_dataset(Sv, mask)
@@ -176,24 +207,45 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     mask_attenuated, mask_seabed
 
     Example:
-    >>> function_name_1(value1, value2)
+        >>> function_name_1(value1, value2)
     Expected Output
-    a dataset with the same dimensions as the original, containing the original
+    - A dataset with the same dimensions as the original, containing the original
     data and four masks: mask_transient, mask_impulse, mask_attenuation, mask_seabed
     """
+    transient_mask_params = {
+        "m": 5,
+        "n": 20,
+        "thr": 20,
+        "excludeabove": 250,
+        "operation": "percentile15",
+    }
     transient_mask = create_transient_mask(
-        source_Sv, mask_type="ryan", n=20, thr=20, excludeabove=250
+        source_Sv, parameters=transient_mask_params, method="ryan"
     )
     transient_mask = add_metadata_to_mask(mask=transient_mask, metadata={"mask_type": "transient"})
+    attenuation_mask_params = {
+        "r0": 180,
+        "r1": 280,
+        "n": 30,
+        "m": None,
+        "thr": -6,
+        "start": 0,
+        "offset": 0,
+    }
     attenuation_mask = create_attenuation_mask(
-        source_Sv, mask_type="ryan", r0=180, r1=280, n=30, m=None, thr=-6, start=0, offset=0
+        source_Sv, parameters=attenuation_mask_params, method="ryan"
     )
     attenuation_mask = add_metadata_to_mask(
         mask=attenuation_mask, metadata={"mask_type": "attenuation"}
     )
-    impulse_mask = create_impulse_mask(
-        source_Sv, method="wang", thr=(-70, -40), erode=[(3, 3)], dilate=[(7, 7)], median=[(7, 7)]
-    )
+    impulse_mask_param = {
+        "thr": (-70, -40),
+        "erode": [(3, 3)],
+        "dilate": [(5, 5), (7, 7)],
+        "median": [(7, 7)],
+    }
+
+    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="wang")
     impulse_mask = add_metadata_to_mask(mask=impulse_mask, metadata={"mask_type": "impulse"})
     seabed_mask = create_seabed_mask(
         source_Sv,
