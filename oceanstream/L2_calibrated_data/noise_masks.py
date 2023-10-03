@@ -130,8 +130,7 @@ def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
     Expected Output
         Sv with an extra variable containing the mask, named mask_[mask_type]
     """
-    print(mask)
-    print(mask.attrs)
+
     mask_type = mask.attrs["mask_type"]
     mask_name = "mask_" + mask_type
     Sv_mask = Sv.assign(mask=mask)
@@ -182,10 +181,12 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     a dataset with the same dimensions as the original, containing the original
     data and four masks: mask_transient, mask_impulse, mask_attenuation, mask_seabed
     """
-    transient_mask = create_transient_mask(source_Sv, method="ryan", n=20, thr=20, excludeabove=250)
+    transient_mask = create_transient_mask(
+        source_Sv, mask_type="ryan", n=20, thr=20, excludeabove=250
+    )
     transient_mask = add_metadata_to_mask(mask=transient_mask, metadata={"mask_type": "transient"})
     attenuation_mask = create_attenuation_mask(
-        source_Sv, method="ryan", r0=180, r1=280, n=30, m=None, thr=-6, start=0, offset=0
+        source_Sv, mask_type="ryan", r0=180, r1=280, n=30, m=None, thr=-6, start=0, offset=0
     )
     attenuation_mask = add_metadata_to_mask(
         mask=attenuation_mask, metadata={"mask_type": "attenuation"}

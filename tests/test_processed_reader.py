@@ -97,7 +97,7 @@ def test_invalid_directory_path(ed_ek_60_for_Sv):
     file_name = "invalid_path_test.nc"
 
     path_pattern = re.escape(str(invalid_path))
-    with pytest.raises(ValueError, match=f"Invalid path provided: {path_pattern}"):
+    with pytest.raises(FileNotFoundError, match=f"Invalid path provided: {path_pattern}"):
         write_processed(sv_echopype_ek60, invalid_path, file_name)
 
 
