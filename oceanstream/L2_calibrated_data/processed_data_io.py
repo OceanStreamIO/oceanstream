@@ -44,6 +44,7 @@ def read_processed(file_path: Union[str, Path]) -> xr.Dataset:
 
     Raises:
     - ValueError: If the file does not exist or has an unsupported format.
+    - FileNotFoundError: If the file does not exist.
 
     Supported File Types:
     - NetCDF (".nc")
@@ -58,7 +59,7 @@ def read_processed(file_path: Union[str, Path]) -> xr.Dataset:
 
     # Check if the file exists
     if not file_path.exists():
-        raise ValueError(f"File does not exist: {file_path}")
+        raise FileNotFoundError(f"File does not exist: {file_path}")
 
     # Check if the file has a supported format
     if file_path.suffix not in [".nc", ".zarr"]:
@@ -111,7 +112,7 @@ def write_processed(
 
     path = Path(file_path)
     if not path.is_dir():
-        raise ValueError(f"Invalid path provided: {path}")
+        raise FileNotFoundError(f"Invalid path provided: {path}")
 
     if not file_name:
         file_name = Path(sv.source_filenames[0].values.item()).stem
