@@ -82,6 +82,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # IPython
 profile_default/
@@ -171,3 +172,5 @@ test_data/
 # For MAC stuff
 .DS_Store
 oceanstream/.DS_Store
+# VS code
+.vs/
