@@ -162,11 +162,11 @@ def file_integrity_checking(
                 ed = ep.open_raw(file_path, sonar_model=s_m)  # type: ignore
                 file_integrity = True
                 break
-            except ValueError:
+            except Exception:
                 continue
-        else:
+        if not file_integrity:
             raise Exception("File type not supported for " + str(file_path))
-    elif ".nc" or ".zarr" in file_path:
+    elif ".nc" in file_path or ".zarr" in file_path:
         try:
             ed = ep.open_converted(file_path)
             file_integrity = True
