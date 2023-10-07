@@ -1,0 +1,44 @@
+name: Python Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    if: env.SKIP_BUILD != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install Miniconda
+      run: |
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+        bash miniconda.sh -b -p $HOME/miniconda
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda info -a
+
+    - name: Install Mamba
+      run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda install mamba -c conda-forge
+
+    - name: Create Environment and Install Dependencies
+      run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        mamba create -q -n test-environment python=${{ matrix.python-version }}
+        conda activate test-environment
+        mamba install pytest -c conda-forge
+
+    - name: Run Tests
+      run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda activate test-environment
+        pytest
