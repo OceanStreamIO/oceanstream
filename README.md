@@ -1,5 +1,9 @@
 # OceanStream
 
+[OceanStream](https://oceanstream.io/) is an integrated cloud data platform used for hydroacoustic data collection and analysis in real-time. It is built on [Azure IoT Edge](https://azure.microsoft.com/en-us/products/iot-edge) infrastructure.
+
+<a href="https://oceanstream.io/" target="_blank"><img width="1537" alt="OceanStream.io" src="https://github.com/OceanStreamIO/oceanstream-cli/assets/419506/a1e5ecc6-77d6-45ea-ac4c-51ca1378acd2"></a>
+
 ## How to Install
 
 ### Prerequisites
