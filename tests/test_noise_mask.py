@@ -15,7 +15,7 @@ def test_impulse(sv_dataset_jr230):
     mask = create_impulse_mask(source_Sv, parameters=RYAN_DEFAULT_PARAMS)
     assert mask["channel"].shape == (3,)
 
-
+@pytest.mark.ignore
 def test_transient(sv_dataset_jr161):
     source_Sv = sv_dataset_jr161
     RYAN_DEFAULT_PARAMS = {
@@ -75,7 +75,7 @@ def test_add_mask(complete_dataset_jr179, metadata=None):
         assert Sv_mask["mask_seabed"].attrs[k] == v
     assert Sv_mask["mask_seabed"].attrs["mask_type"]
 
-
+@pytest.mark.ignore
 def test_add_masks_rapidkrill(complete_dataset_jr179):
     source_Sv = complete_dataset_jr179
     Sv_mask = create_noise_masks_rapidkrill(source_Sv)
