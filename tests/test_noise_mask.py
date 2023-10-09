@@ -1,3 +1,5 @@
+import pytest
+
 from oceanstream.L2_calibrated_data.noise_masks import (
     create_attenuation_mask,
     create_impulse_mask,
