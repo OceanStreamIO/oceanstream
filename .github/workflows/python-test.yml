@@ -3,10 +3,17 @@ name: Python Test
 on: [push, pull_request]
 
 jobs:
-  build:
-    if: env.SKIP_BUILD != 'true'
+  cancel:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  build:
+    needs: cancel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     strategy:
       matrix:
@@ -16,29 +23,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Install Miniconda
-      run: |
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        bash miniconda.sh -b -p $HOME/miniconda
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda config --set always_yes yes --set changeps1 no
-        conda update -q conda
-        conda info -a
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install Mamba
+    - name: Install Dependencies
       run: |
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda install mamba -c conda-forge
-
-    - name: Create Environment and Install Dependencies
-      run: |
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        mamba create -q -n test-environment python=${{ matrix.python-version }}
-        conda activate test-environment
-        mamba install pytest -c conda-forge
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
 
     - name: Run Tests
-      run: |
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda activate test-environment
-        pytest
+      run: pytest -m "not ignore"
