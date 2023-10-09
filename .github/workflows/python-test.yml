@@ -1,17 +1,16 @@
 name: Python Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
-  cancel:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
-
   build:
-    needs: cancel
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
