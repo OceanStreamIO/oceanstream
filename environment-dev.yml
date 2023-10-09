@@ -26,6 +26,7 @@ dependencies:
   - pydantic>2
   - echopype
   - black
+  - bottleneck
   - check-manifest
   - codespell
   - docker-compose

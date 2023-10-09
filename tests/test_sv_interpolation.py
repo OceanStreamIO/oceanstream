@@ -55,7 +55,7 @@ def test_interpolate_sv_with_dataset_input(complete_dataset_jr179):
     dataset_with_mask = attach_mask_to_dataset(source_sv, mask_with_metadata)
     interpolated_dataset = interpolate_sv(dataset_with_mask)
     assert isinstance(interpolated_dataset, xr.Dataset)
-    assert 'Sv' in interpolated_dataset.data_vars
+    assert 'Sv_interpolated' in interpolated_dataset.data_vars
 
 
 def test_interpolate_sv_with_nc_path_input(complete_dataset_jr179):
@@ -69,7 +69,7 @@ def test_interpolate_sv_with_nc_path_input(complete_dataset_jr179):
     saved_file_path = Path(TEST_DATA_FOLDER, "sample.nc")
     interpolated_dataset = interpolate_sv(saved_file_path)
     assert isinstance(interpolated_dataset, xr.Dataset)
-    assert 'Sv' in interpolated_dataset.data_vars
+    assert 'Sv_interpolated' in interpolated_dataset.data_vars
 
 
 def test_interpolate_sv_with_zarr_path_input(complete_dataset_jr179):
@@ -84,7 +84,7 @@ def test_interpolate_sv_with_zarr_path_input(complete_dataset_jr179):
     saved_file_path = Path(TEST_DATA_FOLDER, "sample.zarr")
     interpolated_dataset = interpolate_sv(saved_file_path)
     assert isinstance(interpolated_dataset, xr.Dataset)
-    assert 'Sv' in interpolated_dataset.data_vars
+    assert 'Sv_interpolated' in interpolated_dataset.data_vars
 
 
 def test_interpolate_sv_output_type():
@@ -163,7 +163,7 @@ def test_retains_metadata_and_other_dataarrays(complete_dataset_jr179):
 
     # Check other DataArrays
     for data_var in dataset_with_mask.data_vars:
-        if data_var != 'Sv':
+        if data_var != 'Sv' and data_var != 'Sv_interpolated':
             assert np.array_equal(dataset_with_mask[data_var], result[data_var])
 
 
@@ -181,4 +181,4 @@ def test_deterministic_behavior(complete_dataset_jr179):
     result1 = interpolate_sv(dataset_with_mask1)
     result2 = interpolate_sv(dataset_with_mask2)
 
-    assert np.array_equal(result1['Sv'], result2['Sv'],equal_nan=True)
+    assert np.array_equal(result1['Sv_interpolated'], result2['Sv_interpolated'],equal_nan=True)

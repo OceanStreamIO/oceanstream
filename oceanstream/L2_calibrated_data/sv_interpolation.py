@@ -66,12 +66,6 @@ def interpolate_sv(
         # Convert from dB to linear scale
         channel_data_linear = db_to_linear(channel_data)
 
-        # Apply the masks
-        for var_name in dataset.data_vars:
-            if var_name.startswith("mask_"):
-                mask = dataset[var_name].sel(channel=channel)
-                channel_data_linear = channel_data_linear.where(mask, np.nan)
-
         # Perform interpolation to fill NaN values in linear scale
         # Assuming you are interpolating over ping_time and range dimensions
 
@@ -99,6 +93,6 @@ def interpolate_sv(
     interpolated_sv = xr.concat(processed_channels, dim="channel")
 
     # Update the Sv DataArray in the dataset with the interpolated values
-    dataset["Sv"] = interpolated_sv
+    dataset["Sv_interpolated"] = interpolated_sv
 
     return dataset

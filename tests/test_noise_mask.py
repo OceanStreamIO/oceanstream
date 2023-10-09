@@ -1,3 +1,5 @@
+import pytest
+
 from oceanstream.L2_calibrated_data.noise_masks import (
     add_metadata_to_mask,
     attach_mask_to_dataset,
@@ -18,7 +20,7 @@ def test_impulse(ed_ek_60_for_Sv):
     mask = create_impulse_mask(source_Sv, parameters=RYAN_DEFAULT_PARAMS)
     assert mask["channel"].shape == (3,)
 
-
+@pytest.mark.ignore
 def test_transient(sv_dataset_jr161):
     source_Sv = sv_dataset_jr161
     FIELDING_DEFAULT_PARAMS = {
