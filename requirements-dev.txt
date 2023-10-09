@@ -22,6 +22,7 @@ echopype
 
 # Development dependencies
 black
+bottleneck
 check-manifest
 codespell
 flake8
