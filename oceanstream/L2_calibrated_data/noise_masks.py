@@ -1,6 +1,6 @@
 """
 noise_masks.py
--------------------------
+---------------
 Description: Module for computing noise masks from Sv data.
 """
 
@@ -16,6 +16,8 @@ from echopype.clean.api import (
     get_transient_noise_mask_multichannel,
 )
 from echopype.mask.api import get_seabed_mask_multichannel
+
+from oceanstream.utils import dict_to_formatted_list
 
 
 def create_transient_mask(
@@ -57,7 +59,7 @@ def create_impulse_mask(
 
     Parameters:
     - Sv: xr.Dataset
-        Dataset  containing the Sv data to create a mask
+        Dataset  containing the Sv data to create a mask for
     - method: str, optional
         The method (ryan, ryan iterable or wang) used to mask impulse noise. Defaults to 'ryan'.
     - parameters: dict
@@ -136,7 +138,7 @@ def add_metadata_to_mask(mask, metadata):
     Example:
         >>> add_metadata_to_mask(mask, metadata={"mask_type": "transient",
                                     "interpolation": "median_filtering"})
-    Expected Output
+    Expected Output:
     A mask with the metadata stored as global attributes
     """
     for k, v in metadata.items():
@@ -146,8 +148,7 @@ def add_metadata_to_mask(mask, metadata):
 
 def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
     """
-    Attaches a mask to an existing Sv dataset,
-    so they can travel in one data structure to the next module
+    Attaches a mask to an existing Sv dataset, allowing the mask to travel in one data structure to the next module
 
     Parameters:
     - Sv (xarray.Dataset): Dataset to attach a mask to
@@ -159,7 +160,7 @@ def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
 
     Example:
         >>> attach_mask_to_dataset(Sv, mask)
-    Expected Output
+    Expected Output:
         Sv with an extra variable containing the mask, named mask_[mask_type]
     """
     mask_type = mask.attrs["mask_type"]
@@ -172,19 +173,19 @@ def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
 
 def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]):
     """
-    Attaches a mask to an existing Sv dataset,
+    Attaches masks to an existing Sv dataset,
     so they can travel in one data structure to the next module
 
     Parameters:
-    - Sv (xarray.Dataset): Dataset to attach a mask to
+    - Sv (xarray.Dataset): Dataset to attach the masks to
     - masks (xarray.Dataset[]): Masks to be attached
 
     Returns:
     - xarray.Dataset - dataset enriched with the masks as separate variables
 
     Example:
-        >>> attach_mask_to_dataset(Sv, masks)
-    Expected Output
+        >>> attach_masks_to_dataset(Sv, masks)
+    Expected Output:
     - Sv with extra variables containing the masks, named mask_[mask_type]
     """
     for mask in masks:
@@ -198,19 +199,12 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     rapidkrill processing needs
 
     Parameters:
-    - Sv (xarray.Dataset): Dataset to attach a mask to
-    - arg2 (type): Description of arg2.
+    - Sv (xarray.Dataset): the dataset to which the masks will be attached.
 
     Returns:
     - xarray.Dataset: a dataset with the same dimensions as the original,
-    containing the original data and four masks: mask_transient, mask_impulse,
-    mask_attenuated, mask_seabed
-
-    Example:
-        >>> function_name_1(value1, value2)
-    Expected Output
-    - A dataset with the same dimensions as the original, containing the original
-    data and four masks: mask_transient, mask_impulse, mask_attenuation, mask_seabed
+    containing the original data and five masks: mask_transient, mask_impulse,
+    mask_attenuated, mask_seabed, mask_false_seabed
     """
     transient_mask_params = {
         "m": 5,
@@ -222,7 +216,10 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     transient_mask = create_transient_mask(
         source_Sv, parameters=transient_mask_params, method="ryan"
     )
-    transient_mask = add_metadata_to_mask(mask=transient_mask, metadata={"mask_type": "transient"})
+    transient_mask = add_metadata_to_mask(
+        mask=transient_mask, metadata={"mask_type": "transient", "method": "ryan"}
+    )
+
     attenuation_mask_params = {
         "r0": 180,
         "r1": 280,
@@ -236,17 +233,19 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         source_Sv, parameters=attenuation_mask_params, method="ryan"
     )
     attenuation_mask = add_metadata_to_mask(
-        mask=attenuation_mask, metadata={"mask_type": "attenuation"}
+        mask=attenuation_mask, metadata={"mask_type": "attenuation", "method": "ryan"}
     )
-    impulse_mask_param = {
-        "thr": (-70, -40),
-        "erode": [(3, 3)],
-        "dilate": [(5, 5), (7, 7)],
-        "median": [(7, 7)],
-    }
 
-    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="wang")
-    impulse_mask = add_metadata_to_mask(mask=impulse_mask, metadata={"mask_type": "impulse"})
+    impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
+    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="ryan")
+    impulse_mask = add_metadata_to_mask(
+        mask=impulse_mask,
+        metadata={
+            "mask_type": "impulse",
+            "method": "ryan",
+        },
+    )
+
     seabed_mask = create_seabed_mask(
         source_Sv,
         method="ariza",
@@ -259,14 +258,93 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         dc=10,
         dk=(3, 7),
     )
-    seabed_mask = add_metadata_to_mask(mask=seabed_mask, metadata={"mask_type": "seabed"})
+    seabed_mask = add_metadata_to_mask(
+        mask=seabed_mask, metadata={"mask_type": "seabed", "method": "ariza"}
+    )
+
     seabed_echo_mask = create_seabed_mask(
         source_Sv,
         method="blackwell",
     )
     seabed_echo_mask = add_metadata_to_mask(
-        mask=seabed_echo_mask, metadata={"mask_type": "false_seabed"}
+        mask=seabed_echo_mask, metadata={"mask_type": "false_seabed", "method": "blackwell"}
     )
     masks = [transient_mask, impulse_mask, attenuation_mask, seabed_mask, seabed_echo_mask]
+    Sv_mask = attach_masks_to_dataset(source_Sv, masks)
+    return Sv_mask
+
+
+def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
+    """
+    A function that creates noise masks for a given Sv dataset using default methods for oceanstream
+
+    Parameters:
+    - Sv (xarray.Dataset): the dataset to which the masks will be attached.
+
+    Returns:
+    - xarray.Dataset: a dataset with the same dimensions as the original,
+    containing the original data and four masks: mask_transient, mask_impulse,
+    mask_attenuated, mask_false_seabed
+    """
+    transient_mask_params = {
+        "m": 5,
+        "n": 20,
+        "thr": 20,
+        "excludeabove": 250,
+        "operation": "percentile15",
+    }
+    transient_mask = create_transient_mask(
+        source_Sv, parameters=transient_mask_params, method="ryan"
+    )
+    transient_mask = add_metadata_to_mask(
+        mask=transient_mask,
+        metadata={
+            "mask_type": "transient",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(transient_mask_params),
+        },
+    )
+
+    attenuation_mask_params = {
+        "r0": 180,
+        "r1": 280,
+        "n": 30,
+        "m": None,
+        "thr": -6,
+        "start": 0,
+        "offset": 0,
+    }
+    attenuation_mask = create_attenuation_mask(
+        source_Sv, parameters=attenuation_mask_params, method="ryan"
+    )
+    attenuation_mask = add_metadata_to_mask(
+        mask=attenuation_mask,
+        metadata={
+            "mask_type": "attenuation",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(attenuation_mask_params),
+        },
+    )
+
+    impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
+    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="ryan")
+    impulse_mask = add_metadata_to_mask(
+        mask=impulse_mask,
+        metadata={
+            "mask_type": "impulse",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(impulse_mask_param),
+        },
+    )
+
+    seabed_echo_mask = create_seabed_mask(
+        source_Sv,
+        method="blackwell",
+    )
+    seabed_echo_mask = add_metadata_to_mask(
+        mask=seabed_echo_mask, metadata={"mask_type": "false_seabed", "method": "blackwell"}
+    )
+
+    masks = [transient_mask, impulse_mask, attenuation_mask, seabed_echo_mask]
     Sv_mask = attach_masks_to_dataset(source_Sv, masks)
     return Sv_mask

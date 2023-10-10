@@ -33,7 +33,7 @@ def apply_remove_background_noise(
     ds_Sv: xr.Dataset,
     ping_num: int = 40,
     range_sample_num: int = None,
-    noise_max: float = None,
+    noise_max: float = -125,
     SNR_threshold: float = 3,
 ) -> xr.Dataset:
     """
@@ -57,8 +57,8 @@ def apply_remove_background_noise(
     - range_sample_num: int, optional
         Number of samples along the range_sample dimension to obtain noise estimates. If not provided,
         it's computed based on a 10-meter vertical bin for each channel and the minimum value is used.
-    - noise_max: float, optional
-        The upper limit for background noise expected under the operating conditions.
+    - noise_max: float, default=-125
+        The upper limit for background noise expected under the operating conditions (default=-125 dB).
     - SNR_threshold: float, default=3 [dB]
         Acceptable signal-to-noise ratio.
 
