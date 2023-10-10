@@ -30,9 +30,10 @@ Notes:
 
 from typing import Any, Tuple
 
-import echopype as ep
 import xarray as xr
 from echopype.mask.api import get_shoal_mask_multichannel
+
+from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset
 
 
 def create_shoal_mask_multichannel(
@@ -112,22 +113,26 @@ def combine_shoal_masks_multichannel(mask: xr.DataArray, mask_: xr.DataArray) ->
     return combined_masks
 
 
-def apply_shoal_mask(ds: xr.Dataset, combined_masks: xr.DataArray) -> xr.Dataset:
+def attach_shoal_mask_to_ds(ds: xr.Dataset, **kwargs) -> xr.Dataset:
     """
-    Apply a multichannel mask to the Sv data in the provided dataset.
+    Attaches a shoal mask to the given dataset.
 
-    Parameters
+    This function first creates two multichannel masks used for shoal detection
+    using the `create_shoal_mask_multichannel` function.
+    It then combines the masks using the `combine_shoal_masks_multichannel` function.
+    Metadata indicating the mask type is added to the combined mask before attaching it to the dataset.
 
-    ds : xr.Dataset
-        The dataset containing the Sv data to which the mask will be applied.
-    combined_masks : xr.DataArray
-        A final multichannel mask for the Sv data. Regions that meet the thresholding
-        criteria for shoal identification and fall within valid samples are marked as True.
-        All other regions are marked as False.
+    Parameters:
+    - ds (xr.Dataset): The dataset to which the shoal mask will be attached.
+    - **kwargs: Additional keyword arguments passed to the `create_shoal_mask_multichannel` function.
 
-    Returns
+    Returns:
+    - xr.Dataset: The dataset with the shoal mask attached.
 
-    xr.Dataset
-        A dataset with the applied mask.
+    Example:
+        >>> ds_with_shoal_mask = attach_shoal_mask_to_ds(ds)
     """
-    return ep.mask.apply_mask(ds, combined_masks)
+    mask, mask_ = create_shoal_mask_multichannel(ds, **kwargs)
+    shoal_mask = combine_shoal_masks_multichannel(mask, mask_)
+    shoal_mask = add_metadata_to_mask(mask=shoal_mask, metadata={"mask_type": "shoal"})
+    return attach_mask_to_dataset(ds, shoal_mask)
