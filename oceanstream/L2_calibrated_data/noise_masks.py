@@ -6,7 +6,7 @@ Description: Module for computing noise masks from Sv data.
 
 
 import pathlib
-from typing import Dict, List, Union
+from typing import Union
 
 import xarray
 import xarray as xr
@@ -16,6 +16,8 @@ from echopype.clean.api import (
     get_transient_noise_mask_multichannel,
 )
 from echopype.mask.api import get_seabed_mask_multichannel
+
+from oceanstream.utils import dict_to_formatted_list
 
 
 def create_transient_mask(
@@ -191,11 +193,6 @@ def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]):
     return Sv
 
 
-def dict_to_formatted_list(d: Dict[str, Union[int, str]]) -> List[str]:
-    """Convert a dictionary to a list of formatted strings."""
-    return [f"{key}={value}" for key, value in d.items()]
-
-
 def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     """
     A function that creates noise masks for a given Sv dataset according to
@@ -239,15 +236,14 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         mask=attenuation_mask, metadata={"mask_type": "attenuation", "method": "ryan"}
     )
 
-    impulse_mask_param = {
-        "thr": (-70, -40),
-        "erode": [(3, 3)],
-        "dilate": [(5, 5), (7, 7)],
-        "median": [(7, 7)],
-    }
-    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="wang")
+    impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
+    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="ryan")
     impulse_mask = add_metadata_to_mask(
-        mask=impulse_mask, metadata={"mask_type": "impulse", "method": "wang"}
+        mask=impulse_mask,
+        metadata={
+            "mask_type": "impulse",
+            "method": "ryan",
+        },
     )
 
     seabed_mask = create_seabed_mask(

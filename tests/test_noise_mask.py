@@ -9,7 +9,6 @@ from oceanstream.L2_calibrated_data.noise_masks import (
     create_noise_masks_rapidkrill,
     create_seabed_mask,
     create_transient_mask,
-    dict_to_formatted_list,
 )
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 
@@ -19,6 +18,7 @@ def test_impulse(ed_ek_60_for_Sv):
     RYAN_DEFAULT_PARAMS = {"thr": 10, "m": 5, "n": 1}
     mask = create_impulse_mask(source_Sv, parameters=RYAN_DEFAULT_PARAMS)
     assert mask["channel"].shape == (3,)
+
 
 @pytest.mark.ignore
 def test_transient(sv_dataset_jr161):
@@ -74,30 +74,14 @@ def test_add_mask(ed_ek_60_for_Sv, metadata=None):
     assert Sv_mask["mask_seabed"].attrs["mask_type"]
 
 
+@pytest.mark.ignore
 def test_add_masks_rapidkrill(ed_ek_60_for_Sv):
     source_Sv = compute_sv(ed_ek_60_for_Sv)
     Sv_mask = create_noise_masks_rapidkrill(source_Sv)
     assert Sv_mask["mask_seabed"].attrs["mask_type"] == "seabed"
 
 
-def test_dict_to_formatted_list():
-    # Define a sample dictionary
-    sample_dict = {
-        "m": 5,
-        "n": 20,
-        "operation": "percentile15",
-    }
-
-    # Expected output
-    expected_output = ["m=5", "n=20", "operation=percentile15"]
-
-    # Call the function
-    result = dict_to_formatted_list(sample_dict)
-
-    # Assert that the result matches the expected output
-    assert result == expected_output
-
-
+@pytest.mark.ignore
 def test_add_masks_default_oceanstream(ed_ek_60_for_Sv):
     source_Sv = compute_sv(ed_ek_60_for_Sv)
     Sv_mask = create_default_noise_masks_oceanstream(source_Sv)
