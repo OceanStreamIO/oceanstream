@@ -1,8 +1,6 @@
 import pytest
 
 from oceanstream.L2_calibrated_data.noise_masks import (
-    add_metadata_to_mask,
-    attach_mask_to_dataset,
     create_attenuation_mask,
     create_default_noise_masks_oceanstream,
     create_impulse_mask,
@@ -50,28 +48,6 @@ def test_seabed(ed_ek_60_for_Sv):
     source_Sv = compute_sv(ed_ek_60_for_Sv)
     mask = create_seabed_mask(source_Sv)
     assert mask["channel"].shape == (3,)
-
-
-def test_mask_metadata(ed_ek_60_for_Sv, metadata=None):
-    if metadata is None:
-        metadata = {"test": "test"}
-    source_Sv = compute_sv(ed_ek_60_for_Sv)
-    mask = create_seabed_mask(source_Sv)
-    mask_with_metadata = add_metadata_to_mask(mask, metadata)
-    for k, v in metadata.items():
-        assert mask_with_metadata.attrs[k] == v
-
-
-def test_add_mask(ed_ek_60_for_Sv, metadata=None):
-    if metadata is None:
-        metadata = {"mask_type": "seabed"}
-    source_Sv = compute_sv(ed_ek_60_for_Sv)
-    mask = create_seabed_mask(source_Sv)
-    add_metadata_to_mask(mask, metadata)
-    Sv_mask = attach_mask_to_dataset(source_Sv, mask)
-    for k, v in metadata.items():
-        assert Sv_mask["mask_seabed"].attrs[k] == v
-    assert Sv_mask["mask_seabed"].attrs["mask_type"]
 
 
 @pytest.mark.ignore

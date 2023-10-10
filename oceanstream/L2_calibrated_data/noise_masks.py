@@ -17,7 +17,7 @@ from echopype.clean.api import (
 )
 from echopype.mask.api import get_seabed_mask_multichannel
 
-from oceanstream.utils import dict_to_formatted_list
+from oceanstream.utils import add_metadata_to_mask, attach_masks_to_dataset, dict_to_formatted_list
 
 
 def create_transient_mask(
@@ -122,75 +122,6 @@ def create_seabed_mask(Sv, **kwargs):
     """
     mask = get_seabed_mask_multichannel(Sv, **kwargs)
     return mask
-
-
-def add_metadata_to_mask(mask, metadata):
-    """
-    Attaches the provided metadata to the given mask as global attributes.
-
-    Parameters:
-    - mask (xarray.Dataset): Mask to be attached
-    - metadata (dict): Dictionary of metadata
-
-    Returns:
-    - xarray.Dataset - mask with metadata stored as global attributes
-
-    Example:
-        >>> add_metadata_to_mask(mask, metadata={"mask_type": "transient",
-                                    "interpolation": "median_filtering"})
-    Expected Output:
-    A mask with the metadata stored as global attributes
-    """
-    for k, v in metadata.items():
-        mask.attrs[k] = v
-    return mask
-
-
-def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset):
-    """
-    Attaches a mask to an existing Sv dataset, allowing the mask to travel in one data structure to the next module
-
-    Parameters:
-    - Sv (xarray.Dataset): Dataset to attach a mask to
-    - mask (xarray.Dataset): Mask to be attached, with a mask_type attribute
-        explaining what sort of mask it is
-
-    Returns:
-    - xarray.Dataset - dataset enriched with the mask
-
-    Example:
-        >>> attach_mask_to_dataset(Sv, mask)
-    Expected Output:
-        Sv with an extra variable containing the mask, named mask_[mask_type]
-    """
-    mask_type = mask.attrs["mask_type"]
-    mask_name = "mask_" + mask_type
-    Sv_mask = Sv.assign(mask=mask)
-    Sv_mask["mask"].attrs = mask.attrs
-    Sv_mask = Sv_mask.rename({"mask": mask_name})
-    return Sv_mask
-
-
-def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]):
-    """
-    Attaches masks to an existing Sv dataset,
-    so they can travel in one data structure to the next module
-
-    Parameters:
-    - Sv (xarray.Dataset): Dataset to attach the masks to
-    - masks (xarray.Dataset[]): Masks to be attached
-
-    Returns:
-    - xarray.Dataset - dataset enriched with the masks as separate variables
-
-    Example:
-        >>> attach_masks_to_dataset(Sv, masks)
-    Expected Output:
-    - Sv with extra variables containing the masks, named mask_[mask_type]
-    """
-    for mask in masks:
-        Sv = attach_mask_to_dataset(Sv, mask)
-    return Sv
 
 
 def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
