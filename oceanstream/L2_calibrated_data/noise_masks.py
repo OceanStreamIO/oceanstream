@@ -105,22 +105,25 @@ def create_attenuation_mask(
     return mask
 
 
-def create_seabed_mask(Sv, **kwargs):
+def create_seabed_mask(Sv, parameters, method):
     """
     Invokes echopype's get_seabed_mask_multichannel
     (see echopype's documentation for the possible parameters)
 
     Parameters:
     - Sv: the dataset we're trying to create a mask for
-    - Other arguments as required by the specific function used
+    - method: str with either "ariza", "experimental", "blackwell_mod",
+    "blackwell", "deltaSv", "maxSv" based on the preferred method for seabed mask generation
+    - parameters: dict
+        Default method parameters
 
     Returns:
     - Multichannel mask for seabed detection
 
     Example:
-        >>> create_seabed_mask(Sv)
+        >>> create_seabed_mask(Sv, parameters, method)
     """
-    mask = get_seabed_mask_multichannel(Sv, **kwargs)
+    mask = get_seabed_mask_multichannel(Sv, parameters, method)
     return mask
 
 
@@ -130,14 +133,21 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
     rapidkrill processing needs
 
     Parameters:
-    - Sv (xarray.Dataset): the dataset to which the masks will be attached.
+    - source_Sv (xarray.Dataset): the dataset to which the masks will be attached.
 
     Returns:
     - xarray.Dataset: a dataset with the same dimensions as the original,
     containing the original data and five masks: mask_transient, mask_impulse,
     mask_attenuated, mask_seabed, mask_false_seabed
+
+    Notes:
+    - To effectively utilize the `blackwell` method for seabed detection,
+    it's essential that the `source_Sv` dataset includes the `split-beam angle` parameters.
+    Specifically, ensure that your input `source_Sv` contains
+    both the `angle_alongship` and `angle_athwartship` variables.
+    Absence of these variables leads to errors .
     """
-    transient_mask_params = {
+    rapidkrill_transient_mask_params = {
         "m": 5,
         "n": 20,
         "thr": 20,
@@ -145,13 +155,13 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         "operation": "percentile15",
     }
     transient_mask = create_transient_mask(
-        source_Sv, parameters=transient_mask_params, method="ryan"
+        source_Sv, parameters=rapidkrill_transient_mask_params, method="ryan"
     )
     transient_mask = add_metadata_to_mask(
         mask=transient_mask, metadata={"mask_type": "transient", "method": "ryan"}
     )
 
-    attenuation_mask_params = {
+    rapidkrill_attenuation_mask_params = {
         "r0": 180,
         "r1": 280,
         "n": 30,
@@ -161,14 +171,16 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         "offset": 0,
     }
     attenuation_mask = create_attenuation_mask(
-        source_Sv, parameters=attenuation_mask_params, method="ryan"
+        source_Sv, parameters=rapidkrill_attenuation_mask_params, method="ryan"
     )
     attenuation_mask = add_metadata_to_mask(
         mask=attenuation_mask, metadata={"mask_type": "attenuation", "method": "ryan"}
     )
 
-    impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
-    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="ryan")
+    rapidkrill_impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
+    impulse_mask = create_impulse_mask(
+        source_Sv, parameters=rapidkrill_impulse_mask_param, method="ryan"
+    )
     impulse_mask = add_metadata_to_mask(
         mask=impulse_mask,
         metadata={
@@ -177,29 +189,45 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset):
         },
     )
 
+    rapidkrill_seabed_mask_params = {
+        "r0": 10,
+        "r1": 1000,
+        "roff": 0,
+        "thr": -40,
+        "ec": 1,
+        "ek": (1, 3),
+        "dc": 10,
+        "dk": (3, 7),
+    }
     seabed_mask = create_seabed_mask(
         source_Sv,
         method="ariza",
-        r0=20,
-        r1=1000,
-        roff=0,
-        thr=-38,
-        ec=1,
-        ek=(3, 3),
-        dc=10,
-        dk=(3, 7),
+        parameters=rapidkrill_seabed_mask_params,
     )
     seabed_mask = add_metadata_to_mask(
         mask=seabed_mask, metadata={"mask_type": "seabed", "method": "ariza"}
     )
 
+    rapidkrill_seabed_echo_mask_params = {
+        "theta": None,
+        "phi": None,
+        "r0": 10,
+        "r1": 1000,
+        "tSv": -75,
+        "ttheta": 702,
+        "tphi": 282,
+        "wtheta": 28,
+        "wphi": 52,
+    }
     seabed_echo_mask = create_seabed_mask(
         source_Sv,
         method="blackwell",
+        parameters=rapidkrill_seabed_echo_mask_params,
     )
     seabed_echo_mask = add_metadata_to_mask(
         mask=seabed_echo_mask, metadata={"mask_type": "false_seabed", "method": "blackwell"}
     )
+
     masks = [transient_mask, impulse_mask, attenuation_mask, seabed_mask, seabed_echo_mask]
     Sv_mask = attach_masks_to_dataset(source_Sv, masks)
     return Sv_mask
@@ -210,14 +238,21 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     A function that creates noise masks for a given Sv dataset using default methods for oceanstream
 
     Parameters:
-    - Sv (xarray.Dataset): the dataset to which the masks will be attached.
+    - source_Sv (xarray.Dataset): the dataset to which the masks will be attached.
 
     Returns:
     - xarray.Dataset: a dataset with the same dimensions as the original,
     containing the original data and four masks: mask_transient, mask_impulse,
     mask_attenuated, mask_false_seabed
+
+    Notes:
+    - To effectively utilize the `blackwell` method for seabed detection,
+    it's essential that the `source_Sv` dataset includes the `split-beam angle` parameters.
+    Specifically, ensure that your input `source_Sv` contains
+    both the `angle_alongship` and `angle_athwartship` variables.
+    Absence of these variables leads to errors .
     """
-    transient_mask_params = {
+    oceanstream_transient_mask_params = {
         "m": 5,
         "n": 20,
         "thr": 20,
@@ -225,18 +260,18 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
         "operation": "percentile15",
     }
     transient_mask = create_transient_mask(
-        source_Sv, parameters=transient_mask_params, method="ryan"
+        source_Sv, parameters=oceanstream_transient_mask_params, method="ryan"
     )
     transient_mask = add_metadata_to_mask(
         mask=transient_mask,
         metadata={
             "mask_type": "transient",
             "method": "ryan",
-            "parameters": dict_to_formatted_list(transient_mask_params),
+            "parameters": dict_to_formatted_list(oceanstream_transient_mask_params),
         },
     )
 
-    attenuation_mask_params = {
+    oceanstream_attenuation_mask_params = {
         "r0": 180,
         "r1": 280,
         "n": 30,
@@ -246,34 +281,53 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
         "offset": 0,
     }
     attenuation_mask = create_attenuation_mask(
-        source_Sv, parameters=attenuation_mask_params, method="ryan"
+        source_Sv, parameters=oceanstream_attenuation_mask_params, method="ryan"
     )
     attenuation_mask = add_metadata_to_mask(
         mask=attenuation_mask,
         metadata={
             "mask_type": "attenuation",
             "method": "ryan",
-            "parameters": dict_to_formatted_list(attenuation_mask_params),
+            "parameters": dict_to_formatted_list(oceanstream_attenuation_mask_params),
         },
     )
 
-    impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
-    impulse_mask = create_impulse_mask(source_Sv, parameters=impulse_mask_param, method="ryan")
+    oceanstream_impulse_mask_param = {"thr": 10, "m": 5, "n": 1}
+    impulse_mask = create_impulse_mask(
+        source_Sv, parameters=oceanstream_impulse_mask_param, method="ryan"
+    )
     impulse_mask = add_metadata_to_mask(
         mask=impulse_mask,
         metadata={
             "mask_type": "impulse",
             "method": "ryan",
-            "parameters": dict_to_formatted_list(impulse_mask_param),
+            "parameters": dict_to_formatted_list(oceanstream_impulse_mask_param),
         },
     )
 
+    oceanstream_seabed_echo_mask_params = {
+        "theta": None,
+        "phi": None,
+        "r0": 10,
+        "r1": 1000,
+        "tSv": -75,
+        "ttheta": 702,
+        "tphi": 282,
+        "wtheta": 28,
+        "wphi": 52,
+    }
     seabed_echo_mask = create_seabed_mask(
         source_Sv,
         method="blackwell",
+        parameters=oceanstream_seabed_echo_mask_params,
     )
     seabed_echo_mask = add_metadata_to_mask(
-        mask=seabed_echo_mask, metadata={"mask_type": "false_seabed", "method": "blackwell"}
+        mask=seabed_echo_mask,
+        metadata={
+            "mask_type": "false_seabed",
+            "method": "blackwell",
+            "parameters": dict_to_formatted_list(oceanstream_seabed_echo_mask_params),
+        },
     )
 
     masks = [transient_mask, impulse_mask, attenuation_mask, seabed_echo_mask]

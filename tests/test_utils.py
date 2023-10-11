@@ -25,7 +25,22 @@ def test_mask_metadata(ed_ek_60_for_Sv, metadata=None):
     if metadata is None:
         metadata = {"test": "test"}
     source_Sv = compute_sv(ed_ek_60_for_Sv)
-    mask = create_seabed_mask(source_Sv)
+
+    ARIZA_DEFAULT_PARAMS = {
+        "r0": 10,
+        "r1": 1000,
+        "roff": 0,
+        "thr": -40,
+        "ec": 1,
+        "ek": (1, 3),
+        "dc": 10,
+        "dk": (3, 7),
+    }
+    mask = create_seabed_mask(
+        source_Sv,
+        method="ariza",
+        parameters=ARIZA_DEFAULT_PARAMS,
+    )
     mask_with_metadata = add_metadata_to_mask(mask, metadata)
     for k, v in metadata.items():
         assert mask_with_metadata.attrs[k] == v
@@ -35,7 +50,21 @@ def test_add_mask(ed_ek_60_for_Sv, metadata=None):
     if metadata is None:
         metadata = {"mask_type": "seabed"}
     source_Sv = compute_sv(ed_ek_60_for_Sv)
-    mask = create_seabed_mask(source_Sv)
+    ARIZA_DEFAULT_PARAMS = {
+        "r0": 10,
+        "r1": 1000,
+        "roff": 0,
+        "thr": -40,
+        "ec": 1,
+        "ek": (1, 3),
+        "dc": 10,
+        "dk": (3, 7),
+    }
+    mask = create_seabed_mask(
+        source_Sv,
+        method="ariza",
+        parameters=ARIZA_DEFAULT_PARAMS,
+    )
     add_metadata_to_mask(mask, metadata)
     Sv_mask = attach_mask_to_dataset(source_Sv, mask)
     for k, v in metadata.items():
