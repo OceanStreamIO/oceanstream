@@ -53,20 +53,20 @@ def apply_selected_noise_masks_and_or_noise_removal(
     > Scientific Data 8.1 (2021): 23.
 
     Order of cleaning process:
-    1. False seabed mask (if provided)
-    2. Seabed mask (if provided)
-    3. Impulse noise mask (if provided)
-    4. Attenuated signal mask (if provided)
-    5. Transient noise mask (if provided)
-    6. Background noise mask (if provided)
+    1. Impulse noise mask (if provided)
+    2. Attenuated signal mask (if provided)
+    3. Transient noise mask (if provided)
+    4. Background noise mask (if provided)
+    5. False seabed mask (if provided)
+    6. Seabed mask (if provided)
 
     Valid processes/masks:
-    - 'mask_false_seabed'
-    - 'mask_seabed'
     - 'mask_impulse'
     - 'mask_attenuation'
     - 'mask_transient'
     - 'remove_background_noise'
+    - 'mask_false_seabed'
+    - 'mask_seabed'
 
     Parameters:
     - `ds`: (`xr.Dataset`, `str`, or `pathlib.Path`)
@@ -86,24 +86,24 @@ def apply_selected_noise_masks_and_or_noise_removal(
 
     """
 
-    valid_processes = [
-        "mask_false_seabed",
-        "mask_seabed",
+    valid_processes = valid_processes = [
         "mask_impulse",
         "mask_attenuation",
         "mask_transient",
         "remove_background_noise",
+        "mask_false_seabed",
+        "mask_seabed",
     ]
 
     for process in valid_processes:
         if process in processes_to_apply:
             params = processes_to_apply[process]
             if process in [
-                "mask_false_seabed",
-                "mask_seabed",
                 "mask_impulse",
                 "mask_attenuation",
                 "mask_transient",
+                "mask_false_seabed",
+                "mask_seabed",
             ]:
                 mask_data = ds[process]
                 ds = ep.mask.apply_mask(ds, mask_data, **params)
