@@ -382,3 +382,79 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     masks = [transient_mask, impulse_mask, attenuation_mask, seabed_echo_mask, seabed_mask]
     Sv_mask = attach_masks_to_dataset(source_Sv, masks)
     return Sv_mask
+def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
+    """
+    A function that creates noise masks for a given Sv dataset using default methods for oceanstream
+
+    Parameters:
+    - source_Sv (xarray.Dataset): the dataset to which the masks will be attached.
+
+    Returns:
+    - xarray.Dataset: a dataset with the same dimensions as the original,
+    containing the original data and five masks: mask_transient, mask_impulse,
+    mask_attenuated, mask_false_seabed, mask_seabed
+
+    Notes:
+    - To effectively utilize the `blackwell` or `blackwell_mod` methods for seabed detection,
+    it's essential that the `source_Sv` dataset includes the `split-beam angle` parameters.
+    Specifically, ensure that your input `source_Sv` contains
+    both the `angle_alongship` and `angle_athwartship` variables.
+    Absence of these variables leads to errors .
+    """
+    oceanstream_transient_mask_params = {
+        "r0":200, "r1":1000, "n":5, "thr":[2, 0], "roff":250, "jumps":5, "maxts":-35, "start":0
+    }
+    transient_mask = create_transient_mask(
+        source_Sv, parameters=oceanstream_transient_mask_params, method="fielding"
+    )
+
+    transient_mask = add_metadata_to_mask(
+        mask=transient_mask,
+        metadata={
+            "mask_type": "transient",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(oceanstream_transient_mask_params),
+        },
+    )
+
+    oceanstream_attenuation_mask_params = {
+        "r0": 180,
+        "r1": 280,
+        "n": 5,
+        "m": None,
+        "thr": -5,
+        "start": 0,
+        "offset": 0,
+    }
+
+
+
+    attenuation_mask = create_attenuation_mask(
+        source_Sv, parameters=oceanstream_attenuation_mask_params, method="ryan"
+    )
+    attenuation_mask = add_metadata_to_mask(
+        mask=attenuation_mask,
+        metadata={
+            "mask_type": "attenuation",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(oceanstream_attenuation_mask_params),
+        },
+    )
+
+    oceanstream_impulse_mask_param = {"thr": 3, "m": 3, "n": 1}
+    impulse_mask = create_impulse_mask(
+        source_Sv, parameters=oceanstream_impulse_mask_param, method="ryan"
+    )
+    impulse_mask = add_metadata_to_mask(
+        mask=impulse_mask,
+        metadata={
+            "mask_type": "impulse",
+            "method": "ryan",
+            "parameters": dict_to_formatted_list(oceanstream_impulse_mask_param),
+        },
+    )
+
+
+    masks = [transient_mask, impulse_mask, attenuation_mask]
+    Sv_mask = attach_masks_to_dataset(source_Sv, masks)
+    return Sv_mask
