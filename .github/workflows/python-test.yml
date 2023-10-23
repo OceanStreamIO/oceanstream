@@ -37,10 +37,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
 
-    - name: Download FTP Data
+    - name: Download FTP Data with wget
       run: |
         mkdir -p ${{ env.TEST_DATA_FOLDER }}
-        lftp -c "open ftp://${{ env.FTP_MAIN }}; lcd ${{ env.TEST_DATA_FOLDER }}; cd ${{ env.FTP_PARTIAL_PATH }}; mget JR161-D20061118-T010645.raw JR179-D20080410-T150637.raw JR230-D20091215-T121917.raw"
+        wget -P ${{ env.TEST_DATA_FOLDER }} ftp://${{ env.FTP_MAIN }}/${{ env.FTP_PARTIAL_PATH }}JR161-D20061118-T010645.raw
+        wget -P ${{ env.TEST_DATA_FOLDER }} ftp://${{ env.FTP_MAIN }}/${{ env.FTP_PARTIAL_PATH }}JR179-D20080410-T150637.raw
+        wget -P ${{ env.TEST_DATA_FOLDER }} ftp://${{ env.FTP_MAIN }}/${{ env.FTP_PARTIAL_PATH }}JR230-D20091215-T121917.raw
 
     - name: Run Tests
       run: pytest -m "not ignore"
