@@ -382,6 +382,8 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     masks = [transient_mask, impulse_mask, attenuation_mask, seabed_echo_mask, seabed_mask]
     Sv_mask = attach_masks_to_dataset(source_Sv, masks)
     return Sv_mask
+
+
 def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     """
     A function that creates noise masks for a given Sv dataset using default methods for oceanstream
@@ -402,7 +404,14 @@ def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     Absence of these variables leads to errors .
     """
     oceanstream_transient_mask_params = {
-        "r0":200, "r1":1000, "n":5, "thr":[2, 0], "roff":250, "jumps":5, "maxts":-35, "start":0
+        "r0": 200,
+        "r1": 1000,
+        "n": 5,
+        "thr": [2, 0],
+        "roff": 250,
+        "jumps": 5,
+        "maxts": -35,
+        "start": 0,
     }
     transient_mask = create_transient_mask(
         source_Sv, parameters=oceanstream_transient_mask_params, method="fielding"
@@ -426,8 +435,6 @@ def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
         "start": 0,
         "offset": 0,
     }
-
-
 
     attenuation_mask = create_attenuation_mask(
         source_Sv, parameters=oceanstream_attenuation_mask_params, method="ryan"
@@ -453,7 +460,6 @@ def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
             "parameters": dict_to_formatted_list(oceanstream_impulse_mask_param),
         },
     )
-
 
     masks = [transient_mask, impulse_mask, attenuation_mask]
     Sv_mask = attach_masks_to_dataset(source_Sv, masks)
