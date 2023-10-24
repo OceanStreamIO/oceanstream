@@ -64,6 +64,25 @@ def create_location(data: xr.Dataset) -> pd.DataFrame:
     return df
 
 
+def create_Sv(data: xr.Dataset, channel: str) -> pd.DataFrame:
+    """
+    Given a processed Sv file, enriched with lat/lon, it returns Sv data
+
+    Parameters:
+    - data: xr.Dataset
+        The raw data to extract information from.
+    - channel: str
+        The channel to use
+
+    Returns:
+    - pd.DataFrame
+        The required data.
+    """
+    df = data.sel(channel=channel)["Sv"].to_dataframe()
+    df = df["Sv"].unstack(level="range_sample")
+    return df
+
+
 def export_Sv_csv(data: xr.Dataset, folder: str, root_name: str):
     """
     Given a Sv file, a folder to write the outputs into, and a name pattern for the files,
@@ -81,8 +100,11 @@ def export_Sv_csv(data: xr.Dataset, folder: str, root_name: str):
     - None
     """
     location = create_location(data)
+    Sv = create_Sv(data, data["channel"][0])  # for R Shiny compat reasons
     location_filename = folder + "/" + root_name + "_GPS.csv"
+    Sv_filename = folder + "/" + root_name + "_Sv.csv"
     try:
         location.to_csv(location_filename, index=False)
+        Sv.to_csv(Sv_filename, index=False)
     except Exception as e:
         raise ValueError(str(e))
