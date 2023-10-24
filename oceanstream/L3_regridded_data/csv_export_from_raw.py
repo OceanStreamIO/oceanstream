@@ -64,14 +64,20 @@ def create_calibration(data: xr.Dataset) -> pd.DataFrame:
 
 
 def export_raw_csv(data: xr.Dataset, folder: str, root_name: str):
-    """
-    Given a raw echodata file, a folder to write the outputs into and a name pattern for the files,
-    it extracts and exports to csv the calibration data and the metadata
+"""
+    Given a raw echodata file, a folder to write the outputs into, and a name pattern for the files,
+    it extracts and exports to CSV the calibration data and the metadata.
 
-    :param data: xr.Dataset: the raw data to extract this information from
-    :param folder: str: the folder name to use
-    :param root_name: the root name to be used in the file patterns
-    :return:
+    Parameters:
+    - data: xr.Dataset
+        The raw data to extract this information from.
+    - folder: str
+        The folder name to use.
+    - root_name: str
+        The root name to be used in the file patterns.
+
+    Returns:
+    - None
     """
     metadata = create_metadata(data)
     calibration = create_calibration(data)
