@@ -1,5 +1,3 @@
-# import echopype as ep
-# import pandas as pd
 import xarray as xr
 
 
