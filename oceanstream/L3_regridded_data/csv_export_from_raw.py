@@ -3,11 +3,17 @@
 import xarray as xr
 
 
-def create_metadata(data: xr.Dataset):
+def create_metadata(data: xr.Dataset) -> pd.DataFrame:
     """
-    Given a raw echodata file, it extracts the metadata we require
-    :param data: xr.Dataset: the raw data to extract this information from
-    :return: pd.Dataframe: the required metadata
+    Given a raw echodata file, it extracts the metadata we require.
+
+    Parameters:
+    - data: xr.Dataset
+        The raw data to extract information from.
+
+    Returns:
+    - pd.DataFrame
+        The required metadata.
     """
     bg_1 = data["Sonar/Beam_group1"].isel(ping_time=0).isel(range_sample=0)
     bg_1.set_coords("frequency_nominal")
