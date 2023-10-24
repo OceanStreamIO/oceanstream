@@ -44,11 +44,17 @@ def create_metadata(data: xr.Dataset) -> pd.DataFrame:
     return df
 
 
-def create_calibration(data: xr.Dataset):
+def create_calibration(data: xr.Dataset) -> pd.DataFrame:
     """
-    Given a raw echodata file, it extracts the calibration data we require
-    :param data: xr.Dataset: the raw data to extract this information from
-    :return: pd.Dataframe: the required calibration data
+    Given a raw echodata file, it extracts the calibration data we require.
+
+    Parameters:
+    - data: xr.Dataset
+        The raw data to extract this information from.
+
+    Returns:
+    - pd.DataFrame
+        The required calibration data.
     """
     df = data["Vendor_specific"].to_dataframe()
     columns = ["frequency_nominal", "pulse_length", "gain_correction", "sa_correction"]
