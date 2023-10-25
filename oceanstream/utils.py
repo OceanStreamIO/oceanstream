@@ -1,5 +1,6 @@
 from typing import Dict, List, Union
 
+import numpy as np
 import xarray
 
 
@@ -74,3 +75,36 @@ def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]) -> xarr
     for mask in masks:
         Sv = attach_mask_to_dataset(Sv, mask)
     return Sv
+
+
+def haversine(type: str, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Given a pair of latitude/longitude points, calculate the great circle
+    distance between them, in nautical miles
+    Parameters:
+    - type: string
+        Type of distance unit to use (m, km, nm - nautical miles)
+    - lat1: float
+        Latitude of the first point
+    - lon1: float
+        Longitude of the first point
+    - lat2: float
+        Latitude of the second point
+    - lon2: float
+        Longitude of the second point
+
+    Returns:
+    - float: the distance in nautical miles
+    """
+    radius_dict = {"m": 6671008.8, "km": 6671.0088, "nm": 3440.065}
+    if type not in radius_dict.keys():
+        raise ValueError("Measuring unit not in available haversine units")
+    earth_radius = radius_dict[type]
+    lat1, lon1, lat2, lon2 = np.radians([lat1, lon2, lat2, lon2])
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+    c = 2 * np.arcsin(np.sqrt(a))
+    distance = earth_radius * c
+    return distance
