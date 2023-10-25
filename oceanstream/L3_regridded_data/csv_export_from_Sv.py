@@ -1,34 +1,7 @@
-import numpy as np
 import pandas as pd
 import xarray as xr
 
-
-def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """
-    Given a pair of latitude/longitude points, calculate the great circle
-    distance between them, in nautical miles
-    Parameters:
-    - lat1: float
-        Latitude of the first point
-    - lon1: float
-        Longitude of the first point
-    - lat2: float
-        Latitude of the second point
-    - lon2: float
-        Longitude of the second point
-
-    Returns:
-    - float: the distance in nautical miles
-    """
-    earth_radius = 3440.065  # in nautical miles
-    lat1, lon1, lat2, lon2 = np.radians([lat1, lon2, lat2, lon2])
-
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    c = 2 * np.arcsin(np.sqrt(a))
-    distance = earth_radius * c
-    return distance
+from oceanstream.utils import haversine
 
 
 def create_location(data: xr.Dataset) -> pd.DataFrame:
@@ -51,7 +24,7 @@ def create_location(data: xr.Dataset) -> pd.DataFrame:
     df.columns = ["lat", "lon", "dt"]
     df["distance"] = [
         haversine(
-            df["lat"].iloc[i], df["lon"].iloc[i], df["lat"].iloc[i - 1], df["lon"].iloc[i - 1]
+            "nm", df["lat"].iloc[i], df["lon"].iloc[i], df["lat"].iloc[i - 1], df["lon"].iloc[i - 1]
         )
         if i > 0
         else 0

@@ -1,6 +1,6 @@
 from oceanstream.L2_calibrated_data.noise_masks import create_seabed_mask
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset, dict_to_formatted_list
+from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset, dict_to_formatted_list, haversine
 
 
 def test_dict_to_formatted_list():
@@ -70,3 +70,11 @@ def test_add_mask(ed_ek_60_for_Sv, metadata=None):
     for k, v in metadata.items():
         assert Sv_mask["mask_seabed"].attrs[k] == v
     assert Sv_mask["mask_seabed"].attrs["mask_type"]
+
+
+def test_haversine():
+    lat1 = 44.707938
+    lon1 = -124.343030
+    lat2 = 44.707918
+    lon2 = -124.343044
+    assert haversine("nm", lat1, lon1, lat2, lon2) == 0.001200809214817291
