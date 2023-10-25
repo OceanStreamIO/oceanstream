@@ -3,7 +3,7 @@ import pandas as pd
 import xarray as xr
 
 
-def haversine(lat1, lon1, lat2, lon2):
+def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     Given a pair of latitude/longitude points, calculate the great circle
     distance between them, in nautical miles
