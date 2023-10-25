@@ -1,3 +1,4 @@
+import pandas as pd
 import xarray as xr
 
 
@@ -62,7 +63,7 @@ def create_calibration(data: xr.Dataset) -> pd.DataFrame:
 
 
 def export_raw_csv(data: xr.Dataset, folder: str, root_name: str):
-"""
+    """
     Given a raw echodata file, a folder to write the outputs into, and a name pattern for the files,
     it extracts and exports to CSV the calibration data and the metadata.
 
