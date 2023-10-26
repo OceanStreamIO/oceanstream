@@ -1,8 +1,8 @@
-import echopype as ep
 import numpy as np
 import pandas as pd
 import pytest
 import xarray as xr
+from echopype.commongrid.api import compute_MVBS, compute_MVBS_index_binning
 
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
@@ -87,23 +87,19 @@ def test_compute_mvbs(ed_ek_60_for_Sv):
         sv_echopype_EK60, ed_ek_60_for_Sv, depth_offset=200, waveform_mode="CW", encode_mode="power"
     )
 
-    ds_ep = ep.commongrid.api.compute_MVBS_index_binning(enriched_sv)
+    ds_ep = compute_MVBS_index_binning(enriched_sv)
     ds_os = compute_mvbs(enriched_sv, method="index_binning")
     result = np.isclose(ds_ep["Sv"].values, ds_os["Sv"].values, atol=1e-8, equal_nan=True)
     assert result.all()
-    ds_ep = ep.commongrid.api.compute_MVBS(enriched_sv)
+    ds_ep = compute_MVBS(enriched_sv)
     ds_os = compute_mvbs(enriched_sv, method="physical_units")
     result = np.isclose(ds_ep["Sv"].values, ds_os["Sv"].values, atol=1e-8, equal_nan=True)
     assert result.all()
-    ds_ep = ep.commongrid.api.compute_MVBS_index_binning(
-        enriched_sv, range_sample_num=30, ping_num=30
-    )
+    ds_ep = compute_MVBS_index_binning(enriched_sv, range_sample_num=30, ping_num=30)
     ds_os = compute_mvbs(enriched_sv, method="index_binning", range_sample_num=30, ping_num=30)
     result = np.isclose(ds_ep["Sv"].values, ds_os["Sv"].values, atol=1e-8, equal_nan=True)
     assert result.all()
-    ds_ep = ep.commongrid.api.compute_MVBS(
-        enriched_sv, range_var="depth", range_bin="90m", ping_time_bin="60S"
-    )
+    ds_ep = compute_MVBS(enriched_sv, range_var="depth", range_bin="90m", ping_time_bin="60S")
     ds_os = compute_mvbs(
         enriched_sv,
         method="physical_units",

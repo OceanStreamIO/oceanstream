@@ -1,7 +1,7 @@
 from typing import Literal, Optional
 
-import echopype as ep
 import xarray as xr
+from echopype.commongrid.api import compute_MVBS, compute_MVBS_index_binning
 
 
 def compute_mvbs(
@@ -48,8 +48,8 @@ def compute_mvbs(
     """
 
     methods = {
-        "index_binning": ep.commongrid.api.compute_MVBS_index_binning,
-        "physical_units": ep.commongrid.api.compute_MVBS,
+        "index_binning": compute_MVBS_index_binning,
+        "physical_units": compute_MVBS,
     }
 
     if method == "index_binning":
