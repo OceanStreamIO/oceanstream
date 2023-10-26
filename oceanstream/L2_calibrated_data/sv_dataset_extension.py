@@ -75,3 +75,22 @@ def enrich_sv_dataset(sv: Dataset, echodata: EchoData, **kwargs) -> Dataset:
         warnings.warn(f"Failed to add split-beam angle due to error: {str(e)}")
 
     return enriched_sv
+
+
+def add_seabed_depth(Sv: Dataset):
+    """
+    Given an existing Sv dataset with a seabed mask attached, it adds a
+    data variable called seabed depth containing the location of the seabed on
+    each ping
+
+    Parameters:
+    - sv (xr.Dataset): Volume backscattering strength (Sv) from the given echodata.
+
+    Returns:
+    xr.Dataset:
+        An enhanced dataset with seabed depth
+    """
+    seabed_mask = ~Sv["mask_seabed"]
+    seabed_level = seabed_mask.argmax(dim="range_sample")
+    res = Sv.assign(seabed_level=seabed_level)
+    return res

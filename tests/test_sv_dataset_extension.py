@@ -2,7 +2,15 @@ import numpy as np
 import pytest
 
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
+from oceanstream.L2_calibrated_data.sv_dataset_extension import (
+    enrich_sv_dataset,
+    add_seabed_depth
+)
+from oceanstream.L2_calibrated_data.noise_masks import (
+    create_seabed_mask,
+    attach_masks_to_dataset,
+)
+from oceanstream.utils import add_metadata_to_mask, dict_to_formatted_list
 
 
 def test_enrich_sv_dataset_depth_mean(ed_ek_60_for_Sv):
@@ -39,3 +47,27 @@ def test_enrich_sv_dataset_warning(ed_ek_60_for_Sv):
     with pytest.warns(UserWarning):
         sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
         enrich_sv_dataset(sv_echopype_EK60, ed_ek_60_for_Sv, depth_offset=200)
+
+
+def test_add_seabed_depth(ed_ek_60_for_Sv):
+    source_Sv = enrich_sv_dataset(
+        sv=compute_sv(ed_ek_60_for_Sv), echodata=ed_ek_60_for_Sv, waveform_mode="CW", encode_mode="power"
+    )
+    seabed_mask = create_seabed_mask(
+        source_Sv,
+        method="ariza",
+        parameters=rapidkrill_seabed_mask_params,
+    )
+    seabed_mask = add_metadata_to_mask(
+        mask=seabed_mask,
+        metadata={
+            "mask_type": "seabed",
+            "method": "ariza",
+            "parameters": dict_to_formatted_list(rapidkrill_seabed_mask_params),
+        },
+    )
+    Sv_mask = attach_masks_to_dataset(source_Sv, [seabed_mask])
+    res = add_seabed_depth(Sv_mask)
+    res_sl = res["seabed_level"]
+    assert res_sl.shape == (3, 1932)
+    assert res_sl[0, 0] == 464
