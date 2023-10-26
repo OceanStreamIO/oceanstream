@@ -50,6 +50,16 @@ def test_enrich_sv_dataset_warning(ed_ek_60_for_Sv):
 
 
 def test_add_seabed_depth(ed_ek_60_for_Sv):
+    rapidkrill_seabed_mask_params = {
+        "r0": 10,
+        "r1": 1000,
+        "roff": 0,
+        "thr": -40,
+        "ec": 1,
+        "ek": (1, 3),
+        "dc": 10,
+        "dk": (3, 7),
+    }
     source_Sv = enrich_sv_dataset(
         sv=compute_sv(ed_ek_60_for_Sv), echodata=ed_ek_60_for_Sv, waveform_mode="CW", encode_mode="power"
     )
