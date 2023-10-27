@@ -2,11 +2,14 @@ import ftplib
 import os
 from ftplib import FTP
 from pathlib import Path
-# import xarray as xr
+from xarray import Dataset
 
 import echopype as ep
+from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
+from oceanstream.L2_calibrated_data.sv_computation import compute_sv
+from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
 import pytest
-from xarray import Dataset
+
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")
@@ -153,7 +156,7 @@ def raw_dataset_jr230(setup_test_data_jr230):
     return ed
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def ed_ek_60_for_Sv():
     bucket = "ncei-wcsd-archive"
     base_path = "data/raw/Bell_M._Shimada/SH1707/EK60/"
@@ -171,7 +174,7 @@ def ed_ek_60_for_Sv():
 
 
 # Read test raw data EK80
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def ed_ek_80_for_Sv():
     base_url = "noaa-wcsd-pds.s3.amazonaws.com/"
     path = "data/raw/Sally_Ride/SR1611/EK80/"
@@ -185,6 +188,24 @@ def ed_ek_80_for_Sv():
     )
     return ed_EK80
 
+@pytest.fixture(scope="session")
+def ek_60_Sv_denoised():
+    bucket = "ncei-wcsd-archive"
+    base_path = "data/raw/Bell_M._Shimada/SH1707/EK60/"
+    filename = "Summer2017-D20170620-T011027.raw"
+    rawdirpath = base_path + filename
+
+    s3raw_fpath = f"s3://{bucket}/{rawdirpath}"
+    storage_opts = {"anon": True}
+    ed = ep.open_raw(
+        s3raw_fpath,
+        sonar_model="EK60",
+        storage_options=storage_opts  # type: ignore
+    )
+    Sv = compute_sv(ed)
+    ds_Sv = apply_remove_background_noise(Sv)
+    res = enrich_sv_dataset(ds_Sv, ed, depth_offset=200, waveform_mode="CW", encode_mode="power")
+    return res
 
 def test_transient(sv_dataset_jr161):
     source_Sv = sv_dataset_jr161
