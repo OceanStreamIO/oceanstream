@@ -1,8 +1,8 @@
 import scipy.ndimage as nd_img
 import xarray as xr
 from echopype.mask.api import apply_mask
-
-from oceanstream.utils import haversine
+from haversine import haversine
+from pandas import DataFrame
 
 
 def split_shoal_mask(Sv: xr.Dataset):
@@ -122,7 +122,7 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     end_lat = subset_md.latitude[-1].values
     start_lon = subset_md.longitude[0].values
     end_lon = subset_md.longitude[-1].values
-    length_meters = haversine("m", start_lat, end_lat, start_lon, end_lon)
+    length_meters = haversine((start_lat, start_lon), (end_lat, end_lon), "m")
 
     return_dict = {
         "label": label,
@@ -155,14 +155,13 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
 
 def process_shoals(Sv: xr.Dataset):
     """
-    Given a Sv dataset with an existing shoal mask, generates a list of
-    individual masks for each shoal
+    Given a Sv dataset with an existing shoal mask, extracts shoal metadata
 
     Parameters:
     - Sv: xr.Dataset - Sv dataset with an existing shoal mask
 
     Returns:
-    - [xr.DataArray]: list of individual shoal masks
+    - [dict]: list of individual dicts for each shoal/channel combination
 
     Example:
         >>> split_shoal_mask(Sv)
@@ -172,3 +171,20 @@ def process_shoals(Sv: xr.Dataset):
     results = [item for sublist in dicts for item in sublist]
     results = [r for r in results if r is not None]
     return results
+
+
+def write_shoals_to_csv(shoal_list: [], filename):
+    """
+    Given a shoal list and a filename, it exports the list as csv to the filename
+
+    Parameters:
+    - shoal_list: []
+        the list of dicts containing the shoal metadata
+    - filename: str
+        The file name to use.
+
+    Returns:
+    - None
+    """
+    df = DataFrame(shoal_list)
+    df.to_csv(filename, index=False)
