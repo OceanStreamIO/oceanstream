@@ -1,7 +1,6 @@
 import pandas as pd
 import xarray as xr
-
-from oceanstream.utils import haversine
+from haversine import haversine
 
 
 def create_location(data: xr.Dataset) -> pd.DataFrame:
@@ -24,7 +23,9 @@ def create_location(data: xr.Dataset) -> pd.DataFrame:
     df.columns = ["lat", "lon", "dt"]
     df["distance"] = [
         haversine(
-            "nm", df["lat"].iloc[i], df["lon"].iloc[i], df["lat"].iloc[i - 1], df["lon"].iloc[i - 1]
+            (df["lat"].iloc[i], df["lon"].iloc[i]),
+            (df["lat"].iloc[i - 1], df["lon"].iloc[i - 1]),
+            unit="nmi",
         )
         if i > 0
         else 0
