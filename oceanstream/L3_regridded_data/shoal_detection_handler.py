@@ -5,22 +5,22 @@ This module provides functionalities for shoal detection in echosounder data.
 
 Functions:
 
-- `create_shoal_mask_multichannel(ds, **kwargs)`:
+- `create_shoal_mask_multichannel(Sv, parameters, method)`:
     Generates two multichannel masks (`mask` and `mask_`) used for shoal detection based on the given Sv dataset.
 - `combine_shoal_masks_multichannel(mask, mask_)`:
     Combines the multichannel masks (`mask` and `mask_`) to produce a final mask.
     The resulting mask contains `True` values only where both input masks are `True` for each channel.
-- `apply_shoal_mask(ds, combined_masks)`:
-    Applies a multichannel mask to the Sv data in the provided dataset.
+ - `attach_shoal_mask_to_ds(ds, parameters, method)`:
+    Attaches a shoal mask to the given dataset.
 
 Usage:
 
 To create the two necessary multichannel shoal masks for a given Sv dataset, ds:
-    >>> create_shoal_mask_multichannel(ds, **kwargs)
+    >>> create_shoal_mask_multichannel(Sv, parameters, method)
 To combine two multichannel masks, `mask` and `mask_`:
     >>> combine_shoal_masks_multichannel(mask, mask_)
-To apply the combined masks to a dataset, ds:
-    >>> apply_shoal_mask(ds, combined_masks)
+To attach a shoal mask to the given dataset, ds.:
+    >>> attach_shoal_mask_to_ds(ds, parameters, method)
 
 Notes:
 
@@ -28,16 +28,21 @@ Notes:
 - Sv represents the volume backscattering strength.
 """
 
-from typing import Any, Tuple
+
+from typing import Tuple
 
 import xarray as xr
 from echopype.mask.api import get_shoal_mask_multichannel
 
 from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset
 
+WEILL_DEFAULT_PARAMETERS = {"thr": -70, "maxvgap": -5, "maxhgap": 0, "minvlen": 0, "minhlen": 0}
+
 
 def create_shoal_mask_multichannel(
-    Sv: xr.Dataset, **kwargs: Any
+    Sv: xr.Dataset,
+    parameters: dict = WEILL_DEFAULT_PARAMETERS,
+    method: str = "will",
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     """
     Invokes echopype's `get_shoal_mask_multichannel` to create two multichannel masks used for shoal detection.
@@ -47,10 +52,10 @@ def create_shoal_mask_multichannel(
     Sv : xr.Dataset
         The dataset for which the shoal masks will be created. This dataset should have the
         coordinate `channel` and variables `frequency_nominal` and `Sv`.
-
-    **kwargs : Any
-        Additional arguments required by the `get_shoal_mask_multichannel` function.
-        Refer to echopype's documentation for the possible parameters.
+    parameters: dict
+        Method parameters
+    method: str
+        Specifying the algorithm to use
 
     Returns:
 
@@ -63,13 +68,10 @@ def create_shoal_mask_multichannel(
 
     Example:
 
-    >>> mask, mask_ = create_shoal_mask_multichannel(Sv_dataset)
+    >>> mask, mask_ = create_shoal_mask_multichannel(Sv, parameters, method)
     """
-    mask, mask_ = get_shoal_mask_multichannel(Sv, **kwargs)
-    if "mask_type" in kwargs:
-        mask_type_value = kwargs["mask_type"]
-    else:
-        mask_type_value = "will"
+    mask, mask_ = get_shoal_mask_multichannel(Sv, parameters, method)
+    mask_type_value = method
     mask.attrs["shoal detection mask type"] = mask_type_value
     mask_.attrs["shoal detection mask type"] = mask_type_value
     return mask, mask_
@@ -113,7 +115,9 @@ def combine_shoal_masks_multichannel(mask: xr.DataArray, mask_: xr.DataArray) ->
     return combined_masks
 
 
-def attach_shoal_mask_to_ds(ds: xr.Dataset, **kwargs) -> xr.Dataset:
+def attach_shoal_mask_to_ds(
+    ds: xr.Dataset, parameters: dict = WEILL_DEFAULT_PARAMETERS, method: str = "will"
+) -> xr.Dataset:
     """
     Attaches a shoal mask to the given dataset.
 
@@ -123,16 +127,18 @@ def attach_shoal_mask_to_ds(ds: xr.Dataset, **kwargs) -> xr.Dataset:
     Metadata indicating the mask type is added to the combined mask before attaching it to the dataset.
 
     Parameters:
-    - ds (xr.Dataset): The dataset to which the shoal mask will be attached.
-    - **kwargs: Additional keyword arguments passed to the `create_shoal_mask_multichannel` function.
+    - ds (xr.Dataset):
+        The dataset to which the shoal mask will be attached.
+    - parameters (dist) and method (str):
+        Arguments passed to the `create_shoal_mask_multichannel` function.
 
     Returns:
     - xr.Dataset: The dataset with the shoal mask attached.
 
     Example:
-        >>> ds_with_shoal_mask = attach_shoal_mask_to_ds(ds)
+        >>> ds_with_shoal_mask = attach_shoal_mask_to_ds(ds, parameters, method)
     """
-    mask, mask_ = create_shoal_mask_multichannel(ds, **kwargs)
+    mask, mask_ = create_shoal_mask_multichannel(ds, parameters, method)
     shoal_mask = combine_shoal_masks_multichannel(mask, mask_)
     shoal_mask = add_metadata_to_mask(mask=shoal_mask, metadata={"mask_type": "shoal"})
     return attach_mask_to_dataset(ds, shoal_mask)
