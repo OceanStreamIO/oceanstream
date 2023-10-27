@@ -14,7 +14,7 @@ def prep_dataset(Sv, raw):
     shoal_dataset["mask_shoal"][:,: ,600:] = False
     shoal_dataset["mask_shoal"][:,0:600 ,:] = False
     shoal_dataset["mask_shoal"][:,800: ,:] = False
-    shoal_dataset = enrich_sv_dataset(shoal_dataset, raw)
+    shoal_dataset = enrich_sv_dataset(shoal_dataset, raw, depth_offset=200, waveform_mode="CW", encode_mode="power")
     return shoal_dataset
 
 def test_split_shoal(ed_ek_60_for_Sv):
