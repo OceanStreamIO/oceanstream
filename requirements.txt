@@ -19,3 +19,4 @@ more-itertools==8.13.0
 geopy
 pydantic>2
 echopype
+haversine
