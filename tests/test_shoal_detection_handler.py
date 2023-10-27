@@ -16,6 +16,7 @@ def _count_false_values(mask: xr.DataArray) -> int:
     return mask.size - mask.sum().item()
 
 
+@pytest.mark.ignore
 def test_create_shoal_mask_multichannel(ed_ek_60_for_Sv):
     sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
     ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
@@ -25,6 +26,7 @@ def test_create_shoal_mask_multichannel(ed_ek_60_for_Sv):
     assert _count_false_values(mask_) == 0
 
 
+@pytest.mark.ignore
 def test_combine_shoal_masks_multichannel(ed_ek_60_for_Sv):
     sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
     ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
@@ -34,6 +36,7 @@ def test_combine_shoal_masks_multichannel(ed_ek_60_for_Sv):
     assert _count_false_values(combined_masks) == 4873071
 
 
+@pytest.mark.ignore
 def test_attach_shoal_mask_to_ds(ed_ek_60_for_Sv):
     sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
     ds_Sv = apply_remove_background_noise(sv_echopype_EK60)

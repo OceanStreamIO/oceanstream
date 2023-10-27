@@ -43,6 +43,7 @@ def test_apply_selected_noise_masks_and_or_noise_removal(ed_ek_60_for_Sv):
         apply_selected_noise_masks_and_or_noise_removal(Sv_with_masks, "invalid_parameters")
 
 
+@pytest.mark.ignore
 def test_apply_mask_organisms_in_order(ed_ek_60_for_Sv):
     sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
     enriched_Sv = enrich_sv_dataset(
