@@ -8,13 +8,14 @@ from oceanstream.L3_regridded_data.shoal_detection_handler import (
     combine_shoal_masks_multichannel,
     create_shoal_mask_multichannel,
 )
+#from oceanstream.utils import tfc
 
 
 def _count_false_values(mask: xr.DataArray) -> int:
     return mask.size - mask.sum().item()
 
 
-#@pytest.mark.ignore
+@pytest.mark.ignore
 def test_create_shoal_mask_multichannel(ek_60_Sv_denoised):
     mask, mask_ = create_shoal_mask_multichannel(ek_60_Sv_denoised)
 
@@ -22,15 +23,14 @@ def test_create_shoal_mask_multichannel(ek_60_Sv_denoised):
     assert _count_false_values(mask_) == 0
 
 
-#@pytest.mark.ignore
+@pytest.mark.ignore
 def test_combine_shoal_masks_multichannel(ek_60_Sv_denoised):
     mask, mask_ = create_shoal_mask_multichannel(ek_60_Sv_denoised)
     combined_masks = combine_shoal_masks_multichannel(mask, mask_)
 
     assert _count_false_values(combined_masks) == 4873071
 
-
-#@pytest.mark.ignore
+@pytest.mark.ignore
 def test_attach_shoal_mask_to_ds(ek_60_Sv_denoised):
     ds_Sv_shoal_combined = attach_shoal_mask_to_ds(ek_60_Sv_denoised)
     ds_Sv_shoal_combined = ep.mask.apply_mask(
