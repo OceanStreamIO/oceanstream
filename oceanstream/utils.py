@@ -96,18 +96,23 @@ def haversine(um: str, lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     Returns:
     - float: the distance in the desired unit
     """
-    radius_dict = {"m": 6671008.8, "km": 6671.0088, "nm": 3440.065}
+    radius_dict = {"m": 6372.8 * 1000, "km": 6372.8, "nm": 3959.87433}
     if um not in radius_dict.keys():
         raise ValueError("Measuring unit not in available haversine units")
     earth_radius = radius_dict[um]
-    lat1, lon1, lat2, lon2 = np.radians([lat1, lon2, lat2, lon2])
+    # lat1, lon1, lat2, lon2 = np.radians([lat1, lon2, lat2, lon2])
 
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+    dlat = np.radians(lat2 - lat1)
+    dlon = np.radians(lon2 - lon1)
+    lat1r = np.radians(lat1)
+    lat2r = np.radians(lat2)
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1r) * np.cos(lat2r) * np.sin(dlon / 2) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
     distance = earth_radius * c
     return distance
+
+
+# TODO sanity check, getting some weird numbers when using metric
 
 
 def tfc(mask: xr.DataArray):

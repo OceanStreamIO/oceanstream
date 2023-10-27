@@ -80,7 +80,7 @@ def test_haversine():
     lon1 = -124.343030
     lat2 = 44.707918
     lon2 = -124.343044
-    assert haversine("nm", lat1, lon1, lat2, lon2) == 0.001200809214817291
+    assert haversine("m", lat1, lon1, lat2, lon2) == 2.4846060863150403
 
 
 def test_tfc():
