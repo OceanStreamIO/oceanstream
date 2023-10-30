@@ -1,7 +1,7 @@
 from typing import Dict, List, Union
 
 import numpy as np
-import xarray
+import xarray as xr
 
 
 def dict_to_formatted_list(d: Dict[str, Union[int, str]]) -> List[str]:
@@ -9,7 +9,7 @@ def dict_to_formatted_list(d: Dict[str, Union[int, str]]) -> List[str]:
     return [f"{key}={value}" for key, value in d.items()]
 
 
-def add_metadata_to_mask(mask: xarray.Dataset, metadata: Dict) -> xarray.Dataset:
+def add_metadata_to_mask(mask: xr.Dataset, metadata: Dict) -> xr.Dataset:
     """
     Attaches the provided metadata to the given mask as global attributes.
 
@@ -31,7 +31,7 @@ def add_metadata_to_mask(mask: xarray.Dataset, metadata: Dict) -> xarray.Dataset
     return mask
 
 
-def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset) -> xarray.Dataset:
+def attach_mask_to_dataset(Sv: xr.Dataset, mask: xr.Dataset) -> xr.Dataset:
     """
     Attaches a mask to an existing Sv dataset, allowing the mask to travel in one data structure to the next module
 
@@ -55,7 +55,7 @@ def attach_mask_to_dataset(Sv: xarray.Dataset, mask: xarray.Dataset) -> xarray.D
     return Sv_mask
 
 
-def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]) -> xarray.Dataset:
+def attach_masks_to_dataset(Sv: xr.Dataset, masks: [xr.Dataset]) -> xr.Dataset:
     """
     Attaches masks to an existing Sv dataset,
     so they can travel in one data structure to the next module
@@ -77,34 +77,21 @@ def attach_masks_to_dataset(Sv: xarray.Dataset, masks: [xarray.Dataset]) -> xarr
     return Sv
 
 
-def haversine(um: str, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+def tfc(mask: xr.DataArray):
     """
-    Given a pair of latitude/longitude points, calculate the great circle
-    distance between them, in nautical miles
+    Counts true and false values in a xarray (usually a mask)
+
     Parameters:
-    - um: string
-        Type of distance unit to use (m, km, nm - nautical miles)
-    - lat1: float
-        Latitude of the first point
-    - lon1: float
-        Longitude of the first point
-    - lat2: float
-        Latitude of the second point
-    - lon2: float
-        Longitude of the second point
+    - mask (xarray.DataArray): boolean xarray
 
     Returns:
-    - float: the distance in the desired unit
-    """
-    radius_dict = {"m": 6671008.8, "km": 6671.0088, "nm": 3440.065}
-    if um not in radius_dict.keys():
-        raise ValueError("Measuring unit not in available haversine units")
-    earth_radius = radius_dict[um]
-    lat1, lon1, lat2, lon2 = np.radians([lat1, lon2, lat2, lon2])
+    - (): tuple where the first value is the count of true values
+    and the second one is the count of false values
 
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    c = 2 * np.arcsin(np.sqrt(a))
-    distance = earth_radius * c
-    return distance
+    Example:
+        >>> tfc(mask)
+    """
+    count_true = np.count_nonzero(mask)
+    count_false = mask.size - count_true
+    true_false_counts = (count_true, count_false)
+    return true_false_counts

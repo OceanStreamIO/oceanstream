@@ -46,4 +46,5 @@ sphinx_rtd_theme
 sphinxcontrib-mermaid
 twine
 wheel
+haversine
 git+https://github.com/OceanStreamIO/echopype.git@next-dev

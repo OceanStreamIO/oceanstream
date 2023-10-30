@@ -11,7 +11,7 @@ def test_create_location(ed_ek_60_for_Sv):
     )
     res = create_location(enriched_sv)
     assert res.shape == (1932, 4)
-    assert res["knt"][1931] == 0.8838246707925663
+    assert res["knt"][1931] == 1.7561833282548402
 
 
 def test_create_Sv(ed_ek_60_for_Sv):
