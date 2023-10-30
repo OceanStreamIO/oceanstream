@@ -82,12 +82,12 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     md = Sv_masked.copy(deep=True)
     md["Sv"] = ~md["Sv"].isnull()
 
-    Sv_mean = Sv_masked.Sv.mean(skipna=True).values
-    frequency = Sv_masked.frequency_nominal.values
-    area = mc.sum().values
+    Sv_mean = Sv_masked.Sv.mean(skipna=True).values.item()
+    frequency = Sv_masked.frequency_nominal.values.item()
+    area = mc.sum().values.item()
     if area == 0:
         return None
-    filename = md.source_filenames.values
+    filename = md.source_filenames.values.item()
     label = mc.attrs["label"]
 
     ping_true = md["Sv"].any(dim="range_sample")
@@ -95,28 +95,29 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     subset_md = md.sel(ping_time=ping_true, range_sample=range_true)
 
     # TODO figure out exactly how the shiny tool does plotting
-    # bbox_0 = subset_md.ping_time.min().values
-    # bbox_2 = subset_md.ping_time.max().values
-    # bbox_1 = subset_md.range_sample.min().values
-    # bbox_3 = subset_md.range_sample.max().values
-    # centroid_0 = (bbox_0 + bbox_2) / 2
-    # centroid_1 = (bbox_1 + bbox_3) / 2
+    start_time = subset_md.ping_time.min().values  # .item()
+    end_time = subset_md.ping_time.max().values  # .item()
+    start_range = subset_md.range_sample.min().values.item()
+    end_range = subset_md.range_sample.max().values.item()
+
+    # print(mc.ping_time)
+    # print(start_time)
+    # print(end_time)
 
     bbox_0 = 0
     bbox_1 = 0
     bbox_2 = 0
     bbox_3 = 0
+    bbox_0 = (mc["range_sample"] == start_range).argmax(dim="range_sample").item()
+    bbox_2 = (mc["range_sample"] == end_range).argmax(dim="range_sample").item()
+    # bbox_1 = (mc["ping_time"] == start_time).argmax(dim="ping_time").item()
+    # bbox_3 = (mc["ping_time"] == end_time).argmax(dim="ping_time").item()
     centroid_0 = (bbox_0 + bbox_2) / 2
     centroid_1 = (bbox_1 + bbox_3) / 2
 
     npings = len(subset_md.ping_time)
     nsamples = len(subset_md.range_sample)
     mean_range = subset_md.range_sample.mean().values
-
-    start_time = subset_md.ping_time.min().values
-    end_time = subset_md.ping_time.max().values
-    start_range = subset_md.range_sample.min().values
-    end_range = subset_md.range_sample.max().values
 
     start_lat = subset_md.latitude[0].values
     end_lat = subset_md.latitude[-1].values
