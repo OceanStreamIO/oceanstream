@@ -355,15 +355,26 @@ def create_default_noise_masks_oceanstream(source_Sv: xarray.Dataset):
         },
     )
 
+    # initial "ariza" parameters
+    # oceanstream_seabed_mask_params = {
+    #     "r0": 10,
+    #     "r1": 1000,
+    #     "roff": 0,
+    #     "thr": -40,
+    #     "ec": 1,
+    #     "ek": (1, 3),
+    #     "dc": 10,
+    #     "dk": (3, 7),
+    # }
     oceanstream_seabed_mask_params = {
         "r0": 10,
         "r1": 1000,
         "roff": 0,
-        "thr": -40,
-        "ec": 1,
+        "thr": -35,
+        "ec": 15,
         "ek": (1, 3),
-        "dc": 10,
-        "dk": (3, 7),
+        "dc": 150,
+        "dk": (1, 3),
     }
     seabed_mask = create_seabed_mask(
         source_Sv,
