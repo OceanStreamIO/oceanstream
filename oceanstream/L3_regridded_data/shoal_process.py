@@ -100,18 +100,12 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     start_range = subset_md.range_sample.min().values.item()
     end_range = subset_md.range_sample.max().values.item()
 
-    # print(mc.ping_time)
-    # print(start_time)
-    # print(end_time)
-
-    bbox_0 = 0
-    bbox_1 = 0
-    bbox_2 = 0
-    bbox_3 = 0
     bbox_0 = (mc["range_sample"] == start_range).argmax(dim="range_sample").item()
     bbox_2 = (mc["range_sample"] == end_range).argmax(dim="range_sample").item()
-    # bbox_1 = (mc["ping_time"] == start_time).argmax(dim="ping_time").item()
-    # bbox_3 = (mc["ping_time"] == end_time).argmax(dim="ping_time").item()
+    bbox_1 = (mc["ping_time"] == start_time).argmax(
+        dim="ping_time"
+    ).item() * 2  # for historical compatibility
+    bbox_3 = (mc["ping_time"] == end_time).argmax(dim="ping_time").item() * 2
     centroid_0 = (bbox_0 + bbox_2) / 2
     centroid_1 = (bbox_1 + bbox_3) / 2
 
