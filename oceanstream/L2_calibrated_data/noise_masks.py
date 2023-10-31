@@ -405,14 +405,8 @@ def create_noise_masks_oceanstream(source_Sv: xarray.Dataset):
     Returns:
     - xarray.Dataset: a dataset with the same dimensions as the original,
     containing the original data and five masks: mask_transient, mask_impulse,
-    mask_attenuated, mask_false_seabed, mask_seabed
+    mask_attenuated
 
-    Notes:
-    - To effectively utilize the `blackwell` or `blackwell_mod` methods for seabed detection,
-    it's essential that the `source_Sv` dataset includes the `split-beam angle` parameters.
-    Specifically, ensure that your input `source_Sv` contains
-    both the `angle_alongship` and `angle_athwartship` variables.
-    Absence of these variables leads to errors .
     """
     oceanstream_transient_mask_params = {
         "r0": 200,
