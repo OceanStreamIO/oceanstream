@@ -10,6 +10,10 @@ from xarray import Dataset
 from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
+from oceanstream.L2_calibrated_data import sv_interpolation, \
+    create_default_noise_masks_oceanstream
+from oceanstream.L3_regridded_data import applying_masks_handler, \
+    attach_shoal_mask_to_ds
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")
@@ -88,6 +92,41 @@ def get_sv_dataset(file_path, enriched: bool = False, waveform: str = "CW", enco
 def get_raw_dataset(file_path):
     ed = ep.open_raw(file_path, sonar_model="ek60")  # type: ignore
     return ed
+
+
+def denoise_dataset(dataset):
+    enriched_Sv = dataset
+    Sv_with_masks = create_default_noise_masks_oceanstream(enriched_Sv)
+
+    process_parameters = {
+        "mask_transient": {
+            "var_name": "Sv",
+        },
+        "mask_impulse": {
+            "var_name": "Sv",
+        },
+        "mask_attenuation": {
+            "var_name": "Sv",
+        },
+    }
+    cleaned_ds = applying_masks_handler.apply_selected_noise_masks_and_or_noise_removal(
+        Sv_with_masks,
+        process_parameters,
+    )
+    interpolated_ds = sv_interpolation.interpolate_sv(cleaned_ds)
+    interpolated_ds = interpolated_ds.rename({"Sv": "Sv_denoised", "Sv_interpolated": "Sv"})
+    process_parameters = {
+        "remove_background_noise": {
+            "ping_num": 40,
+            "range_sample_num": 10,
+            "noise_max": -125,
+            "SNR_threshold": 3,
+        },
+    }
+    interpolated_ds = applying_masks_handler.apply_selected_noise_masks_and_or_noise_removal(
+        interpolated_ds, process_parameters
+    )
+    return interpolated_ds
 
 
 @pytest.fixture(scope="session")
@@ -196,6 +235,13 @@ def ek_60_Sv_denoised(enriched_ek60_Sv):
     return ds_Sv
 
 
-def test_transient(sv_dataset_jr161):
-    source_Sv = sv_dataset_jr161
-    print(source_Sv)
+@pytest.fixture(scope="session")
+def ek_60_Sv_full_denoised(enriched_ek60_Sv):
+    dataset = denoise_dataset(enriched_ek60_Sv)
+    return dataset
+
+
+@pytest.fixture(scope="session")
+def ek_60_Sv_shoal(ek_60_Sv_full_denoised):
+    dataset = attach_shoal_mask_to_ds(ek_60_Sv_full_denoised)
+    return dataset
