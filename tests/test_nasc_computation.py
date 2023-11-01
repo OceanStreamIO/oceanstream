@@ -2,16 +2,11 @@ import pytest
 
 from oceanstream.L2_calibrated_data import sv_interpolation
 from oceanstream.L2_calibrated_data.noise_masks import create_default_noise_masks_oceanstream
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
 from oceanstream.L3_regridded_data import applying_masks_handler, nasc_computation
 
 
-def test_compute_per_dataset_nasc(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    enriched_Sv = enrich_sv_dataset(
-        sv=sv_echopype_EK60, echodata=ed_ek_60_for_Sv, waveform_mode="CW", encode_mode="power"
-    )
+def test_compute_per_dataset_nasc(enriched_ek60_Sv):
+    enriched_Sv = enriched_ek60_Sv
     Sv_with_masks = create_default_noise_masks_oceanstream(enriched_Sv)
 
     process_parameters = {
