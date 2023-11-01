@@ -1,7 +1,6 @@
 from typing import Dict, Union
 
 import echopype as ep
-import numpy as np
 import xarray as xr
 
 
@@ -40,11 +39,13 @@ def compute_per_dataset_nasc(Sv_ds: xr.Dataset) -> Dict[str, Union[xr.Dataset, s
 
     # Get the maximum distance from the Sv dataset
     dist = ep.commongrid.utils.get_distance_from_latlon(Sv_ds)
-    max_dist = np.nanmax(dist)
+    # max_dist = np.nanmax(dist)
+    max_dist = dist.max()
     max_dist_str = str(max_dist) + "nmi"
 
     # Get the maximum depth from the Sv dataset
-    max_depth = np.nanmax(Sv_ds["depth"].values)
+    # max_depth = np.nanmax(Sv_ds["depth"].values)
+    max_depth = Sv_ds.depth.values.max()
     max_depth_str = str(max_depth) + "m"
 
     # Compute NASC using the determined max depth and max distance - one bin per channel
