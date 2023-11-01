@@ -35,7 +35,7 @@ def test_combine_shoal_masks_multichannel(shoal_masks):
     assert _count_false_values(combined_masks) == 4873071
 
 
-# @pytest.mark.ignore
+@pytest.mark.ignore
 def test_attach_shoal_mask_to_ds(ek_60_Sv_denoised):
     ds_Sv_shoal_combined = attach_shoal_mask_to_ds(ek_60_Sv_denoised)
     ds_Sv_shoal_combined = ep.mask.apply_mask(

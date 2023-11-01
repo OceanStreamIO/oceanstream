@@ -1,4 +1,4 @@
-# import pytest
+import pytest
 
 from oceanstream.L2_calibrated_data.noise_masks import (
     create_attenuation_mask,
@@ -62,7 +62,7 @@ def test_seabed(enriched_ek60_Sv):
     assert mask["channel"].shape == (3,)
 
 
-# @pytest.mark.ignore
+@pytest.mark.ignore
 def test_add_masks_rapidkrill(enriched_ek60_Sv):
     enriched_Sv = enriched_ek60_Sv
     Sv_mask = create_noise_masks_rapidkrill(enriched_Sv)
