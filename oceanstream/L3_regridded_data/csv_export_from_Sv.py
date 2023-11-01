@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import xarray as xr
 from haversine import haversine
@@ -75,8 +77,8 @@ def export_Sv_csv(data: xr.Dataset, folder: str, root_name: str):
     """
     location = create_location(data)
     Sv = create_Sv(data, data["channel"][0])  # for R Shiny compat reasons
-    location_filename = folder + "/" + root_name + "_GPS.csv"
-    Sv_filename = folder + "/" + root_name + "_Sv.csv"
+    location_filename = os.path.join(folder, root_name + "_GPS.csv")
+    Sv_filename = os.path.join(folder, root_name + "_Sv.csv")
     try:
         location.to_csv(location_filename, index=False)
         Sv.to_csv(Sv_filename, index=False)

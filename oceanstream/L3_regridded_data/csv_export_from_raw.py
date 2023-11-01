@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import xarray as xr
 
@@ -80,8 +82,8 @@ def export_raw_csv(data: xr.Dataset, folder: str, root_name: str):
     """
     metadata = create_metadata(data)
     calibration = create_calibration(data)
-    metadata_filename = folder + "/" + root_name + "_metadata.csv"
-    calibration_filename = folder + "/" + root_name + "_calibration.csv"
+    metadata_filename = os.path.join(folder, root_name + "_metadata.csv")
+    calibration_filename = os.path.join(folder, root_name + "_calibration.csv")
     try:
         metadata.to_csv(metadata_filename, index=False)
         calibration.to_csv(calibration_filename, index=False)
