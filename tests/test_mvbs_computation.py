@@ -4,8 +4,6 @@ import pytest
 import xarray as xr
 from echopype.commongrid.api import compute_MVBS, compute_MVBS_index_binning
 
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
 from oceanstream.L3_regridded_data.mvbs_computation import compute_mvbs
 
 
@@ -81,12 +79,8 @@ def test_physical_units_wrong_params():
         compute_mvbs(ds, method="physical_units", ping_num=150)
 
 
-def test_compute_mvbs(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    enriched_sv = enrich_sv_dataset(
-        sv_echopype_EK60, ed_ek_60_for_Sv, depth_offset=200, waveform_mode="CW", encode_mode="power"
-    )
-
+def test_compute_mvbs(enriched_ek60_Sv):
+    enriched_sv = enriched_ek60_Sv
     ds_ep = compute_MVBS_index_binning(enriched_sv)
     ds_os = compute_mvbs(enriched_sv, method="index_binning")
     result = np.isclose(ds_ep["Sv"].values, ds_os["Sv"].values, atol=1e-8, equal_nan=True)

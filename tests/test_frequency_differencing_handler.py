@@ -2,8 +2,6 @@ import echopype as ep
 import numpy as np
 import pytest
 
-from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L3_regridded_data.frequency_differencing_handler import (
     find_mask_freq_diff,
     identify_fluid_like_organisms,
@@ -12,9 +10,8 @@ from oceanstream.L3_regridded_data.frequency_differencing_handler import (
 )
 
 
-def test_find_mask_freq_diff(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
+def test_find_mask_freq_diff(ek_60_Sv_denoised):
+    ds_Sv = ek_60_Sv_denoised
     chanA = "GPT 120 kHz 00907205a6d0 4-1 ES120-7C"
     chanB = "GPT  38 kHz 009072058146 2-1 ES38B"
     ds_Sv_interval_mask = find_mask_freq_diff(
@@ -39,9 +36,8 @@ def test_find_mask_freq_diff(ed_ek_60_for_Sv):
         pass
 
 
-def test_identify_krill(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
+def test_identify_krill(ek_60_Sv_denoised):
+    ds_Sv = ek_60_Sv_denoised
     chan120 = "GPT 120 kHz 00907205a6d0 4-1 ES120-7C"
     chan38 = "GPT  38 kHz 009072058146 2-1 ES38B"
     ds_Sv_krill = identify_krill(ds_Sv, chan120=chan120, chan38=chan38)
@@ -50,9 +46,8 @@ def test_identify_krill(ed_ek_60_for_Sv):
     assert np.nanmean(ds_Sv_krill["Sv"].values) == pytest.approx(-72.54676167765183, 0.0001)
 
 
-def test_identify_gas_bearing_organisms(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
+def test_identify_gas_bearing_organisms(ek_60_Sv_denoised):
+    ds_Sv = ek_60_Sv_denoised
     chan120 = "GPT 120 kHz 00907205a6d0 4-1 ES120-7C"
     chan38 = "GPT  38 kHz 009072058146 2-1 ES38B"
     ds_Sv_gas_bearing_organisms = identify_gas_bearing_organisms(
@@ -66,9 +61,8 @@ def test_identify_gas_bearing_organisms(ed_ek_60_for_Sv):
     )
 
 
-def test_identify_fluid_like_organisms(ed_ek_60_for_Sv):
-    sv_echopype_EK60 = compute_sv(ed_ek_60_for_Sv)
-    ds_Sv = apply_remove_background_noise(sv_echopype_EK60)
+def test_identify_fluid_like_organisms(ek_60_Sv_denoised):
+    ds_Sv = ek_60_Sv_denoised
     chan120 = "GPT 120 kHz 00907205a6d0 4-1 ES120-7C"
     chan38 = "GPT  38 kHz 009072058146 2-1 ES38B"
     ds_Sv_fluid_like_organisms = identify_fluid_like_organisms(
