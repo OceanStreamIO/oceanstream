@@ -189,7 +189,7 @@ def process_shoals(Sv: xr.Dataset):
             "start_lon": None,
             "end_lon": None,
         }
-        return return_dict
+        return [return_dict]
     masks = split_shoal_mask(Sv)
     dicts = [process_single_shoal(Sv, mask) for mask in masks]
     results = [item for sublist in dicts for item in sublist]
