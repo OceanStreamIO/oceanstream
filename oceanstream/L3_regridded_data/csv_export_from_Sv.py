@@ -54,6 +54,7 @@ def create_Sv(data: xr.Dataset, channel: str) -> pd.DataFrame:
     - pd.DataFrame
         The required data.
     """
+    data = data.copy(deep=True)
     data["ping_time"] = range(0, len(data.ping_time))
     data["range_sample"] = data["range_sample"] / 2
     df = data.sel(channel=channel)["Sv"].to_dataframe()
