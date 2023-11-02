@@ -54,8 +54,9 @@ def create_Sv(data: xr.Dataset, channel: str) -> pd.DataFrame:
     - pd.DataFrame
         The required data.
     """
+    data["ping_time"] = range(0, len(data.ping_time))
     df = data.sel(channel=channel)["Sv"].to_dataframe()
-    df = df["Sv"].unstack(level="range_sample")
+    df = df["Sv"].unstack(level="ping_time")
     return df
 
 
@@ -76,9 +77,9 @@ def export_Sv_csv(data: xr.Dataset, folder: str, root_name: str):
     - None
     """
     location = create_location(data)
-    Sv = create_Sv(data, data["channel"][0])  # for R Shiny compat reasons
+    Sv = create_Sv(data, data["channel"][1])  # for R Shiny compat reasons
     location_filename = os.path.join(folder, root_name + "_GPS.csv")
-    Sv_filename = os.path.join(folder, root_name + "_Sv.csv")
+    Sv_filename = os.path.join(folder, root_name + "_Sv_38000.0.csv")
     try:
         location.to_csv(location_filename, index=False)
         Sv.to_csv(Sv_filename, index=False)

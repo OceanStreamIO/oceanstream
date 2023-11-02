@@ -9,7 +9,7 @@ def test_create_location(enriched_ek60_Sv):
 
 
 def test_create_Sv(enriched_ek60_Sv):
-    channel = enriched_ek60_Sv["channel"][0]
+    channel = enriched_ek60_Sv["channel"][1]
     enriched_sv = enriched_ek60_Sv
     res = create_Sv(enriched_sv, channel)
-    assert res.shape == (1932, 1055)
+    assert res.shape == (1055, 1932)
