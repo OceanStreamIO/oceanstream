@@ -31,6 +31,7 @@ def create_metadata(data: xr.Dataset) -> pd.DataFrame:
         "transmit_bandwidth",
         "transmit_duration_nominal",
         "transmit_power",
+        "sample_interval",
     ]
     df = (
         bg_1.drop_vars([v for v in bg_1.variables if v not in variable_list])
