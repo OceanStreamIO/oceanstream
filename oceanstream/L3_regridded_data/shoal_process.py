@@ -4,6 +4,8 @@ from echopype.mask.api import apply_mask
 from haversine import haversine
 from pandas import DataFrame
 
+from oceanstream.utils import tfc
+
 
 def split_shoal_mask(Sv: xr.Dataset):
     """
@@ -159,8 +161,35 @@ def process_shoals(Sv: xr.Dataset):
     - [dict]: list of individual dicts for each shoal/channel combination
 
     Example:
-        >>> split_shoal_mask(Sv)
+        >>> process_shoals(Sv)
     """
+    if 0 in tfc(Sv["mask_shoal"]):
+        return_dict = {
+            "label": None,
+            "frequency": None,
+            "filename": Sv.source_filenames.values.item(),
+            "area": None,
+            "bbox.0": None,
+            "bbox.1": None,
+            "bbox.2": None,
+            "bbox.3": None,
+            "centroid.0": None,
+            "centroid.1": None,
+            "Sv_mean": None,
+            "npings": None,
+            "nsamples": None,
+            "corrected_length": None,
+            "mean_range": None,
+            "start_range": None,
+            "end_range": None,
+            "start_time": None,
+            "end_time": None,
+            "start_lat": None,
+            "end_lat": None,
+            "start_lon": None,
+            "end_lon": None,
+        }
+        return return_dict
     masks = split_shoal_mask(Sv)
     dicts = [process_single_shoal(Sv, mask) for mask in masks]
     results = [item for sublist in dicts for item in sublist]
