@@ -82,6 +82,6 @@ def export_Sv_csv(data: xr.Dataset, folder: str, root_name: str):
     Sv_filename = os.path.join(folder, root_name + "_Sv_38000.0.csv")
     try:
         location.to_csv(location_filename, index=False)
-        Sv.to_csv(Sv_filename, index=False)
+        Sv.to_csv(Sv_filename)
     except Exception as e:
         raise ValueError(str(e))
