@@ -4,6 +4,7 @@ from echopype.mask.api import apply_mask
 from haversine import haversine
 from pandas import DataFrame
 
+from oceanstream.L3_regridded_data.nasc_computation import compute_per_dataset_nasc
 from oceanstream.utils import tfc
 
 
@@ -115,11 +116,14 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     nsamples = len(subset_md.range_sample)
     mean_range = subset_md.range_sample.mean().values
 
-    start_lat = subset_md.latitude[0].values
-    end_lat = subset_md.latitude[-1].values
-    start_lon = subset_md.longitude[0].values
-    end_lon = subset_md.longitude[-1].values
+    start_lat = subset_md.latitude[0].item()
+    end_lat = subset_md.latitude[-1].item()
+    start_lon = subset_md.longitude[0].item()
+    end_lon = subset_md.longitude[-1].item()
     length_meters = haversine((start_lat, start_lon), (end_lat, end_lon), "m")
+
+    nasc_list = compute_per_dataset_nasc(Sv)
+    nasc = nasc_list["NASC_dataset"]["NASC"].sel(channel=channel).item()
 
     return_dict = {
         "label": label,
@@ -145,6 +149,7 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
         "end_lat": end_lat,
         "start_lon": start_lon,
         "end_lon": end_lon,
+        "nasc": nasc,
     }
 
     return return_dict
@@ -188,6 +193,7 @@ def process_shoals(Sv: xr.Dataset):
             "end_lat": None,
             "start_lon": None,
             "end_lon": None,
+            "nasc": None,
         }
         return [return_dict]
     masks = split_shoal_mask(Sv)

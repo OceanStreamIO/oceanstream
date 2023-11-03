@@ -37,7 +37,7 @@ def test_single_shoal(ek_60_Sv_denoised):
     mask = split_shoal_mask(shoal_dataset)[0]
     res = process_single_shoal(shoal_dataset, mask)
     assert len(res) == 3
-    assert len(res[0]) == 23
+    assert len(res[0]) == 24
     assert res[0]["area"] == 4252
 
 
