@@ -89,13 +89,13 @@ This command creates a virtual environment in the `.venv` directory using Python
 
 Install the pre-commit tool using pip:
 
-    pip install pre-commit
+    `pip install pre-commit`
 
 ### Installing the Git Hook Scripts
 
 Navigate to your repository where the `.pre-commit-config.yaml` file is located. Install the Git hook scripts with:
 
-    pre-commit install
+    `pre-commit install`
 
 ### Running Pre-Commit
 
@@ -103,25 +103,25 @@ Pre-commit will now run automatically every time you attempt to make a commit. I
 
 To manually run all hooks against all the files, use:
 
-    pre-commit run --all-files
+    `pre-commit run --all-files`
 
 ### Updating Hooks
 
 To update your hooks to the latest versions, use:
 
-    pre-commit autoupdate
+    `pre-commit autoupdate`
 
 ### Skipping Hooks
 
 To bypass the hooks for a particular commit, use the `-n` or `--no-verify` option:
 
-    git commit -m "Your commit message" -n
+    `git commit -m "Your commit message" -n`
 
 ### Uninstalling Pre-Commit
 
 To uninstall the Git hook scripts, use:
 
-    pre-commit uninstall
+    `pre-commit uninstall`
 
 ## Building Documentation Locally
 
@@ -133,20 +133,20 @@ Ensure Python and pip are installed on your system.
 
 1. **Install Sphinx:**
 
-    pip install sphinx
+    `pip install sphinx`
 
 2. **Navigate to Your Project's docs Directory:**
 
-    cd /path/to/your/docs_directory
+    `cd /path/to/your/docs_directory`
 
 3. **Build the Documentation:**
 
 - For Linux/Mac:
 
-    make html
+    `make html`
 
 - For Windows:
 
-    make.bat html
+    `make.bat html`
 
 This command will generate the HTML documentation in the `build/html` directory within your docs folder.
