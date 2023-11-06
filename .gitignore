@@ -165,10 +165,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 # Data files
-test_data/
 *.nc
 *.zarr
-*.raw
 # For MAC stuff
 .DS_Store
 oceanstream/.DS_Store
