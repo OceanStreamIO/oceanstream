@@ -24,8 +24,8 @@ RAPIDKRILL_MASK_PARAMETERS = {
         "method": "ryan",
         "params": {
             "m": 5,
-            # "n": 20,
-            "n": 5,
+            "n": 20,
+            # "n": 5,
             "thr": 20,
             "excludeabove": 250,
             "operation": "percentile15",
@@ -79,8 +79,8 @@ OCEANSTREAM_MASK_PARAMETERS = {
         "method": "ryan",
         "params": {
             "m": 5,
-            # "n": 20,
-            "n": 5,
+            "n": 20,
+            # "n": 5,
             "thr": 20,
             "excludeabove": 250,
             "operation": "percentile15",
@@ -124,6 +124,10 @@ OCEANSTREAM_MASK_PARAMETERS = {
             "tphi": 282,
             "wtheta": 28,
             "wphi": 52,
+            "rlog": None,
+            "tpi": None,
+            "freq": None,
+            "rank": 50,
         },
     },
 }
@@ -180,6 +184,7 @@ TEST_MASK_PARAMETERS = {
         },
     },
 }
+
 
 OCEANSTREAM_NOISE_MASK_PARAMETERS = {
     k: OCEANSTREAM_MASK_PARAMETERS[k] for k in ["transient", "attenuation", "impulse"]
