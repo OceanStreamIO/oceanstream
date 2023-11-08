@@ -8,7 +8,6 @@ Description: Module for computing noise masks from Sv data.
 import pathlib
 from typing import Union
 
-import xarray
 import xarray as xr
 from echopype.clean.api import (
     get_attenuation_mask_multichannel,
@@ -28,7 +27,8 @@ RAPIDKRILL_MASK_PARAMETERS = {
             # "n": 5,
             "thr": 20,
             "excludeabove": 250,
-            "operation": "percentile15",
+            "dask_chunking": {"ping_time": 100},
+            "operation": "mean",
         },
     },
     "attenuation": {
@@ -83,7 +83,8 @@ OCEANSTREAM_MASK_PARAMETERS = {
             # "n": 5,
             "thr": 20,
             "excludeabove": 250,
-            "operation": "percentile15",
+            "dask_chunking": {"ping_time": 100},
+            "operation": "mean",
         },
     },
     "attenuation": {
@@ -140,6 +141,7 @@ TEST_MASK_PARAMETERS = {
             "n": 5,
             "thr": 20,
             "excludeabove": 250,
+            "dask_chunking": {"ping_time": 100},
             "operation": "mean",
         },
     },
@@ -307,7 +309,7 @@ def create_seabed_mask(Sv, parameters, method):
     return mask
 
 
-def create_mask(source_Sv: xarray.Dataset, mask_type="impulse", params=MASK_PARAMETERS):
+def create_mask(source_Sv: xr.Dataset, mask_type="impulse", params=MASK_PARAMETERS):
     """
     A function that creates a single noise mask for a given dataset
 
@@ -341,7 +343,7 @@ def create_mask(source_Sv: xarray.Dataset, mask_type="impulse", params=MASK_PARA
     return mask
 
 
-def create_multiple_masks(source_Sv: xarray.Dataset, params=TEST_MASK_PARAMETERS):
+def create_multiple_masks(source_Sv: xr.Dataset, params=TEST_MASK_PARAMETERS):
     """
     A function that creates multiple noise masks for a given Sv dataset
 
@@ -366,7 +368,7 @@ def create_multiple_masks(source_Sv: xarray.Dataset, params=TEST_MASK_PARAMETERS
     return Sv_mask
 
 
-def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset, params=RAPIDKRILL_MASK_PARAMETERS):
+def create_noise_masks_rapidkrill(source_Sv: xr.Dataset, params=RAPIDKRILL_MASK_PARAMETERS):
     """
     A function that creates noise masks for a given Sv dataset according to
     rapidkrill processing needs
@@ -391,7 +393,7 @@ def create_noise_masks_rapidkrill(source_Sv: xarray.Dataset, params=RAPIDKRILL_M
 
 
 def create_default_noise_masks_oceanstream(
-    source_Sv: xarray.Dataset, params=OCEANSTREAM_MASK_PARAMETERS
+    source_Sv: xr.Dataset, params=OCEANSTREAM_MASK_PARAMETERS
 ):
     """
     A function that creates noise masks for a given Sv dataset using default methods for oceanstream
@@ -416,7 +418,7 @@ def create_default_noise_masks_oceanstream(
 
 
 def create_seabed_masks_oceanstream(
-    source_Sv: xarray.Dataset, params=OCEANSTREAM_SEABED_MASK_PARAMETERS
+    source_Sv: xr.Dataset, params=OCEANSTREAM_SEABED_MASK_PARAMETERS
 ):
     """
     A function that creates seabed masks for a given Sv dataset using default methods for oceanstream
@@ -434,9 +436,7 @@ def create_seabed_masks_oceanstream(
     return Sv_mask
 
 
-def create_noise_masks_oceanstream(
-    source_Sv: xarray.Dataset, params=OCEANSTREAM_NOISE_MASK_PARAMETERS
-):
+def create_noise_masks_oceanstream(source_Sv: xr.Dataset, params=OCEANSTREAM_NOISE_MASK_PARAMETERS):
     """
     A function that creates noise masks for a given Sv dataset using default methods for oceanstream
 
