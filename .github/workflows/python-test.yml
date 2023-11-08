@@ -22,11 +22,6 @@ jobs:
       TEST_DATA_FOLDER: ${{ github.workspace }}/test_data
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-      with:
-        lfs: true  # This ensures that LFS files are checked out
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -37,6 +32,11 @@ jobs:
       with:
         path: ${{ env.TEST_DATA_FOLDER }}
         key: test-data-${{ runner.os }}-${{ hashFiles('test_data/*.raw') }}
+
+    - name: Download Test Data from Google Drive
+      run: |
+        wget -O test_data.zip "https://drive.google.com/uc?export=download&id=1ofiSQ4zDwXfHE65tow4_jDIceBYHNW_8"
+        unzip test_data.zip -d ${{ env.TEST_DATA_FOLDER }}
 
     - name: Install Dependencies
       run: |
