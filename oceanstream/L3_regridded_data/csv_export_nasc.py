@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import xarray as xr
 from echopype.mask.api import apply_mask
 from pandas import DataFrame
@@ -33,7 +35,7 @@ def base_nasc_data(Sv: xr.Dataset, abbreviated: bool = False, root_name: str = N
 
     metadata = {}
     if abbreviated is False:
-        metadata["filename"] = Sv.source_filenames.values.item()
+        metadata["filename"] = Path(Sv.source_filenames.values.item()).stem
         metadata["start_lat"] = nasc.attrs["geospatial_lat_min"]
         metadata["end_lat"] = nasc.attrs["geospatial_lat_max"]
         metadata["start_lon"] = nasc.attrs["geospatial_lon_min"]

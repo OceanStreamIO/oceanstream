@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import scipy.ndimage as nd_img
 import xarray as xr
 from echopype.mask.api import apply_mask
@@ -90,7 +92,7 @@ def process_single_shoal_channel(Sv: xr.Dataset, mask: xr.DataArray, channel: st
     area = mc.sum().values.item()
     if area == 0:
         return None
-    filename = md.source_filenames.values.item()
+    filename = Path(md.source_filenames.values.item()).stem
     label = mc.attrs["label"]
 
     ping_true = md["Sv"].any(dim="range_sample")
@@ -172,7 +174,7 @@ def process_shoals(Sv: xr.Dataset):
         return_dict = {
             "label": None,
             "frequency": None,
-            "filename": Sv.source_filenames.values.item(),
+            "filename": Path(Sv.source_filenames.values.item()).stem,
             "area": None,
             "bbox.0": None,
             "bbox.1": None,
