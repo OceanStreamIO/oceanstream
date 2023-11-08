@@ -36,7 +36,7 @@ jobs:
     - name: Download Test Data from Google Drive
       run: |
         wget --load-cookies /tmp/cookies.txt "https://drive.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1ofiSQ4zDwXfHE65tow4_jDIceBYHNW_8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ofiSQ4zDwXfHE65tow4_jDIceBYHNW_8" -O test_data.zip && rm -rf /tmp/cookies.txt
-        unzip test_data.zip -d ${{ env.TEST_DATA_FOLDER }}
+        unzip -n test_data.zip -d ${{ env.TEST_DATA_FOLDER }}
 
     - name: Install Dependencies
       run: |
