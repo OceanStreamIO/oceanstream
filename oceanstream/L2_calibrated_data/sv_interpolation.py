@@ -54,7 +54,10 @@ def interpolate_sv(
         dataset = read_processed(path_to_file)
 
     # Retrieve the Sv DataArray from the dataset
-    sv_dataarray = dataset["Sv"].chunk({"ping_time": -1})
+    # sv_dataarray = dataset["Sv"].chunk({"ping_time": -1})
+    # Ensure the data is loaded into memory as a regular array (not Dask chunked)
+    sv_dataarray = dataset["Sv"]
+    sv_dataarray = sv_dataarray.load()
 
     # Initialize an empty list to store the processed channels
     processed_channels = []
