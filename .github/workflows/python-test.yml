@@ -24,8 +24,6 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-      with:
-        lfs: true  # This ensures that LFS files are checked out
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -37,6 +35,11 @@ jobs:
       with:
         path: ${{ env.TEST_DATA_FOLDER }}
         key: test-data-${{ runner.os }}-${{ hashFiles('test_data/*.raw') }}
+
+    - name: Download Test Data from Google Drive
+      run: |
+        wget --load-cookies /tmp/cookies.txt "https://drive.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1ofiSQ4zDwXfHE65tow4_jDIceBYHNW_8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ofiSQ4zDwXfHE65tow4_jDIceBYHNW_8" -O test_data.zip && rm -rf /tmp/cookies.txt
+        unzip -n test_data.zip -d ${{ env.TEST_DATA_FOLDER }}
 
     - name: Install Dependencies
       run: |
