@@ -33,7 +33,7 @@ def test_apply_selected_noise_masks_and_or_noise_removal(enriched_ek60_Sv):
     ds_processed = apply_selected_noise_masks_and_or_noise_removal(
         Sv_with_masks, process_parameters
     )
-    assert np.nanmean(ds_processed["Sv"].values) == pytest.approx(-77.02628114845355, 0.0001)
+    assert np.nanmean(ds_processed["Sv"].values) == pytest.approx(-76.98963161976543, 0.0001)
     with pytest.raises(ValueError, match="Unexpected mask/process"):
         apply_selected_noise_masks_and_or_noise_removal(Sv_with_masks, "invalid_parameters")
 

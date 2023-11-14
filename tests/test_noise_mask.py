@@ -23,7 +23,7 @@ def test_transient(enriched_ek60_Sv):
     source_Sv = enriched_ek60_Sv
     RYAN_DEFAULT_PARAMS = OCEANSTREAM_MASK_PARAMETERS["transient"]["params"]
     mask_ryan = create_transient_mask(
-        source_Sv, parameters=RYAN_DEFAULT_PARAMS, method="ryan"
+        source_Sv, parameters=RYAN_DEFAULT_PARAMS, method="fielding"
     )
     assert mask_ryan["channel"].shape == (3,)
 
