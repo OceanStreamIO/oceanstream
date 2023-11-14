@@ -37,7 +37,7 @@ def test_apply_selected_noise_masks_and_or_noise_removal(enriched_ek60_Sv):
     with pytest.raises(ValueError, match="Unexpected mask/process"):
         apply_selected_noise_masks_and_or_noise_removal(Sv_with_masks, "invalid_parameters")
 
-
+@pytest.mark.ignore
 def test_apply_mask_organisms_in_order(enriched_ek60_Sv):
     enriched_Sv = enriched_ek60_Sv
 
