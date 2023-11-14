@@ -36,7 +36,14 @@ from echopype.mask.api import get_shoal_mask_multichannel
 
 from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset
 
-WEILL_DEFAULT_PARAMETERS = {"thr": -70, "maxvgap": -5, "maxhgap": 0, "minvlen": 0, "minhlen": 0}
+WEILL_DEFAULT_PARAMETERS = {
+    "thr": -70,
+    "maxvgap": 5,
+    "maxhgap": 5,
+    "minvlen": 0,
+    "minhlen": 0,
+    "dask_chunking": {"ping_time": 1000, "range_sample": 1000},
+}
 
 
 def create_shoal_mask_multichannel(
@@ -68,51 +75,11 @@ def create_shoal_mask_multichannel(
 
     Example:
 
-    >>> mask, mask_ = create_shoal_mask_multichannel(Sv, parameters, method)
+    >>> mask = create_shoal_mask_multichannel(Sv, parameters, method)
     """
-    mask, mask_ = get_shoal_mask_multichannel(Sv, parameters, method)
-    mask_type_value = method
-    mask.attrs["shoal detection mask type"] = mask_type_value
-    mask_.attrs["shoal detection mask type"] = mask_type_value
-    return mask, mask_
-
-
-def combine_shoal_masks_multichannel(mask: xr.DataArray, mask_: xr.DataArray) -> xr.DataArray:
-    """
-    Combines the provided multichannel masks (`mask` and `mask_`) to produce a final mask that contains `True` values
-    only where both input masks are `True` for each channel.
-
-    Parameters:
-
-    mask : xr.DataArray
-        A multichannel mask for the Sv data. Regions satisfying the thresholding criteria
-        for shoal identification are filled with `True`, else the regions are filled with `False`.
-
-    mask_ : xr.DataArray
-        A mask indicating the valid samples for the first mask. Edge regions are
-        filled with 'False', whereas the portion in which shoals could be detected is 'True'.
-
-    Returns:
-
-    xr.DataArray
-        A final multichannel mask for the Sv data. Regions that meet the thresholding criteria
-        for shoal identification and fall within valid samples are marked as True.
-        All other regions are marked as False.
-
-    Example:
-
-    >>> mask, mask_ = create_shoal_mask_multichannel(Sv_dataset)
-    >>> combined_masks = combine_masks_multichannel(mask, mask_)
-    """
-    # Check if both masks have the 'channel' dimension
-    if "channel" not in mask.dims or "channel" not in mask_.dims:
-        raise ValueError("Both masks must have a 'channel' dimension for multichannel processing.")
-    # Ensure the channels in both masks match
-    if not all(mask["channel"].values == mask_["channel"].values):
-        raise ValueError("Channels in both masks must match.")
-    combined_masks = xr.where(mask & mask_, True, False)
-    combined_masks.attrs["shoal detection mask type"] = mask.attrs["shoal detection mask type"]
-    return combined_masks
+    mask = get_shoal_mask_multichannel(Sv, parameters, method)
+    mask.attrs["shoal detection mask type"] = method
+    return mask
 
 
 def attach_shoal_mask_to_ds(
@@ -138,7 +105,6 @@ def attach_shoal_mask_to_ds(
     Example:
         >>> ds_with_shoal_mask = attach_shoal_mask_to_ds(ds, parameters, method)
     """
-    mask, mask_ = create_shoal_mask_multichannel(ds, parameters, method)
-    shoal_mask = combine_shoal_masks_multichannel(mask, mask_)
+    shoal_mask = create_shoal_mask_multichannel(ds, parameters, method)
     shoal_mask = add_metadata_to_mask(mask=shoal_mask, metadata={"mask_type": "shoal"})
     return attach_mask_to_dataset(ds, shoal_mask)
