@@ -47,5 +47,4 @@ sphinxcontrib-mermaid
 twine
 wheel
 haversine
-dask_image
 git+https://github.com/OceanStreamIO/echopype.git@next-dev

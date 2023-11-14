@@ -20,4 +20,3 @@ geopy
 pydantic>2
 echopype
 haversine
-dask_image
