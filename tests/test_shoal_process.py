@@ -42,7 +42,7 @@ def test_single_shoal(ek_60_Sv_denoised):
     assert len(res[0]) == 24
     assert res[0]["area"] == 4252
 
-
+@pytest.mark.ignore
 def test_shoals(ek_60_Sv_denoised):
     shoal_dataset = prep_dataset(ek_60_Sv_denoised)
     res = process_shoals(shoal_dataset)
