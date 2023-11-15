@@ -1,5 +1,5 @@
 from .ensure_time_continuity import check_reversed_time, fix_time_reversions
-from .raw_reader import (
+from .raw_handler import (
     concatenate_files,
     convert_raw_files,
     file_finder,
