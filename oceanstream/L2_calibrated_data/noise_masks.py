@@ -76,15 +76,17 @@ RAPIDKRILL_MASK_PARAMETERS = {
 
 OCEANSTREAM_MASK_PARAMETERS = {
     "transient": {
-        "method": "ryan",
+        "method": "fielding",
         "params": {
-            "m": 5,
-            "n": 20,
-            # "n": 5,
-            "thr": 20,
-            "excludeabove": 250,
-            "dask_chunking": {"ping_time": 100},
-            "operation": "mean",
+            "r0": 200,
+            "r1": 1000,
+            "n": 5,
+            "thr": [2, 0],
+            "roff": 250,
+            "jumps": 5,
+            "maxts": -35,
+            "start": 0,
+            "dask_chunking": {"ping_time": 100, "range_sample": 100},
         },
     },
     "attenuation": {

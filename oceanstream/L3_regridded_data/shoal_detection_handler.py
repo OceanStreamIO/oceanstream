@@ -75,11 +75,11 @@ def create_shoal_mask_multichannel(
 
     Example:
 
-    >>> mask, mask_ = create_shoal_mask_multichannel(Sv, parameters, method)
+    >>> mask = create_shoal_mask_multichannel(Sv, parameters, method)
     """
     mask = get_shoal_mask_multichannel(Sv, parameters, method)
-    mask_type_value = method
-    mask.attrs["shoal detection mask type"] = mask_type_value
+    mask.attrs["shoal detection mask type"] = method
+    return mask
 
 
 def attach_shoal_mask_to_ds(

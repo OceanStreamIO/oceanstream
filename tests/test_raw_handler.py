@@ -1,10 +1,8 @@
 import os
-from ftplib import FTP
 
 import pytest
 
-from oceanstream.L0_unprocessed_data.raw_reader import (
-    concatenate_files,
+from oceanstream.L0_unprocessed_data.raw_handler import (
     convert_raw_files,
     file_finder,
     file_integrity_checking,
@@ -14,12 +12,11 @@ from oceanstream.L0_unprocessed_data.raw_reader import (
 )
 from tests.conftest import TEST_DATA_FOLDER
 
+
 def test_file_finder(ftp_data):
     # Test with a valid directory path containing files
     found_files = file_finder(ftp_data)
-    assert (
-        len(found_files) > 0
-    )  # Assuming there's at least one file in the FTP directory
+    assert len(found_files) > 0  # Assuming there's at least one file in the FTP directory
     assert all([os.path.isfile(f) for f in found_files])
 
     # Test with a list of valid file paths
@@ -90,9 +87,7 @@ def test_read_processed_files(ftp_data):
     # Test with a list of valid processed file paths
     found_files = file_finder(ftp_data, "raw")
     file_dicts = [file_integrity_checking(f) for f in found_files[:3]]
-    file_paths = convert_raw_files(
-        file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="nc"
-    )
+    file_paths = convert_raw_files(file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="nc")
 
     datasets = read_processed_files(file_paths)
     assert len(datasets) == 3
@@ -107,9 +102,7 @@ def test_convert_raw_files(ftp_data):
     # Test conversion of raw files to netCDF
     found_files = file_finder(ftp_data, "raw")
     file_dicts = [file_integrity_checking(f) for f in found_files[:3]]
-    converted_files = convert_raw_files(
-        file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="nc"
-    )
+    converted_files = convert_raw_files(file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="nc")
     for file in converted_files:
         assert os.path.exists(file)
         assert file.endswith(".nc")
@@ -126,9 +119,7 @@ def test_convert_raw_files(ftp_data):
     with pytest.raises(
         Exception
     ):  # Assuming the function raises an exception for unsupported file types
-        convert_raw_files(
-            file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="unsupported"
-        )
+        convert_raw_files(file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="unsupported")
 
     # Test with an empty save path
     converted_files = convert_raw_files(file_dicts, save_file_type="nc")
@@ -158,4 +149,3 @@ def test_split_files(ftp_data):
     # Test with an empty list
     with pytest.raises(Exception):
         grouped_files = split_files([])
-

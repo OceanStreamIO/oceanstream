@@ -1,6 +1,6 @@
 """
-raw_reader.py
--------------
+raw_handler.py
+--------------
 Module for reading, verifying, and converting echo sounder raw data files.
 
 This module provides functionalities to:
@@ -91,19 +91,24 @@ def file_finder(paths: Union[str, List[str]], file_type: str = "raw") -> List[st
 
 def file_integrity_checking(
     file_path: str,
+    use_swap: bool = False,
 ) -> Dict[str, Union[str, datetime, bool]]:  # noqa: E501
     """
     Checks the integrity of a given echo sounder file.
 
     This function verifies if the provided echo sounder file is
     readable by echopype and extracts
-    essential metadata such as the campaign ID, date of measurement,
-    and sonar model. The function
-    supports raw, netCDF, and zarr file formats.
+    essential metadata such as the campaign ID, date of measurement, sonar model
+    and `use_swap` option (relevant only for raw files)
+    The function supports raw, netCDF, and zarr file formats.
 
     Parameters:
 
     - file_path (str): Absolute path to the echo sounder file.
+    - use_swap (bool, optional): Parameter specific to the echopype library `open_raw` function. Defaults to False\
+      If True, variables with a large memory footprint will be written to a temporary zarr store at \
+      ``~/.echopype/temp_output/parsed2zarr_temp_files``\
+      Relevant only for raw files.
 
     Returns:
 
@@ -115,6 +120,8 @@ def file_integrity_checking(
      extracted from the file name.
     'sonar_model': Type of sonar that produced the file.
     'file_integrity': Boolean indicating if the file is readable by echopype.
+    'use_swap': Applicable only for raw files.\
+     A Boolean indicating whether the option was used when reading raw files or not.
 
     Raises:
 
@@ -130,6 +137,7 @@ def file_integrity_checking(
     'date': datetime.datetime(2023, 5, 9, 10, 6, 45),
     'sonar_model': 'EK60',
     'file_integrity': True
+    'use_swap': False
     }
     """
     return_dict = {}
@@ -159,7 +167,7 @@ def file_integrity_checking(
     if ".raw" in file_path:
         for s_m in SUPPORTED_SONAR_MODELS:
             try:
-                ed = ep.open_raw(file_path, sonar_model=s_m)  # type: ignore
+                ed = ep.open_raw(file_path, sonar_model=s_m, use_swap=use_swap)  # type: ignore
                 file_integrity = True
                 break
             except Exception:
@@ -183,6 +191,8 @@ def file_integrity_checking(
     return_dict["date"] = date
     return_dict["sonar_model"] = ed.sonar_model
     return_dict["file_integrity"] = file_integrity
+    if ".raw" in file_path:
+        return_dict["use_swap"] = use_swap
     return return_dict
 
 
@@ -210,7 +220,7 @@ def read_raw_files(
     """
     ret_list = []
     for f_i in file_dicts:
-        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"])
+        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"], f_i["use_swap"])
         ret_list.append(opened_file)
     return ret_list
 
@@ -240,7 +250,9 @@ def read_processed_files(file_paths: List[str]) -> List[ep.echodata.EchoData]:
     return ret_list
 
 
-def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.echodata.EchoData:
+def _read_file(
+    file_path: str, sonar_model: str = "EK80", use_swap: bool = False
+) -> ep.echodata.EchoData:
     """
     Reads an echo sounder file and
     returns the corresponding Dataset.
@@ -248,12 +260,16 @@ def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.echodata.EchoDat
     This function determines the type of the file
      (raw, netCDF, or zarr) based on its
     extension and opens it using echopype.
-    For raw files, the sonar model must be specified.
+    The sonar_model and use_swap parameters are relevant only for the raw files.
 
     Parameters:
 
     - file_path (str): Absolute path to the echo sounder file.
     - sonar_model (str, optional): Type of sonar model. Defaults to "EK80".\
+      Relevant only for raw files.
+    - use_swap (bool, optional): Parameter specific to the echopype library `open_raw` function. Defaults to False\
+      If True, variables with a large memory footprint will be written to a temporary zarr store at \
+      ``~/.echopype/temp_output/parsed2zarr_temp_files``\
       Relevant only for raw files.
 
     Returns:
@@ -267,7 +283,7 @@ def _read_file(file_path: str, sonar_model: str = "EK80") -> ep.echodata.EchoDat
     """
     file_name = os.path.split(file_path)[-1]
     if ".raw" in file_name:
-        ed = ep.open_raw(file_path, sonar_model=sonar_model)  # type: ignore
+        ed = ep.open_raw(file_path, sonar_model=sonar_model, use_swap=use_swap)  # type: ignore
     elif ".nc" in file_name or ".zarr" in file_name:
         ed = ep.open_converted(file_path)  # create an EchoData object
     else:
@@ -306,7 +322,7 @@ def convert_raw_files(
     """
     ret_list = []
     for f_i in file_dicts:
-        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"])
+        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"], f_i["use_swap"])
         _write_file(opened_file, save_path, save_file_type)
         file_name = os.path.split(f_i["file_path"])[-1]
         file_type = save_file_type
