@@ -193,14 +193,14 @@ def raw_dataset_jr230(setup_test_data_jr230):
 
 @pytest.fixture(scope="session")
 def ed_ek_60_for_Sv():
-    bucket = "ncei-wcsd-archive"
-    base_path = "data/raw/Bell_M._Shimada/SH1707/EK60/"
+    #bucket = "ncei-wcsd-archive"
+    #base_path = "data/raw/Bell_M._Shimada/SH1707/EK60/"
     filename = "Summer2017-D20170620-T011027.raw"
-    rawdirpath = base_path + filename
-
-    s3raw_fpath = f"s3://{bucket}/{rawdirpath}"
-    storage_opts = {"anon": True}
-    ed = ep.open_raw(s3raw_fpath, sonar_model="EK60", storage_options=storage_opts)  # type: ignore
+    #rawdirpath = base_path + filename
+    #s3raw_fpath = f"s3://{bucket}/{rawdirpath}"
+    #storage_opts = {"anon": True}
+    s3raw_fpath = os.path.join(TEST_DATA_FOLDER, filename)
+    ed = ep.open_raw(s3raw_fpath, sonar_model="EK60")  # type: ignore
     return ed
 
 
@@ -216,14 +216,15 @@ def enriched_ek60_Sv(ed_ek_60_for_Sv):
 # Read test raw data EK80
 @pytest.fixture(scope="session")
 def ed_ek_80_for_Sv():
-    base_url = "noaa-wcsd-pds.s3.amazonaws.com/"
-    path = "data/raw/Sally_Ride/SR1611/EK80/"
+    #base_url = "noaa-wcsd-pds.s3.amazonaws.com/"
+    #path = "data/raw/Sally_Ride/SR1611/EK80/"
     file_name = "D20161109-T163350.raw"
-    raw_file_address = base_url + path + file_name
+    #raw_file_address = base_url + path + file_name
 
-    rf = raw_file_address  # Path(raw_file_address)
+    #rf = raw_file_address  # Path(raw_file_address)
+    s3raw_fpath = os.path.join(TEST_DATA_FOLDER, filename)
     ed_EK80 = ep.open_raw(
-        f"https://{rf}",
+        s3raw_fpath,
         sonar_model="EK80",
     )
     return ed_EK80
