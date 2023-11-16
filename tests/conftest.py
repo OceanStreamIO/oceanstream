@@ -197,7 +197,7 @@ def ed_ek_60_for_Sv():
     base_path = "data/raw/Bell_M._Shimada/SH1707/EK60/"
     filename = "Summer2017-D20170620-T011027.raw"
     local_path = os.path.join(TEST_DATA_FOLDER, filename)
-    if os.path.isfile(local_path)
+    if os.path.isfile(local_path):
         ed = ep.open_raw(
                       local_path,
                       sonar_model="EK60",
@@ -229,7 +229,7 @@ def ed_ek_80_for_Sv():
     filename = "D20161109-T163350.raw"
 
     local_path = os.path.join(TEST_DATA_FOLDER, filename)
-    if os.path.isfile(local_path)
+    if os.path.isfile(local_path):
         ed_EK80 = ep.open_raw(
                       local_path,
                       sonar_model="EK80",
