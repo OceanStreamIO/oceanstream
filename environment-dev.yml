@@ -17,6 +17,7 @@ dependencies:
   - flake8
   - isort
   - dask
+  - dask-image
   - pynmea2
   - xarray
   - zarr

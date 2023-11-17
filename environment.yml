@@ -15,6 +15,7 @@ dependencies:
   - aiohttp
   - geopy
   - dask
+  - dask-image
   - pynmea2
   - xarray
   - zarr

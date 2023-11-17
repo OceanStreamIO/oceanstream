@@ -19,6 +19,7 @@ more-itertools==8.13.0
 geopy
 pydantic>2
 echopype
+dask-image
 
 # Development dependencies
 black
@@ -47,5 +48,4 @@ sphinxcontrib-mermaid
 twine
 wheel
 haversine
-dask_image
 git+https://github.com/OceanStreamIO/echopype.git@next-dev
