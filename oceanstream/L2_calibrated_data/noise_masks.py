@@ -338,7 +338,7 @@ def create_mask(source_Sv: xr.Dataset, mask_type="impulse", params=MASK_PARAMETE
         mask,
         metadata={
             "mask_type": mask_type,
-            "method": "method",
+            "method": method,
             "parameters": dict_to_formatted_list(parameters),
         },
     )
