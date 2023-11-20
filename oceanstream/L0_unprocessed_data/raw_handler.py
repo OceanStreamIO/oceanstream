@@ -33,6 +33,50 @@ SUPPORTED_SONAR_MODELS = ["EK60", "ES70", "EK80", "EA640", "AZFP", "AD2CP"]
 TIME_BETWEEN_FILES = 30  # time in minutes between two consecutive files
 
 
+def _find_zarr_root_directories(paths: Union[str, List[str]]) -> List[str]:
+    """
+    Finds and returns paths to the root directories of zarr datasets within the given paths.
+
+    Parameters:
+    - paths (str or List[str]): A single directory path or a list of directory paths.
+
+    Returns:
+    - List[str]: A list of paths to the root directories of found zarr datasets.
+
+    Raises:
+    - ValueError: If the provided paths input is not valid.
+    """
+    zarr_roots = []
+
+    def is_zarr_root(directory: str) -> bool:
+        """
+        Checks if a directory is the root of a zarr dataset.
+        """
+        return any(
+            fname.endswith(".zarray") or fname.endswith(".zgroup")
+            for fname in os.listdir(directory)
+        )
+
+    if isinstance(paths, str):
+        if not os.path.isdir(paths):
+            raise ValueError(f"Path {paths} is not a valid directory.")
+        search_paths = [paths]
+    elif isinstance(paths, list):
+        search_paths = paths
+    else:
+        raise ValueError(
+            "Invalid input. Provide either a directory path or a list of directory paths."
+        )
+
+    for path in search_paths:
+        for root, dirs, _ in os.walk(path):
+            if is_zarr_root(root):
+                zarr_roots.append(root)
+                dirs[:] = []  # Skip subdirectories to avoid nested zarr datasets
+
+    return sorted(zarr_roots)
+
+
 def file_finder(paths: Union[str, List[str]], file_type: str = "raw") -> List[str]:  # noqa: E501
     """
     Finds and returns all files of a specified type from given paths.
@@ -68,6 +112,13 @@ def file_finder(paths: Union[str, List[str]], file_type: str = "raw") -> List[st
      file_finder(["/path/to/file1.raw", "/path/to/file2.raw"])
     ['/path/to/file1.raw', '/path/to/file2.raw']
     """
+    if file_type == "zarr" or file_type == ".zarr":
+        zarr_files = _find_zarr_root_directories(paths)
+        if isinstance(paths, str):
+            # Filter out subdirectory paths
+            zarr_files = [f for f in zarr_files if os.path.dirname(f) == paths]
+        return sorted(zarr_files)
+
     if isinstance(paths, str) and os.path.isdir(paths):
         ret_files = [
             os.path.join(paths, f_p)
