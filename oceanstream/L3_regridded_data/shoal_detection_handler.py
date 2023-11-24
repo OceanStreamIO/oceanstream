@@ -40,8 +40,8 @@ WEILL_DEFAULT_PARAMETERS = {
     "thr": -70,
     "maxvgap": 5,
     "maxhgap": 5,
-    "minvlen": 0,
-    "minhlen": 0,
+    "minvlen": 5,
+    "minhlen": 5,
     "dask_chunking": {"ping_time": 1000, "range_sample": 1000},
 }
 
