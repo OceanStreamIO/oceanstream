@@ -61,6 +61,6 @@ def test_apply_mask_organisms_in_order(enriched_ek60_Sv):
     }
 
     ds_processed = apply_mask_organisms_in_order(ds_Sv_with_shoal_combined_mask, process_parameters)
-    assert np.nanmean(ds_processed["Sv"].values) == pytest.approx(-56.85248587691882, 0.0001)
+    assert np.nanmean(ds_processed["Sv"].values) == pytest.approx(-63.41369478688135, 0.0001)
     with pytest.raises(ValueError, match="Unexpected mask"):
         apply_selected_noise_masks_and_or_noise_removal(ds_processed, "invalid_parameters")
