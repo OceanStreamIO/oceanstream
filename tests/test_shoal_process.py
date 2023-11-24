@@ -1,6 +1,7 @@
+from oceanstream.L3_regridded_data.shoal_detection_handler import attach_shoal_mask_to_ds, WEILL_DEFAULT_PARAMETERS
 import pytest
 
-from oceanstream.L3_regridded_data.shoal_detection_handler import attach_shoal_mask_to_ds
+
 from oceanstream.L3_regridded_data.shoal_process import (
     process_shoals,
     process_single_shoal,
@@ -10,7 +11,8 @@ from oceanstream.utils import tfc
 
 @pytest.mark.ignore
 def prep_dataset(Sv):
-    parameters = {"thr": -55, "maxvgap": -5, "maxhgap": 0, "minvlen": 5, "minhlen": 5}
+    # parameters = {"thr": -55, "maxvgap": -5, "maxhgap": 0, "minvlen": 5, "minhlen": 5}
+    parameters = WEILL_DEFAULT_PARAMETERS
     shoal_dataset = attach_shoal_mask_to_ds(Sv, parameters=parameters, method="will")
     shoal_dataset["mask_shoal"][:, :, 0:25] = False
     shoal_dataset["mask_shoal"][:, :, 600:] = False
