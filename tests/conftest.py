@@ -7,13 +7,11 @@ import echopype as ep
 import pytest
 from xarray import Dataset
 
+from oceanstream.L2_calibrated_data import create_default_noise_masks_oceanstream, sv_interpolation
 from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
-from oceanstream.L2_calibrated_data import sv_interpolation, \
-    create_default_noise_masks_oceanstream
-from oceanstream.L3_regridded_data import applying_masks_handler, \
-    attach_shoal_mask_to_ds
+from oceanstream.L3_regridded_data import applying_masks_handler, attach_shoal_mask_to_ds
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")
@@ -199,16 +197,16 @@ def ed_ek_60_for_Sv():
     local_path = os.path.join(TEST_DATA_FOLDER, filename)
     if os.path.isfile(local_path):
         ed = ep.open_raw(
-                      local_path,
-                      sonar_model="EK60",
-                      )
+            local_path,
+            sonar_model="EK60",
+        )
     else:
         rawdirpath = base_path + filename
         s3raw_fpath = f"s3://{bucket}/{rawdirpath}"
         storage_opts = {"anon": True}
         ed = ep.open_raw(
-                s3raw_fpath, 
-                sonar_model="EK60",storage_options=storage_opts)  # type: ignore
+            s3raw_fpath, sonar_model="EK60", storage_options=storage_opts
+        )  # type: ignore
     return ed
 
 
@@ -226,22 +224,22 @@ def enriched_ek60_Sv(ed_ek_60_for_Sv):
 def ed_ek_80_for_Sv():
     base_url = "noaa-wcsd-pds.s3.amazonaws.com/"
     path = "data/raw/Sally_Ride/SR1611/EK80/"
-    filename = "D20161109-T163350.raw"
+    file_name = "D20161109-T163350.raw"
 
-    local_path = os.path.join(TEST_DATA_FOLDER, filename)
+    local_path = os.path.join(TEST_DATA_FOLDER, file_name)
     if os.path.isfile(local_path):
         ed_EK80 = ep.open_raw(
-                      local_path,
-                      sonar_model="EK80",
-                      )
+            local_path,
+            sonar_model="EK80",
+        )
     else:
         raw_file_address = base_url + path + file_name
         rf = raw_file_address  # Path(raw_file_address)
         ed_EK80 = ep.open_raw(
-                   f"https://{rf}",
-                   sonar_model="EK80",
-                   )
-    
+            f"https://{rf}",
+            sonar_model="EK80",
+        )
+
     return ed_EK80
 
 
