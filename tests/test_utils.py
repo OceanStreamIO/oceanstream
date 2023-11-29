@@ -1,7 +1,8 @@
+import os
+
 from oceanstream.L2_calibrated_data.noise_masks import create_seabed_mask
 from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.utils import *
-
 
 def test_dict_to_formatted_list():
     # Define a sample dictionary
@@ -80,3 +81,13 @@ def test_tfc():
     )
     res = tfc(data)
     assert res == (2, 1)
+
+
+def test_plotting(ed_ek_60_for_Sv):
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")
+    source_Sv = compute_sv(ed_ek_60_for_Sv)
+    plot_all_channels(source_Sv,name="test_image", save_path=TEST_DATA_FOLDER)
+
+    plot_all_channels(source_Sv,source_Sv, name="test_image_double", save_path=TEST_DATA_FOLDER)
+

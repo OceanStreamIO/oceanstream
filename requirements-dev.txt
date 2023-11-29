@@ -20,6 +20,7 @@ geopy
 pydantic>2
 echopype
 dask-image
+matplotlib
 
 # Development dependencies
 black

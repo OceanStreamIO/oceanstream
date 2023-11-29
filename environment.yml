@@ -25,6 +25,7 @@ dependencies:
   - pydantic>2
   - echopype
   - haversine
+  - matplotlib
   - pip
   - git
   - pip:
