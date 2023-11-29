@@ -27,6 +27,7 @@ dependencies:
   - pydantic>2
   - echopype
   - haversine
+  - matplotlib
   - black
   - bottleneck
   - check-manifest

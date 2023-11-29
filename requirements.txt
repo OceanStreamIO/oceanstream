@@ -21,3 +21,4 @@ pydantic>2
 echopype
 haversine
 dask-image
+matplotlib
