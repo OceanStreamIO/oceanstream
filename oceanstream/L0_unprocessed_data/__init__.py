@@ -6,5 +6,6 @@ from .raw_handler import (
     file_integrity_checking,
     read_processed_files,
     read_raw_files,
-    split_files,
+    split_files
 )
+

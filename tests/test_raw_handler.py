@@ -1,5 +1,5 @@
 import os
-
+import urllib.request
 import pytest
 
 from oceanstream.L0_unprocessed_data.raw_handler import (
@@ -9,6 +9,7 @@ from oceanstream.L0_unprocessed_data.raw_handler import (
     read_processed_files,
     read_raw_files,
     split_files,
+    detect_sonar_model,
 )
 from tests.conftest import TEST_DATA_FOLDER
 
@@ -40,14 +41,7 @@ def test_file_integrity_checking(ftp_data):
     # Test with a valid raw echo sounder file
     result_files = file_integrity_checking(found_files[0])
     assert result_files["file_integrity"] == True
-    assert result_files["sonar_model"] in [
-        "EK60",
-        "ES70",
-        "EK80",
-        "EA640",
-        "AZFP",
-        "AD2CP",
-    ]
+    assert result_files["campaign_id"] == 'SignytoP2'
 
     # Test with a valid netCDF file
     valid_netcdf_file = convert_raw_files(
@@ -117,7 +111,7 @@ def test_convert_raw_files(ftp_data):
 
     # Test with an unsupported save file type
     with pytest.raises(
-        Exception
+            Exception
     ):  # Assuming the function raises an exception for unsupported file types
         convert_raw_files(file_dicts, save_path=TEST_DATA_FOLDER, save_file_type="unsupported")
 
@@ -149,3 +143,26 @@ def test_split_files(ftp_data):
     # Test with an empty list
     with pytest.raises(Exception):
         grouped_files = split_files([])
+
+
+def test_detect_sonar_model_ek60(ftp_data):
+    # Test with a valid raw echo sounder file
+    found_files = file_finder(ftp_data, "raw")
+    sonar_model = detect_sonar_model(found_files[0])
+
+    assert sonar_model == "EK60"
+
+
+def test_detect_sonar_model_ek80(ftp_data):
+    base_url = "https://noaa-wcsd-pds.s3.amazonaws.com/"
+    path = "data/raw/Sally_Ride/SR1611/EK80/"
+    file_name = "D20161108-T214612.raw"
+
+    local_path = os.path.join(TEST_DATA_FOLDER, file_name)
+    if not os.path.isfile(local_path):
+        raw_file_address = base_url + path + file_name
+        urllib.request.urlretrieve(raw_file_address, local_path)
+
+    sonar_model = detect_sonar_model(local_path)
+
+    assert sonar_model == "EK80"

@@ -130,9 +130,9 @@ def denoise_dataset(dataset):
 @pytest.fixture(scope="session")
 def ftp_data():
     test_data_folder = Path(TEST_DATA_FOLDER) / "ek60"
-    with FTP(FTP_MAIN) as ftp:
-        ftp.login()  # Add credentials if needed: ftp.login(user="username", passwd="password")
-        download_ftp_directory(ftp, FTP_PARTIAL_PATH, test_data_folder)
+    # with FTP(FTP_MAIN) as ftp:
+    #     ftp.login()
+    #     download_ftp_directory(ftp, FTP_PARTIAL_PATH, test_data_folder)
     yield str(test_data_folder)
     # Optional: Cleanup after tests are done
     # shutil.rmtree(TEST_DATA_FOLDER)

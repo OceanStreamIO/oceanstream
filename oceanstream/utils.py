@@ -33,13 +33,14 @@ def add_metadata_to_mask(mask: xr.Dataset, metadata: Dict) -> xr.Dataset:
     return mask
 
 
-def attach_mask_to_dataset(Sv: xr.Dataset, mask: xr.Dataset) -> xr.Dataset:
+def attach_mask_to_dataset(Sv: xr.Dataset, mask: xr.Dataset, mask_type: str = None) -> xr.Dataset:
     """
     Attaches a mask to an existing Sv dataset, allowing the mask to travel in one data structure to the next module
 
     Parameters:
     - Sv (xarray.Dataset): dataset to attach a mask to
     - mask (xarray.Dataset): mask to be attached, with a mask_type attribute explaining what sort of mask it is
+    - mask_type (str): type of mask to be attached (optional, if not specified, the mask_type attribute of the mask)
 
     Returns:
     - xarray.Dataset: dataset enriched with the mask
@@ -49,11 +50,14 @@ def attach_mask_to_dataset(Sv: xr.Dataset, mask: xr.Dataset) -> xr.Dataset:
     Expected Output:
         Sv with an extra variable containing the mask, named mask_[mask_type]
     """
-    mask_type = mask.attrs["mask_type"]
+    if mask_type is None:
+        mask_type = mask.attrs["mask_type"]
+
     mask_name = "mask_" + mask_type
     Sv_mask = Sv.assign(mask=mask)
     Sv_mask["mask"].attrs = mask.attrs
     Sv_mask = Sv_mask.rename({"mask": mask_name})
+
     return Sv_mask
 
 

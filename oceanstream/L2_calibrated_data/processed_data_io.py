@@ -111,8 +111,14 @@ def write_processed(
         raise TypeError("Expected a xarray Dataset")
 
     path = Path(file_path)
-    if not path.is_dir():
-        raise FileNotFoundError(f"Invalid path provided: {path}")
+    if not path.exists():
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            raise Exception(f"An error occurred while creating the directory: {e}")
+    else:
+        if not path.is_dir():
+            raise NotADirectoryError(f"Path exists but is not a directory: {path}")
 
     if not file_name:
         file_name = Path(sv.source_filenames[0].values.item()).stem

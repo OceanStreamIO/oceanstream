@@ -86,7 +86,7 @@ def apply_selected_noise_masks_and_or_noise_removal(
 
     """
 
-    valid_processes = valid_processes = [
+    valid_processes = [
         "mask_impulse",
         "mask_attenuation",
         "mask_transient",
@@ -94,6 +94,13 @@ def apply_selected_noise_masks_and_or_noise_removal(
         "mask_false_seabed",
         "mask_seabed",
     ]
+
+    # Check for unexpected masks/processes
+    for process in processes_to_apply:
+        if process not in valid_processes:
+            raise ValueError(
+                "Unexpected mask/process. Please refer to the function documentation for valid masks/processes."
+            )
 
     for process in valid_processes:
         if process in processes_to_apply:
@@ -109,13 +116,6 @@ def apply_selected_noise_masks_and_or_noise_removal(
                 ds = ep.mask.apply_mask(ds, mask_data, **params)
             elif process == "remove_background_noise":
                 ds = background_noise_remover.apply_remove_background_noise(ds, **params)
-
-    # Check for unexpected masks/processes
-    for process in processes_to_apply:
-        if process not in valid_processes:
-            raise ValueError(
-                "Unexpected mask/process. Please refer to the function documentation for valid masks/processes."
-            )
 
     return ds
 

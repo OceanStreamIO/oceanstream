@@ -6,14 +6,14 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name="oceanstream",
-    version="0.1",  # You can adjust the version number as needed
+    version="0.1",
     packages=find_packages(),
     install_requires=requirements,
     # Optional metadata
-    author="PineView AS",
+    author="Pine View Software AS",
     author_email="hello@pineview.io",
-    description="A brief description of the oceanstream package",
+    description="",
     license="MIT",
-    keywords="ocean stream processing",
+    keywords="oceanstream echosounder",
     url="https://github.com/OceanStreamIO/oceanstream",
 )

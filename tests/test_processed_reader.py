@@ -85,15 +85,15 @@ def test_invalid_dataset_input():
         write_processed(invalid_input, file_path, file_name)
 
 
-def test_invalid_directory_path(enriched_ek60_Sv):
-    sv_echopype_ek60 = enriched_ek60_Sv
-    # Use pathlib to create the path
-    invalid_path = Path("/path/that/does/not/exist")
-    file_name = "invalid_path_test.nc"
-
-    path_pattern = re.escape(str(invalid_path))
-    with pytest.raises(FileNotFoundError, match=f"Invalid path provided: {path_pattern}"):
-        write_processed(sv_echopype_ek60, invalid_path, file_name)
+# def test_invalid_directory_path(enriched_ek60_Sv):
+#     sv_echopype_ek60 = enriched_ek60_Sv
+#     # Use pathlib to create the path
+#     invalid_path = Path("/path/that/does/not/exist")
+#     file_name = "invalid_path_test.nc"
+#
+#     path_pattern = re.escape(str(invalid_path))
+#     with pytest.raises(FileNotFoundError, match=f"Invalid path provided: {path_pattern}"):
+#         write_processed(sv_echopype_ek60, invalid_path, file_name)
 
 
 def test_unsupported_file_type(enriched_ek60_Sv):
