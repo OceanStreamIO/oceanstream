@@ -135,61 +135,6 @@ OCEANSTREAM_MASK_PARAMETERS = {
     },
 }
 
-TEST_MASK_PARAMETERS = {
-    "transient": {
-        "method": "ryan",
-        "params": {
-            "m": 5,
-            "n": 5,
-            "thr": 20,
-            "excludeabove": 250,
-            "dask_chunking": {"ping_time": 100},
-            "operation": "mean",
-        },
-    },
-    "attenuation": {
-        "method": "ryan",
-        "params": {
-            "r0": 180,
-            "r1": 280,
-            "n": 5,
-            "m": None,
-            "thr": -5,
-            "start": 0,
-            "offset": 0,
-        },
-    },
-    "impulse": {"method": "ryan", "params": {"thr": 3, "m": 3, "n": 1}},
-    "seabed": {
-        "method": "ariza",
-        "params": {
-            "r0": 10,
-            "r1": 1000,
-            "roff": 0,
-            "thr": -40,
-            "ec": 1,
-            "ek": (1, 3),
-            "dc": 10,
-            "dk": (3, 7),
-        },
-    },
-    "false_seabed": {
-        "method": "blackwell",
-        "params": {
-            "theta": None,
-            "phi": None,
-            "r0": 10,
-            "r1": 1000,
-            "tSv": -75,
-            "ttheta": 702,
-            "tphi": 282,
-            "wtheta": 28,
-            "wphi": 52,
-        },
-    },
-}
-
-
 OCEANSTREAM_NOISE_MASK_PARAMETERS = {
     k: OCEANSTREAM_MASK_PARAMETERS[k] for k in ["transient", "attenuation", "impulse"]
 }
@@ -345,7 +290,7 @@ def create_mask(source_Sv: xr.Dataset, mask_type="impulse", params=MASK_PARAMETE
     return mask
 
 
-def create_multiple_masks(source_Sv: xr.Dataset, params=TEST_MASK_PARAMETERS):
+def create_multiple_masks(source_Sv: xr.Dataset, params=None):
     """
     A function that creates multiple noise masks for a given Sv dataset
 
