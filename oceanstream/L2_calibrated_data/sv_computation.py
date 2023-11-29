@@ -15,7 +15,7 @@ for Sv computation.
 - `ComputeSVParams`: Class to validate and structure the parameters passed
 to the Sv computation function.
 - `compute_sv`: Main function to calculate Sv given an EchoData object
-and other optional parameters.
+and other optional parameters. This function is based on the `echopype.calibrate.compute_Sv()` function.
 
 Usage:
 
@@ -84,6 +84,7 @@ def compute_sv(echodata: EchoData, **kwargs) -> xr.Dataset:
     - Uses the `ComputeSVParams` pydantic model to validate parameters.
     - Checks if the computed Sv is empty.
     - Returns Sv only if it is not empty.
+    - Is based on the `echopype.calibrate.compute_Sv()` function.
 
     """
     # Validate parameters using the pydantic model

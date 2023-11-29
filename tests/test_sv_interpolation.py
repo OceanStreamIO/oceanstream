@@ -15,7 +15,9 @@ from oceanstream.L2_calibrated_data.sv_interpolation import (
     db_to_linear,
     interpolate_sv,
     linear_to_db,
+    regrid_dataset,
 )
+from oceanstream.L2_calibrated_data.sv_computation import compute_sv
 from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset
 from tests.conftest import TEST_DATA_FOLDER
 
@@ -186,3 +188,20 @@ def test_deterministic_behavior(complete_dataset_jr179):
     result2 = interpolate_sv(dataset_with_mask2)
 
     assert np.array_equal(result1["Sv_interpolated"], result2["Sv_interpolated"], equal_nan=True)
+
+
+def test_regrid_dataset(ed_ek_80_for_Sv):
+    ds1 = compute_sv(ed_ek_80_for_Sv, waveform_mode="CW", encode_mode="complex")
+
+    ds2 = regrid_dataset(ds1)
+
+    # Check if dimension names are the same
+    assert set(ds1.dims.keys()) == set(ds2.dims.keys()), "Dimension names are different"
+
+    # Check if attributes are the same
+    assert ds1.attrs == ds2.attrs, "Attributes are different"
+
+    # Check if variables are the same
+    assert set(ds1.variables) == set(ds2.variables), "Variables are different"
+
+
