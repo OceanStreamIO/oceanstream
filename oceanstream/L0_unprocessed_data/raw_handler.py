@@ -24,11 +24,12 @@ the similarity between two consecutive files.
 # Import necessary libraries
 import os
 import re
-import echopype as ep
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from typing import Dict, List, Union
+
+import echopype as ep
 from echopype.convert.utils.ek_raw_io import RawSimradFile
-import xml.etree.ElementTree as ET
 
 SUPPORTED_SONAR_MODELS = ["EK60", "ES70", "EK80", "EA640", "AZFP", "AD2CP"]
 TIME_BETWEEN_FILES = 30  # time in minutes between two consecutive files
@@ -142,8 +143,8 @@ def file_finder(paths: Union[str, List[str]], file_type: str = "raw") -> List[st
 
 
 def file_integrity_checking(
-        file_path: str,
-        use_swap: bool = False,
+    file_path: str,
+    use_swap: bool = False,
 ) -> Dict[str, Union[str, datetime, bool]]:  # noqa: E501
     """
     Checks the integrity of a given echo sounder file.
@@ -189,14 +190,13 @@ def file_integrity_checking(
     """
     return_dict = {}
 
-
     # get file name from path
     file_path = os.path.abspath(file_path)
     _, file_name = os.path.split(file_path)
     _, file_extension = os.path.splitext(file_path)
     file_extension = file_extension.lower()
 
-    if file_extension not in ['.raw', '.nc', '.zarr']:
+    if file_extension not in [".raw", ".nc", ".zarr"]:
         raise Exception("File type not supported for " + str(file_path))
 
     file_integrity = True
@@ -245,7 +245,7 @@ def file_integrity_checking(
 
 
 def read_raw_files(
-        file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
 ) -> List[ep.echodata.EchoData]:
     """
     Reads multiple raw echo sounder files and returns a list of Datasets.
@@ -298,9 +298,7 @@ def read_processed_files(file_paths: List[str]) -> List[ep.echodata.EchoData]:
     return ret_list
 
 
-def _read_file(
-        file_path: str, sonar_model: str = None
-) -> ep.echodata.EchoData:
+def _read_file(file_path: str, sonar_model: str = None) -> ep.echodata.EchoData:
     """
     Reads an echo sounder file and
     returns the corresponding Dataset.
@@ -343,9 +341,9 @@ def _read_file(
 
 
 def convert_raw_files(
-        file_dicts: List[Dict[str, Union[str, datetime, bool]]],
-        save_path: str = "",
-        save_file_type: str = "nc",
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]],
+    save_path: str = "",
+    save_file_type: str = "nc",
 ) -> List[str]:
     """
     Converts multiple raw echo sounder files to the
@@ -383,10 +381,10 @@ def convert_raw_files(
 
 
 def _write_file(
-        ed: ep.echodata.EchoData,
-        save_path: str,
-        save_file_type: str = "nc",
-        overwrite: bool = False,  # noqa: E501
+    ed: ep.echodata.EchoData,
+    save_path: str,
+    save_file_type: str = "nc",
+    overwrite: bool = False,  # noqa: E501
 ) -> str:
     """
     Writes an echo sounder dataset to a
@@ -425,8 +423,8 @@ def _write_file(
 
 
 def _is_similar(
-        file_dict1: Dict[str, Union[str, datetime, bool]],
-        file_dict2: Dict[str, Union[str, datetime, bool]],
+    file_dict1: Dict[str, Union[str, datetime, bool]],
+    file_dict2: Dict[str, Union[str, datetime, bool]],
 ) -> bool:
     """
     Determines if two file information dictionaries
@@ -461,7 +459,7 @@ def _is_similar(
 
 
 def split_files(
-        file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
 ) -> List[List[Dict[str, Union[str, datetime, bool]]]]:
     """
     Splits a list of file information dictionaries
@@ -499,7 +497,7 @@ def split_files(
 
 
 def concatenate_files(
-        file_dicts: List[Dict[str, Union[str, datetime, bool]]]
+    file_dicts: List[Dict[str, Union[str, datetime, bool]]]
 ) -> ep.echodata.EchoData:
     list_of_datasets = []
     for file_info in file_dicts:
@@ -527,10 +525,10 @@ def detect_sonar_model(file_path: str, metadata=None) -> str:
 
     if "sounder_name" not in metadata:
         try:
-            xml_string = metadata.get('xml', None)
+            xml_string = metadata.get("xml", None)
             root = ET.fromstring(xml_string)
-            header = root.find('Header')
-            application_name = header.attrib.get('ApplicationName')
+            header = root.find("Header")
+            application_name = header.attrib.get("ApplicationName")
 
             if application_name == "EK80":
                 return "EK80"
