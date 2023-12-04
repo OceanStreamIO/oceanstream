@@ -24,10 +24,12 @@ the similarity between two consecutive files.
 # Import necessary libraries
 import os
 import re
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from typing import Dict, List, Union
 
 import echopype as ep
+from echopype.convert.utils.ek_raw_io import RawSimradFile
 
 SUPPORTED_SONAR_MODELS = ["EK60", "ES70", "EK80", "EA640", "AZFP", "AD2CP"]
 TIME_BETWEEN_FILES = 30  # time in minutes between two consecutive files
@@ -164,86 +166,81 @@ def file_integrity_checking(
     Returns:
 
     - dict: A dictionary containing the following keys:
-    'file_path': Absolute path to the file.
-    'campaign_id': Identifier for the measuring\
-    campaign extracted from the file name.
-    'date': Date and time when the measurement started,\
-     extracted from the file name.
-    'sonar_model': Type of sonar that produced the file.
-    'file_integrity': Boolean indicating if the file is readable by echopype.
-    'use_swap': Applicable only for raw files.\
+        'file_path': Absolute path to the file.
+        'campaign_id': Identifier for the measuring campaign,
+                      extracted from the file name.
+        'date': Date and time when the measurement started,
+                extracted from the file name. Returns None if the date
+                and time cannot be determined.
+        'file_integrity': Boolean indicating if the file is of a supported type.
+        'use_swap': Applicable only for raw files.\
      A Boolean indicating whether the option was used when reading raw files or not.
 
     Raises:
-
-    - Exception: If the file type is not supported or
-    if there are issues reading the file.
+    - Exception: If the file type is not supported.
 
     Example:
-
     file_integrity_checking("/path/to/JR161-D20230509-T100645.raw")
     {
-    'file_path': '/path/to/JR161-D20230509-T100645.raw',
-    'campaign_id': 'JR161',
-    'date': datetime.datetime(2023, 5, 9, 10, 6, 45),
-    'sonar_model': 'EK60',
-    'file_integrity': True
-    'use_swap': False
+        'file_path': '/path/to/JR161-D20230509-T100645.raw',
+        'campaign_id': 'JR161',
+        'date': datetime.datetime(2023, 5, 9, 10, 6, 45),
+        'file_integrity': True
     }
     """
     return_dict = {}
+
     # get file name from path
-    file_name = os.path.split(file_path)[-1]
-    # eliminate file type
-    file_name = file_name.split(".")[0]
-    campaign_id = file_name.split("-")[0]
-    no_date_from_file_name = False
-    date = datetime.now()
-    try:
-        pattern_date = r"D(\d{4})(\d{2})(\d{2})"
-        pattern_time = r"T(\d{2})(\d{2})(\d{2})"
+    file_path = os.path.abspath(file_path)
+    _, file_name = os.path.split(file_path)
+    _, file_extension = os.path.splitext(file_path)
+    file_extension = file_extension.lower()
 
-        matches_date = re.findall(pattern_date, file_name)[0]
-        matches_time = re.findall(pattern_time, file_name)[0]
-
-        year, month, day = matches_date
-        hour, minute, second = matches_time
-
-        datetime_string = f"D{year}{month}{day}-T{hour}{minute}{second}"
-        date = datetime.strptime(datetime_string, "D%Y%m%d-T%H%M%S")
-    except Exception as e:
-        e += "!"
-        no_date_from_file_name = True
-
-    if ".raw" in file_path:
-        for s_m in SUPPORTED_SONAR_MODELS:
-            try:
-                ed = ep.open_raw(file_path, sonar_model=s_m, use_swap=use_swap)  # type: ignore
-                file_integrity = True
-                break
-            except Exception:
-                continue
-        if not file_integrity:
-            raise Exception("File type not supported for " + str(file_path))
-    elif ".nc" in file_path or ".zarr" in file_path:
-        try:
-            ed = ep.open_converted(file_path)
-            file_integrity = True
-        except ValueError:
-            raise Exception("File type not supported for " + str(file_path))
-    else:
+    if file_extension not in [".raw", ".nc", ".zarr"]:
         raise Exception("File type not supported for " + str(file_path))
-    if no_date_from_file_name:
-        datetime_string = ed["Top-level"].date_created
-        date = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ")
+
+    file_integrity = True
+    metadata = None
+    sonar_model = None
+    date = None
+    campaign_id = None
+
+    if ".raw" == file_extension:
+        metadata = parse_metadata(file_path)
+        if metadata is not None:
+            campaign_id = metadata.get("survey_name", None)
+            date = metadata.get("timestamp", None)
+            sonar_model = detect_sonar_model(file_path, metadata=metadata)
+
+    if not metadata:
+        campaign_id = file_name.split("-")[0]
+
+        try:
+            pattern_date = r"D(\d{4})(\d{2})(\d{2})"
+            pattern_time = r"T(\d{2})(\d{2})(\d{2})"
+
+            matches_date = re.findall(pattern_date, file_name)[0]
+            matches_time = re.findall(pattern_time, file_name)[0]
+
+            year, month, day = matches_date
+            hour, minute, second = matches_time
+
+            datetime_string = f"D{year}{month}{day}-T{hour}{minute}{second}"
+            date = datetime.strptime(datetime_string, "D%Y%m%d-T%H%M%S")
+        except Exception as e:
+            e += "!"
+            file_integrity = False
+            date = None
 
     return_dict["file_path"] = file_path
     return_dict["campaign_id"] = campaign_id
     return_dict["date"] = date
-    return_dict["sonar_model"] = ed.sonar_model
     return_dict["file_integrity"] = file_integrity
-    if ".raw" in file_path:
+    return_dict["sonar_model"] = sonar_model
+
+    if ".raw" == file_extension:
         return_dict["use_swap"] = use_swap
+
     return return_dict
 
 
@@ -271,7 +268,7 @@ def read_raw_files(
     """
     ret_list = []
     for f_i in file_dicts:
-        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"], f_i["use_swap"])
+        opened_file = _read_file(file_path=f_i["file_path"])
         ret_list.append(opened_file)
     return ret_list
 
@@ -301,9 +298,7 @@ def read_processed_files(file_paths: List[str]) -> List[ep.echodata.EchoData]:
     return ret_list
 
 
-def _read_file(
-    file_path: str, sonar_model: str = "EK80", use_swap: bool = False
-) -> ep.echodata.EchoData:
+def _read_file(file_path: str, sonar_model: str = None) -> ep.echodata.EchoData:
     """
     Reads an echo sounder file and
     returns the corresponding Dataset.
@@ -334,7 +329,10 @@ def _read_file(
     """
     file_name = os.path.split(file_path)[-1]
     if ".raw" in file_name:
-        ed = ep.open_raw(file_path, sonar_model=sonar_model, use_swap=use_swap)  # type: ignore
+        if sonar_model is None:
+            sonar_model = detect_sonar_model(file_path)
+
+        ed = ep.open_raw(file_path, sonar_model=sonar_model)  # type: ignore
     elif ".nc" in file_name or ".zarr" in file_name:
         ed = ep.open_converted(file_path)  # create an EchoData object
     else:
@@ -373,7 +371,7 @@ def convert_raw_files(
     """
     ret_list = []
     for f_i in file_dicts:
-        opened_file = _read_file(f_i["file_path"], f_i["sonar_model"], f_i["use_swap"])
+        opened_file = _read_file(file_path=f_i["file_path"])
         _write_file(opened_file, save_path, save_file_type)
         file_name = os.path.split(f_i["file_path"])[-1]
         file_type = save_file_type
@@ -506,3 +504,41 @@ def concatenate_files(
         list_of_datasets.append(_read_file(file_info["file_path"]))
     combined_dataset = ep.combine_echodata(list_of_datasets)
     return combined_dataset
+
+
+def parse_metadata(file_path):
+    try:
+        with RawSimradFile(file_path, "r", storage_options={}) as fid:
+            config_datagram = fid.read(1)
+            return config_datagram
+    except Exception as e:
+        print(f"Error parsing metadata from {file_path}. Error: {e}")
+        return None
+
+
+def detect_sonar_model(file_path: str, metadata=None) -> str:
+    if metadata is None:
+        metadata = parse_metadata(file_path)
+
+    if metadata is None:
+        return None
+
+    if "sounder_name" not in metadata:
+        try:
+            xml_string = metadata.get("xml", None)
+            root = ET.fromstring(xml_string)
+            header = root.find("Header")
+            application_name = header.attrib.get("ApplicationName")
+
+            if application_name == "EK80":
+                return "EK80"
+
+        except ET.ParseError:
+            return None
+
+        return None
+
+    if metadata["sounder_name"] == "EK60" or metadata["sounder_name"] == "ER60":
+        return "EK60"
+
+    return metadata["sounder_name"]
