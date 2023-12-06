@@ -1,5 +1,6 @@
 from typing import Dict, Union
 
+import dask.array as da
 import echopype as ep
 import numpy as np
 import xarray as xr
@@ -51,6 +52,8 @@ def compute_per_dataset_nasc(Sv_ds: xr.Dataset) -> Dict[str, Union[xr.Dataset, s
 
     # Compute NASC using the determined max depth and max distance - one bin per channel
     nasc_ep = ep.commongrid.api.compute_NASC(Sv_ds, range_bin=max_depth_str, dist_bin=max_dist_str)
+    if isinstance(nasc_ep["NASC"], da.Array):
+        nasc_ep["NASC"] = nasc_ep["NASC"].compute()
 
     return {
         "NASC_dataset": nasc_ep,

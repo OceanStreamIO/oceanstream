@@ -36,7 +36,8 @@ def split_shoal_mask(Sv: xr.Dataset):
             coords=all_shoals.coords,
         )
         shoal.attrs["label"] = i
-        shoals.append(shoal)
+        shoal_dict = process_single_shoal(Sv, shoal)
+        shoals.append(shoal_dict)
     return shoals
 
 
@@ -198,8 +199,9 @@ def process_shoals(Sv: xr.Dataset):
             "nasc": None,
         }
         return [return_dict]
-    masks = split_shoal_mask(Sv)
-    dicts = [process_single_shoal(Sv, mask) for mask in masks]
+    # masks = split_shoal_mask(Sv)
+    # dicts = [process_single_shoal(Sv, mask) for mask in masks]
+    dicts = split_shoal_mask(Sv)
     results = [item for sublist in dicts for item in sublist]
     results = [r for r in results if r is not None]
     return results

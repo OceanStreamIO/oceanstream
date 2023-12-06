@@ -116,7 +116,7 @@ OCEANSTREAM_MASK_PARAMETERS = {
         },
     },
     "false_seabed": {
-        "method": "blackwell_mod",
+        "method": "blackwell",
         "params": {
             "theta": None,
             "phi": None,
@@ -127,10 +127,6 @@ OCEANSTREAM_MASK_PARAMETERS = {
             "tphi": 282,
             "wtheta": 28,
             "wphi": 52,
-            "rlog": None,
-            "tpi": None,
-            "freq": None,
-            "rank": 50,
         },
     },
 }
