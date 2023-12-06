@@ -6,7 +6,7 @@ from echopype.mask.api import apply_mask
 from haversine import haversine
 from pandas import DataFrame
 
-from oceanstream.L3_regridded_data.nasc_computation import compute_per_dataset_nasc
+from oceanstream.exports.nasc_computation import compute_per_dataset_nasc
 from oceanstream.utils import tfc
 
 

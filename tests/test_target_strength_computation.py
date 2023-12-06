@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from oceanstream.L2_calibrated_data import target_strength_computation
+from oceanstream.echodata import target_strength_computation
 
 
 def test_ctarget_strength_computation(ed_ek_60_for_Sv):

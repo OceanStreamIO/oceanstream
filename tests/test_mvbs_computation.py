@@ -4,7 +4,7 @@ import pytest
 import xarray as xr
 from echopype.commongrid.api import compute_MVBS, compute_MVBS_index_binning
 
-from oceanstream.L3_regridded_data.mvbs_computation import compute_mvbs
+from oceanstream.exports.mvbs_computation import compute_mvbs
 
 
 def generate_mock_data(channels=2, pings=4, ranges=4):

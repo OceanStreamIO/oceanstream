@@ -1,6 +1,6 @@
-from oceanstream.L3_regridded_data.shoal_detection_handler import attach_shoal_mask_to_ds
+from oceanstream.exports.shoals.shoals_handler import attach_shoal_mask_to_ds
 
-from oceanstream.L3_regridded_data.shoal_process import (
+from oceanstream.exports.shoals.shoal_process import (
     process_shoals,
     process_single_shoal,
     split_shoal_mask,

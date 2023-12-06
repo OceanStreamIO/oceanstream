@@ -1,4 +1,4 @@
-from oceanstream.L3_regridded_data.csv_export_from_Sv import create_location, create_Sv
+from oceanstream.exports.csv.csv_export_from_Sv import create_location, create_Sv
 
 
 def test_create_location(enriched_ek60_Sv):

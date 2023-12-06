@@ -1,6 +1,6 @@
 import pytest
 
-from oceanstream.L3_regridded_data import nasc_computation
+from oceanstream.exports import nasc_computation
 
 
 def test_compute_per_dataset_nasc(enriched_ek60_Sv):

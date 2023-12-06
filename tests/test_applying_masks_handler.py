@@ -1,9 +1,10 @@
 import numpy as np
 import pytest
 
-from oceanstream.L2_calibrated_data.noise_masks import create_default_noise_masks_oceanstream
-from oceanstream.L3_regridded_data import frequency_differencing_handler, shoal_detection_handler
-from oceanstream.L3_regridded_data.applying_masks_handler import (
+from oceanstream.denoise.noise_masks import create_default_noise_masks_oceanstream
+from oceanstream.exports import frequency_differencing_handler
+from oceanstream.exports.shoals import shoal_detection_handler
+from oceanstream.denoise.applying_masks_handler import (
     apply_mask_organisms_in_order,
     apply_selected_noise_masks_and_or_noise_removal,
 )

@@ -1,6 +1,6 @@
 import pytest
 
-from oceanstream.L0_unprocessed_data.ensure_time_continuity import (
+from oceanstream.echodata.ensure_time_continuity import (
     check_reversed_time,
     fix_time_reversions,
 )

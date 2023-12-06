@@ -25,10 +25,7 @@ Note:
 """
 
 from pathlib import Path
-
-# Import necessary libraries
 from typing import Union
-
 import xarray as xr
 
 

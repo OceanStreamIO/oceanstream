@@ -7,17 +7,17 @@ from echopype.clean.impulse_noise import (
     RYAN_DEFAULT_PARAMS
 )
 
-from oceanstream.L2_calibrated_data.noise_masks import (
+from oceanstream.denoise.noise_masks import (
     create_impulse_mask,
 )
-from oceanstream.L2_calibrated_data.processed_data_io import write_processed
-from oceanstream.L2_calibrated_data.sv_interpolation import (
+from oceanstream.echodata.processed_data_io import write_processed
+from oceanstream.echodata.sv_interpolation import (
     db_to_linear,
     interpolate_sv,
     linear_to_db,
     regrid_dataset,
 )
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
+from oceanstream.echodata.sv_computation import compute_sv
 from oceanstream.utils import add_metadata_to_mask, attach_mask_to_dataset
 from tests.conftest import TEST_DATA_FOLDER
 
