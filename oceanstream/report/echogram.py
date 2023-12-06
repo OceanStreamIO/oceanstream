@@ -1,9 +1,9 @@
 import os
-import xarray as xr
+
+import echopype as ep
 import matplotlib
 import matplotlib.pyplot as plt
-import echopype as ep
-
+import xarray as xr
 
 # def save_echogram_to_file(ds: xr.Dataset, config: dict, filename):
 #     """
@@ -43,6 +43,7 @@ import echopype as ep
 #         plt.close(fig)
 #
 #     plt.close('all')
+
 
 def save_echogram_to_file_combined(ds: xr.Dataset, config: dict, filename: str):
     """
@@ -85,6 +86,6 @@ def save_echogram_to_file_combined(ds: xr.Dataset, config: dict, filename: str):
 
     # Adjust layout and save the figure
     plt.tight_layout()
-    output_path = os.path.join(config.get('output_folder', '.'), filename)
+    output_path = os.path.join(config.get("output_folder", "."), filename)
     combined_fig.savefig(output_path, dpi=300)
     plt.close(combined_fig)

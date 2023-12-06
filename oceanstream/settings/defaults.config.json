@@ -1,112 +1,113 @@
 {
-    "impulse": {
-        "enabled": true,
-        "method": "ryan",
-        "parameters": {
-            "thr": 3,
-            "m": 3,
-            "n": 1
-        }
-    },
-
-    "attenuation": {
-        "enabled": true,
-        "method": "ryan",
-        "parameters": {
-            "r0": 180,
-            "r1": 280,
-            "n": 5,
-            "m": null,
-            "thr": -5,
-            "start": 0,
-            "offset": 0
-        }
-    },
-
-    "transient": {
-        "enabled": true,
-        "method": "fielding",
-        "parameters": {
-            "r0": 200,
-            "r1": 1000,
-            "n": 5,
-            "thr": [2, 0],
-            "roff": 250,
-            "jumps": 5,
-            "maxts": -35,
-            "start": 0,
-            "dask_chunking": {"ping_time": 100, "range_sample": 100}
-        }
-    },
-
-    "false_seabed": {
-        "enabled": true,
-        "method": "blackwell_mod",
-        "parameters": {
-            "theta": null,
-            "phi": null,
-            "r0": 10,
-            "r1": 1000,
-            "tSv": -75,
-            "ttheta": 702,
-            "tphi": 282,
-            "wtheta": 28,
-            "wphi": 52,
-            "rlog": null,
-            "tpi": null,
-            "freq": null,
-            "rank": 50
-        }
-    },
-
-    "seabed": {
-        "enabled": true,
-        "method": "ariza",
-        "parameters": {
-            "r0": 10,
-            "r1": 1000,
-            "roff": 0,
-            "thr": -35,
-            "ec": 15,
-            "ek": [
-                1,
-                3
-            ],
-            "dc": 150,
-            "dk": [
-                1,
-                3
-            ]
-        }
-    },
-
-    "remove_background_noise": {
-        "enabled": true,
-        "parameters": {
-            "ping_num": 40,
-            "noise_max": -125,
-            "SNR_threshold": 3
-        }
-    },
-
-    "nasc": {
-        "enabled": true
-    },
-
-    "shoals": {
-        "enabled": true,
-        "method": "will",
-        "parameters": {
-            "thr": -55,
-            "maxvgap": -5,
-            "maxhgap": 0,
-            "minvlen": 5,
-            "minhlen": 5,
-            "dask_chunking": {"ping_time": 100, "range_sample": 100}
-        }
-    },
-
-    "profile": true,
-    "sonar_model": "EK60",
-    "output_folder": "output"
+  "impulse": {
+    "enabled": true,
+    "method": "ryan",
+    "parameters": {
+      "thr": 3,
+      "m": 3,
+      "n": 1
+    }
+  },
+  "attenuation": {
+    "enabled": true,
+    "method": "ryan",
+    "parameters": {
+      "r0": 180,
+      "r1": 280,
+      "n": 5,
+      "m": null,
+      "thr": -5,
+      "start": 0,
+      "offset": 0
+    }
+  },
+  "transient": {
+    "enabled": true,
+    "method": "fielding",
+    "parameters": {
+      "r0": 200,
+      "r1": 1000,
+      "n": 5,
+      "thr": [
+        2,
+        0
+      ],
+      "roff": 250,
+      "jumps": 5,
+      "maxts": -35,
+      "start": 0,
+      "dask_chunking": {
+        "ping_time": 100,
+        "range_sample": 100
+      }
+    }
+  },
+  "false_seabed": {
+    "enabled": true,
+    "method": "blackwell_mod",
+    "parameters": {
+      "theta": null,
+      "phi": null,
+      "r0": 10,
+      "r1": 1000,
+      "tSv": -75,
+      "ttheta": 702,
+      "tphi": 282,
+      "wtheta": 28,
+      "wphi": 52,
+      "rlog": null,
+      "tpi": null,
+      "freq": null,
+      "rank": 50
+    }
+  },
+  "seabed": {
+    "enabled": true,
+    "method": "ariza",
+    "parameters": {
+      "r0": 10,
+      "r1": 1000,
+      "roff": 0,
+      "thr": -35,
+      "ec": 15,
+      "ek": [
+        1,
+        3
+      ],
+      "dc": 150,
+      "dk": [
+        1,
+        3
+      ]
+    }
+  },
+  "remove_background_noise": {
+    "enabled": true,
+    "parameters": {
+      "ping_num": 40,
+      "noise_max": -125,
+      "SNR_threshold": 3
+    }
+  },
+  "nasc": {
+    "enabled": true
+  },
+  "shoals": {
+    "enabled": true,
+    "method": "will",
+    "parameters": {
+      "thr": -55,
+      "maxvgap": -5,
+      "maxhgap": 0,
+      "minvlen": 5,
+      "minhlen": 5,
+      "dask_chunking": {
+        "ping_time": 100,
+        "range_sample": 100
+      }
+    }
+  },
+  "profile": true,
+  "sonar_model": "EK60",
+  "output_folder": "output"
 }

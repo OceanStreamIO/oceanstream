@@ -1,10 +1,11 @@
 from typing import Union
+
 from echopype.echodata import EchoData
 
-from oceanstream.report import start_profiling, end_profiling
-from .raw_handler import file_integrity_checking
-from .raw_handler import read_raw_files
-from .ensure_time_continuity import fix_time_reversions, check_reversed_time
+from oceanstream.report import end_profiling, start_profiling
+
+from .ensure_time_continuity import check_reversed_time, fix_time_reversions
+from .raw_handler import file_integrity_checking, read_raw_files
 
 
 def read_file(config, profiling_info=None) -> Union[dict[str, str], tuple[EchoData, str]]:
@@ -16,7 +17,9 @@ def read_file(config, profiling_info=None) -> Union[dict[str, str], tuple[EchoDa
         start_time, start_cpu, start_memory = start_profiling()
 
     filename = config["raw_path"]
-    check, file_integrity, encode_mode = check_file_integrity(filename, sonar_model=config["sonar_model"])
+    check, file_integrity, encode_mode = check_file_integrity(
+        filename, sonar_model=config["sonar_model"]
+    )
 
     if not file_integrity:
         return {"Processing Error": f"File {filename} could not usable!"}

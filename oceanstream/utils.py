@@ -99,5 +99,3 @@ def tfc(mask: xr.DataArray):
     count_false = mask.size - count_true
     true_false_counts = (count_true, count_false)
     return true_false_counts
-
-

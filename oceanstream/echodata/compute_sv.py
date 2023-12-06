@@ -1,11 +1,14 @@
-from echopype.echodata import EchoData
 import xarray as xr
+from echopype.echodata import EchoData
 
-from oceanstream.report import start_profiling, end_profiling
+from oceanstream.report import end_profiling, start_profiling
+
 from .sv_computation import compute_sv
 
 
-def compute_sv_with_encode_mode(echodata: EchoData, encode_mode: str, config, profiling_info=None) -> xr.Dataset:
+def compute_sv_with_encode_mode(
+    echodata: EchoData, encode_mode: str, config, profiling_info=None
+) -> xr.Dataset:
     start_time = None
     start_cpu = None
     start_memory = None

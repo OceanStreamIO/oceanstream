@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional, List, Union
+from typing import List, Optional, TypedDict, Union
 
 
 class TransientParameters(TypedDict, total=False):
@@ -56,7 +56,12 @@ class MaskConfig(TypedDict):
     enabled: bool
     method: str
     parameters: Union[
-        TransientParameters, AttenuationParameters, ImpulseParameters, SeabedEchoParameters, SeabedParameters]
+        TransientParameters,
+        AttenuationParameters,
+        ImpulseParameters,
+        SeabedEchoParameters,
+        SeabedParameters,
+    ]
 
 
 class DenoiseConfig(TypedDict):

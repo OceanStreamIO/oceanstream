@@ -1,4 +1,5 @@
 import time
+
 import psutil
 
 
@@ -56,7 +57,7 @@ def end_profiling(start_time, start_cpu, start_memory):
     profiling_info = {
         "execution_time": end_time - start_time,
         "cpu_usage": end_cpu - start_cpu,
-        "memory_usage": end_memory - start_memory  # In bytes
+        "memory_usage": end_memory - start_memory,  # In bytes
     }
 
     return profiling_info
