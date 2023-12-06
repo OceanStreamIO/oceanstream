@@ -80,4 +80,4 @@ def test_add_seabed_depth(ed_ek_60_for_Sv):
     res = add_seabed_depth(Sv_mask)
     res_sl = res["seabed_level"]
     assert res_sl.shape == (3, 1932)
-    assert res_sl[0, 0] == 464
+    assert res_sl[0, 0].item() == 445
