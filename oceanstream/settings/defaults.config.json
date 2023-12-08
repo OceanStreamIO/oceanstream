@@ -3,8 +3,8 @@
     "enabled": true,
     "method": "ryan",
     "parameters": {
-      "thr": 3,
-      "m": 3,
+      "thr": 10,
+      "m": 5,
       "n": 1
     }
   },
