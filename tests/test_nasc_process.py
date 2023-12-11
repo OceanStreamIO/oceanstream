@@ -1,6 +1,6 @@
 import pytest
 
-from oceanstream.L3_regridded_data.csv_export_nasc import *
+from oceanstream.exports.csv.csv_export_nasc import *
 
 # @pytest.mark.ignore
 def test_compute_per_dataset_nasc(ek_60_Sv_full_denoised):

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from oceanstream.L3_regridded_data.shoal_detection_handler import (
+from oceanstream.exports.shoals.shoal_detection_handler import (
     attach_shoal_mask_to_ds,
     create_shoal_mask_multichannel,
 )

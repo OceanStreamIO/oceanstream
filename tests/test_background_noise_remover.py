@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 
-from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
+from oceanstream.denoise.background_noise_remover import apply_remove_background_noise
 
 
 def test_apply_remove_background_noise(enriched_ek60_Sv):

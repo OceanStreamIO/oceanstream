@@ -16,6 +16,7 @@ for Sv computation.
 to the Sv computation function.
 - `compute_sv`: Main function to calculate Sv given an EchoData object
 and other optional parameters. This function is based on the `echopype.calibrate.compute_Sv()` function.
+- `compute_sv_with_encode_mode`
 
 Usage:
 
@@ -30,6 +31,8 @@ import echopype as ep
 import xarray as xr
 from echopype.echodata.echodata import EchoData
 from pydantic import BaseModel, ValidationError, field_validator
+
+from oceanstream.report import end_profiling, start_profiling
 
 
 class SupportedSonarModelsForSv(str, Enum):
@@ -109,3 +112,24 @@ def compute_sv(echodata: EchoData, **kwargs) -> xr.Dataset:
     if Sv["Sv"].values.size == 0:
         raise ValueError("Computed Sv is empty!")
     return Sv
+
+
+def compute_sv_with_encode_mode(
+    echodata: EchoData, encode_mode: str, config, profiling_info=None
+) -> xr.Dataset:
+    start_time = None
+    start_cpu = None
+    start_memory = None
+
+    if config["profile"]:
+        start_time, start_cpu, start_memory = start_profiling()
+
+    if encode_mode == "power":
+        sv_dataset = compute_sv(echodata)
+    else:
+        sv_dataset = compute_sv(echodata, waveform_mode="CW", encode_mode="power")
+
+    if config["profile"]:
+        profiling_info["compute sv"] = end_profiling(start_time, start_cpu, start_memory)
+
+    return sv_dataset

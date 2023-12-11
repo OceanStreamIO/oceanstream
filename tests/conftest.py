@@ -7,11 +7,13 @@ import echopype as ep
 import pytest
 from xarray import Dataset
 
-from oceanstream.L2_calibrated_data import create_default_noise_masks_oceanstream, sv_interpolation
-from oceanstream.L2_calibrated_data.background_noise_remover import apply_remove_background_noise
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.L2_calibrated_data.sv_dataset_extension import enrich_sv_dataset
-from oceanstream.L3_regridded_data import applying_masks_handler, attach_shoal_mask_to_ds
+from oceanstream.denoise.noise_masks import create_default_noise_masks_oceanstream
+from oceanstream.echodata import sv_interpolation
+from oceanstream.denoise.background_noise_remover import apply_remove_background_noise
+from oceanstream.echodata.sv_computation import compute_sv
+from oceanstream.echodata.sv_dataset_extension import enrich_sv_dataset
+from oceanstream.exports.shoals.shoal_detection_handler import attach_shoal_mask_to_ds
+from oceanstream.denoise import applying_masks_handler
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 TEST_DATA_FOLDER = os.path.join(current_directory, "..", "test_data")

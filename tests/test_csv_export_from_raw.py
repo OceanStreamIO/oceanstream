@@ -1,4 +1,4 @@
-from oceanstream.L3_regridded_data.csv_export_from_raw import *
+from oceanstream.exports.csv.csv_export_from_raw import *
 
 
 def test_create_metadata(raw_dataset_jr179):

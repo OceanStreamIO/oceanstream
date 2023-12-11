@@ -1,7 +1,8 @@
 import os
 
-from oceanstream.L2_calibrated_data.noise_masks import create_seabed_mask
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
+from oceanstream.denoise.noise_masks import create_seabed_mask
+from oceanstream.echodata.sv_computation import compute_sv
+from oceanstream.exports.plot import plot_all_channels
 from oceanstream.utils import *
 
 def test_dict_to_formatted_list():

@@ -4,7 +4,7 @@ import xarray as xr
 from echopype.mask.api import apply_mask
 from pandas import DataFrame
 
-from oceanstream.L3_regridded_data.nasc_computation import compute_per_dataset_nasc
+from oceanstream.exports.nasc_computation import compute_per_dataset_nasc
 
 BASE_NASC_PARAMETERS = [
     {"masks": {"mask_shoal": False}, "abbreviated": True, "root_name": "fish_NASC"}

@@ -1,10 +1,9 @@
-import re
 from pathlib import Path
 
 import pytest
 import xarray as xr
 
-from oceanstream.L2_calibrated_data.processed_data_io import write_processed
+from oceanstream.echodata import write_processed
 from tests.conftest import TEST_DATA_FOLDER
 
 

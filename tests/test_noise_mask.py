@@ -1,11 +1,7 @@
-import pytest
-from oceanstream.L2_calibrated_data.noise_masks import OCEANSTREAM_MASK_PARAMETERS
-
-from oceanstream.L2_calibrated_data.noise_masks import (
+from oceanstream.denoise.noise_masks import OCEANSTREAM_MASK_PARAMETERS
+from oceanstream.denoise.noise_masks import (
     create_attenuation_mask,
-    # create_default_noise_masks_oceanstream,
     create_impulse_mask,
-    # create_noise_masks_rapidkrill,
     create_seabed_mask,
     create_transient_mask,
     create_multiple_masks,

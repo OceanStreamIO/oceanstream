@@ -39,7 +39,7 @@ from typing import Union
 import echopype as ep
 import xarray as xr
 
-from oceanstream.L2_calibrated_data import background_noise_remover
+from oceanstream.denoise import background_noise_remover
 
 
 def apply_selected_noise_masks_and_or_noise_removal(

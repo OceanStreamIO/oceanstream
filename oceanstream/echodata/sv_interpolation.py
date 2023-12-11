@@ -14,7 +14,7 @@ import numpy as np
 import xarray as xr
 from scipy.interpolate import interp1d
 
-from oceanstream.L2_calibrated_data.processed_data_io import read_processed
+from .processed_data_io import read_processed
 
 
 def db_to_linear(db: xr.DataArray) -> xr.DataArray:

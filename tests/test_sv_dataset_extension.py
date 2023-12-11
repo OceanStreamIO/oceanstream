@@ -1,12 +1,12 @@
 import numpy as np
 import pytest
 
-from oceanstream.L2_calibrated_data.sv_computation import compute_sv
-from oceanstream.L2_calibrated_data.sv_dataset_extension import (
+from oceanstream.echodata.sv_computation import compute_sv
+from oceanstream.echodata.sv_dataset_extension import (
     enrich_sv_dataset,
     add_seabed_depth
 )
-from oceanstream.L2_calibrated_data.noise_masks import (
+from oceanstream.denoise.noise_masks import (
     create_seabed_mask,
     attach_masks_to_dataset,
 )

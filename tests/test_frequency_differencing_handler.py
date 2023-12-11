@@ -2,7 +2,7 @@ import echopype as ep
 import numpy as np
 import pytest
 
-from oceanstream.L3_regridded_data.frequency_differencing_handler import (
+from oceanstream.exports.frequency_differencing_handler import (
     find_mask_freq_diff,
     identify_fluid_like_organisms,
     identify_gas_bearing_organisms,

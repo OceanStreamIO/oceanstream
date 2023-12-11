@@ -2,7 +2,7 @@ import os
 import urllib.request
 import pytest
 
-from oceanstream.L0_unprocessed_data.raw_handler import (
+from oceanstream.echodata.raw_handler import (
     convert_raw_files,
     file_finder,
     file_integrity_checking,
