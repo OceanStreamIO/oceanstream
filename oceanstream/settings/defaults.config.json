@@ -107,5 +107,6 @@
   },
   "profile": true,
   "sonar_model": "EK60",
-  "output_folder": "output"
+  "output_folder": "output",
+  "plot_echogram": true
 }

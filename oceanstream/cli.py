@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import gc
 import logging
 import os
 import sys
@@ -16,6 +17,7 @@ from oceanstream.echodata import (
     compute_sv_with_encode_mode,
     enrich_sv_dataset,
     read_file,
+    regrid_dataset,
     write_processed,
 )
 from oceanstream.exports import compute_and_write_nasc
@@ -35,7 +37,7 @@ def parse_cli_arguments():
         "--raw-data-source",
         type=str,
         required=True,
-        help="Path to a raw data file or directory containing multiple raw data files",
+        help="Path to a raw data file",  # "or directory containing multiple raw data files",
     )
     parser.add_argument(
         "--output-folder",
@@ -48,6 +50,9 @@ def parse_cli_arguments():
     )
     parser.add_argument(
         "--export-csv", action="store_true", help="Write CSV output files with processed data"
+    )
+    parser.add_argument(
+        "--plot_echogram", action="store_true", help="Plot the echogram from processed data"
     )
     parser.add_argument("--config", type=str, default=None, help="Path to a configuration file")
     parser.add_argument(
@@ -86,6 +91,15 @@ async def process_file(filename, args):
 
     # Enrich the Sv by adding depth, location, and split-beam angle information
     sv_enriched = create_enriched_sv(echodata, encode_mode, sv_dataset)
+    # Force memory clear
+    if config["export_csv"]:
+        export_raw_csv(echodata, config["output_folder"], config["raw_path"].stem)
+    del echodata
+    gc.collect()
+
+    # Downsample if needed
+    sv_enriched_downsampled = regrid_dataset(sv_enriched)
+    sv_enriched = sv_enriched_downsampled
 
     # Create noise masks
     print("Creating noise masks...")
@@ -116,7 +130,6 @@ async def process_file(filename, args):
 
     # Calibration and metadata
     if config["export_csv"]:
-        export_raw_csv(echodata, config["output_folder"], config["raw_path"].stem)
         export_Sv_csv(ds_clean, config["output_folder"], config["raw_path"].stem)
         print(f"Exported raw and processed CSV files to: {raw_csv_path}")
 
@@ -125,9 +138,10 @@ async def process_file(filename, args):
     print("Applied seabed mask")
 
     # Echogram
-    plot_all_channels(ds_clean, save_path=config["output_folder"])
-    print(f"Saved echograms for all channels to: {config['output_folder']}")
-    # save_echogram_to_file(ds_clean, config, config["raw_path"].stem + "_echogram_clean.png")
+    if config["plot_echogram"]:
+        plot_all_channels(ds_clean, save_path=config["output_folder"])
+        print(f"Saved echograms for all channels to: {config['output_folder']}")
+        # save_echogram_to_file(ds_clean, config, config["raw_path"].stem + "_echogram_clean.png")
 
     # Shoals
     shoal_list, shoal_dataset = write_shoals_csv(
@@ -146,6 +160,7 @@ def initialize(args, config, filename):
     sonar_model = args.sonar_model
     profile = args.profile
     export_csv = args.export_csv
+    plot_echogram = args.plot_echogram
     output_folder = args.output_folder
 
     config["raw_path"] = Path(filename)
@@ -154,6 +169,8 @@ def initialize(args, config, filename):
         config["profile"] = profile
     if export_csv is not None:
         config["export_csv"] = export_csv
+    if plot_echogram is not None:
+        config["plot_echogram"] = plot_echogram
     if sonar_model is not None:
         config["sonar_model"] = sonar_model
     if output_folder is not None:
