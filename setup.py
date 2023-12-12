@@ -9,6 +9,8 @@ setup(
     version="0.1",
     packages=find_packages(),
     install_requires=requirements,
+    package_data={"oceanstream": ["settings/*.json", "data/*.json"]},
+    include_package_data=True,  # Include package data
     # Optional metadata
     author="Pine View Software AS",
     author_email="hello@pineview.io",
