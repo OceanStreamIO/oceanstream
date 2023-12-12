@@ -12,6 +12,6 @@ def load_config(user_config_path=None):
         with open(user_config_path, "r") as file:
             user_config = json.load(file)
         for key in user_config:
-            config[key].update(user_config[key])
+            config[key] = user_config[key]
 
     return config
