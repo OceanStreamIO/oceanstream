@@ -29,6 +29,7 @@ TEST_MASK_PARAMETERS = {
             "thr": -5,
             "start": 0,
             "offset": 0,
+            "dask_chunking": {"ping_time": 100, "range_sample": 100},
         },
     },
     "impulse": {"method": "ryan", "params": {"thr": 3, "m": 3, "n": 1}},
