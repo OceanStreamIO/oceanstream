@@ -57,4 +57,6 @@ def apply_seabed_mask(ds: xr.Dataset, config) -> xr.Dataset:
 
         ds_processed = apply_selected_masks(ds, params)
 
-    return ds_processed
+        return ds_processed
+
+    return ds
