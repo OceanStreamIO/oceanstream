@@ -112,8 +112,12 @@ def apply_selected_noise_masks_and_or_noise_removal(
                 "mask_false_seabed",
                 "mask_seabed",
             ]:
-                mask_data = ds[process]
-                ds = ep.mask.apply_mask(ds, mask_data, **params)
+                if process in ds:
+                    mask_data = ds[process]
+                    ds = ep.mask.apply_mask(ds, mask_data, **params)
+                else:
+                    print(f"'{process}' is not a key in ds")
+
             elif process == "remove_background_noise":
                 ds = background_noise_remover.apply_remove_background_noise(ds, **params)
 
